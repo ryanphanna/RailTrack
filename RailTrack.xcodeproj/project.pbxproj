@@ -1,0 +1,503 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1000001 /* RailTrackApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000001 /* RailTrackApp.swift */; };
+		A1000002 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000002 /* AppState.swift */; };
+		A1000003 /* Trip.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000003 /* Trip.swift */; };
+		A1000004 /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000004 /* Station.swift */; };
+		A1000005 /* TrainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000005 /* TrainService.swift */; };
+		A1000006 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000006 /* Alert.swift */; };
+		A1000007 /* SupabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000007 /* SupabaseService.swift */; };
+		A1000008 /* MockDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000008 /* MockDataService.swift */; };
+		A1000009 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000009 /* NotificationService.swift */; };
+		A1000010 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000010 /* HomeView.swift */; };
+		A1000011 /* TripCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000011 /* TripCardView.swift */; };
+		A1000012 /* TripDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000012 /* TripDetailView.swift */; };
+		A1000013 /* LiveMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000013 /* LiveMapView.swift */; };
+		A1000014 /* StationTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000014 /* StationTimelineView.swift */; };
+		A1000015 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000015 /* StatsView.swift */; };
+		A1000016 /* SocialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000016 /* SocialView.swift */; };
+		A1000017 /* AddTripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000017 /* AddTripView.swift */; };
+		A1000018 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000018 /* OnboardingView.swift */; };
+		A1000019 /* StatusBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000019 /* StatusBadge.swift */; };
+		A1000020 /* DelayBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000020 /* DelayBanner.swift */; };
+		A1000021 /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000021 /* ColorTheme.swift */; };
+		A1000022 /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000022 /* DateExtensions.swift */; };
+		A1000023 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000023 /* ContentView.swift */; };
+		A1000099 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000099 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		B1000001 /* RailTrackApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RailTrackApp.swift; sourceTree = "<group>"; };
+		B1000002 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		B1000003 /* Trip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trip.swift; sourceTree = "<group>"; };
+		B1000004 /* Station.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
+		B1000005 /* TrainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainService.swift; sourceTree = "<group>"; };
+		B1000006 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
+		B1000007 /* SupabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseService.swift; sourceTree = "<group>"; };
+		B1000008 /* MockDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDataService.swift; sourceTree = "<group>"; };
+		B1000009 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		B1000010 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		B1000011 /* TripCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripCardView.swift; sourceTree = "<group>"; };
+		B1000012 /* TripDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailView.swift; sourceTree = "<group>"; };
+		B1000013 /* LiveMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveMapView.swift; sourceTree = "<group>"; };
+		B1000014 /* StationTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationTimelineView.swift; sourceTree = "<group>"; };
+		B1000015 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
+		B1000016 /* SocialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialView.swift; sourceTree = "<group>"; };
+		B1000017 /* AddTripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTripView.swift; sourceTree = "<group>"; };
+		B1000018 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		B1000019 /* StatusBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBadge.swift; sourceTree = "<group>"; };
+		B1000020 /* DelayBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DelayBanner.swift; sourceTree = "<group>"; };
+		B1000021 /* ColorTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTheme.swift; sourceTree = "<group>"; };
+		B1000022 /* DateExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtensions.swift; sourceTree = "<group>"; };
+		B1000023 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B1000099 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C1000001 /* RailTrack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RailTrack.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D1000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E1000000 /* RailTrack */ = {
+			isa = PBXGroup;
+			children = (
+				E1000001 /* App */,
+				E1000002 /* Models */,
+				E1000003 /* Services */,
+				E1000004 /* Views */,
+				E1000009 /* Utilities */,
+				B1000099 /* Assets.xcassets */,
+				C1000001 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E1000001 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				B1000001 /* RailTrackApp.swift */,
+				B1000002 /* AppState.swift */,
+				B1000023 /* ContentView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		E1000002 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B1000003 /* Trip.swift */,
+				B1000004 /* Station.swift */,
+				B1000005 /* TrainService.swift */,
+				B1000006 /* Alert.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		E1000003 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				B1000007 /* SupabaseService.swift */,
+				B1000008 /* MockDataService.swift */,
+				B1000009 /* NotificationService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		E1000004 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E1000005 /* Home */,
+				E1000006 /* TripDetail */,
+				E1000007 /* Stats */,
+				E1000008 /* Social */,
+				E1000010 /* Onboarding */,
+				E1000011 /* Components */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E1000005 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				B1000010 /* HomeView.swift */,
+				B1000011 /* TripCardView.swift */,
+				B1000017 /* AddTripView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		E1000006 /* TripDetail */ = {
+			isa = PBXGroup;
+			children = (
+				B1000012 /* TripDetailView.swift */,
+				B1000013 /* LiveMapView.swift */,
+				B1000014 /* StationTimelineView.swift */,
+			);
+			path = TripDetail;
+			sourceTree = "<group>";
+		};
+		E1000007 /* Stats */ = {
+			isa = PBXGroup;
+			children = (
+				B1000015 /* StatsView.swift */,
+			);
+			path = Stats;
+			sourceTree = "<group>";
+		};
+		E1000008 /* Social */ = {
+			isa = PBXGroup;
+			children = (
+				B1000016 /* SocialView.swift */,
+			);
+			path = Social;
+			sourceTree = "<group>";
+		};
+		E1000009 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				B1000021 /* ColorTheme.swift */,
+				B1000022 /* DateExtensions.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		E1000010 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				B1000018 /* OnboardingView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		E1000011 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				B1000019 /* StatusBadge.swift */,
+				B1000020 /* DelayBanner.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		C1000001 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C1000001 /* RailTrack.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F1000001 /* RailTrack */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F2000001 /* Build configuration list for PBXNativeTarget "RailTrack" */;
+			buildPhases = (
+				F3000001 /* Sources */,
+				D1000001 /* Frameworks */,
+				F3000002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RailTrack;
+			packageProductDependencies = (
+			);
+			productName = RailTrack;
+			productReference = C1000001 /* RailTrack.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F0000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					F1000001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = F2000002 /* Build configuration list for PBXProject "RailTrack" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = E1000000;
+			productRefGroup = C1000001 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F1000001 /* RailTrack */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F3000002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000099 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F3000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000001 /* RailTrackApp.swift in Sources */,
+				A1000002 /* AppState.swift in Sources */,
+				A1000023 /* ContentView.swift in Sources */,
+				A1000003 /* Trip.swift in Sources */,
+				A1000004 /* Station.swift in Sources */,
+				A1000005 /* TrainService.swift in Sources */,
+				A1000006 /* Alert.swift in Sources */,
+				A1000007 /* SupabaseService.swift in Sources */,
+				A1000008 /* MockDataService.swift in Sources */,
+				A1000009 /* NotificationService.swift in Sources */,
+				A1000010 /* HomeView.swift in Sources */,
+				A1000011 /* TripCardView.swift in Sources */,
+				A1000012 /* TripDetailView.swift in Sources */,
+				A1000013 /* LiveMapView.swift in Sources */,
+				A1000014 /* StationTimelineView.swift in Sources */,
+				A1000015 /* StatsView.swift in Sources */,
+				A1000016 /* SocialView.swift in Sources */,
+				A1000017 /* AddTripView.swift in Sources */,
+				A1000018 /* OnboardingView.swift in Sources */,
+				A1000019 /* StatusBadge.swift in Sources */,
+				A1000020 /* DelayBanner.swift in Sources */,
+				A1000021 /* ColorTheme.swift in Sources */,
+				A1000022 /* DateExtensions.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		F4000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F4000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F4000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = RailTrack;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "RailTrack uses your location to show your train's position on the map.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ryanphanna.RailTrack;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F4000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = RailTrack;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "RailTrack uses your location to show your train's position on the map.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ryanphanna.RailTrack;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F2000001 /* Build configuration list for PBXNativeTarget "RailTrack" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F4000003 /* Debug */,
+				F4000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F2000002 /* Build configuration list for PBXProject "RailTrack" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F4000001 /* Debug */,
+				F4000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = F0000001 /* Project object */;
+}

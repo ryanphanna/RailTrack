@@ -1,0 +1,131 @@
+import SwiftUI
+import MapKit
+
+struct LiveMapView: View {
+    let trip: Trip
+
+    @State private var position: MapCameraPosition
+
+    init(trip: Trip) {
+        self.trip = trip
+        // Center between origin and destination
+        let midLat = (trip.origin.coordinate.latitude + trip.destination.coordinate.latitude) / 2
+        let midLon = (trip.origin.coordinate.longitude + trip.destination.coordinate.longitude) / 2
+        _position = State(initialValue: .region(
+            MKCoordinateRegion(
+                center: CLLocationCoordinate2D(latitude: midLat, longitude: midLon),
+                latitudinalMeters: 400_000,
+                longitudinalMeters: 400_000
+            )
+        ))
+    }
+
+    var body: some View {
+        Map(position: $position) {
+            // Origin marker
+            Annotation(trip.origin.shortName, coordinate: trip.origin.clCoordinate) {
+                StationMarker(code: trip.origin.code, isOrigin: true)
+            }
+
+            // Destination marker
+            Annotation(trip.destination.shortName, coordinate: trip.destination.clCoordinate) {
+                StationMarker(code: trip.destination.code, isOrigin: false)
+            }
+
+            // Route polyline (straight line for now; replace with GTFS shape)
+            MapPolyline(coordinates: [trip.origin.clCoordinate, trip.destination.clCoordinate])
+                .stroke(ColorTheme.operatorColor(for: trip.trainOperator), lineWidth: 3)
+
+            // Train position (mock: 40% along route)
+            if trip.isActive {
+                let trainCoord = interpolate(
+                    from: trip.origin.clCoordinate,
+                    to: trip.destination.clCoordinate,
+                    fraction: 0.4
+                )
+                Annotation("Train \(trip.trainNumber)", coordinate: trainCoord) {
+                    TrainPositionMarker(operatorColor: ColorTheme.operatorColor(for: trip.trainOperator))
+                }
+            }
+        }
+        .mapStyle(.standard(elevation: .realistic))
+        .mapControls {
+            MapCompass()
+            MapScaleView()
+        }
+    }
+
+    private func interpolate(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D, fraction: Double) -> CLLocationCoordinate2D {
+        CLLocationCoordinate2D(
+            latitude: from.latitude + (to.latitude - from.latitude) * fraction,
+            longitude: from.longitude + (to.longitude - from.longitude) * fraction
+        )
+    }
+}
+
+// MARK: - Markers
+
+private struct StationMarker: View {
+    let code: String
+    let isOrigin: Bool
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Text(code)
+                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 5)
+                .background(isOrigin ? Color.white.opacity(0.2) : Color.white.opacity(0.15),
+                            in: RoundedRectangle(cornerRadius: 6))
+                .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(.white.opacity(0.4), lineWidth: 1))
+
+            Triangle()
+                .fill(isOrigin ? Color.white.opacity(0.5) : Color.white.opacity(0.3))
+                .frame(width: 8, height: 5)
+        }
+    }
+}
+
+private struct TrainPositionMarker: View {
+    let operatorColor: Color
+    @State private var pulse = false
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(operatorColor.opacity(0.25))
+                .frame(width: 40, height: 40)
+                .scaleEffect(pulse ? 1.4 : 1.0)
+                .opacity(pulse ? 0 : 1)
+                .animation(.easeOut(duration: 1.5).repeatForever(autoreverses: false), value: pulse)
+
+            Circle()
+                .fill(operatorColor)
+                .frame(width: 22, height: 22)
+                .overlay(
+                    Image(systemName: "tram.fill")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(.white)
+                )
+                .shadow(color: operatorColor.opacity(0.6), radius: 6)
+        }
+        .onAppear { pulse = true }
+    }
+}
+
+private struct Triangle: Shape {
+    func path(in rect: CGRect) -> Path {
+        Path { p in
+            p.move(to: CGPoint(x: rect.midX, y: rect.maxY))
+            p.addLine(to: CGPoint(x: rect.minX, y: rect.minY))
+            p.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
+            p.closeSubpath()
+        }
+    }
+}
+
+#Preview {
+    LiveMapView(trip: MockDataService.shared.sampleTrips[0])
+        .frame(height: 300)
+}
