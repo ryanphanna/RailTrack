@@ -30,6 +30,8 @@
 		A1000021 /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000021 /* ColorTheme.swift */; };
 		A1000022 /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000022 /* DateExtensions.swift */; };
 		A1000023 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000023 /* ContentView.swift */; };
+		A1000024 /* TripRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000024 /* TripRecord.swift */; };
+		A1000025 /* StationDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000025 /* StationDatabase.swift */; };
 		A1000099 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000099 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -57,6 +59,8 @@
 		B1000021 /* ColorTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTheme.swift; sourceTree = "<group>"; };
 		B1000022 /* DateExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtensions.swift; sourceTree = "<group>"; };
 		B1000023 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B1000024 /* TripRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripRecord.swift; sourceTree = "<group>"; };
+		B1000025 /* StationDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationDatabase.swift; sourceTree = "<group>"; };
 		B1000099 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C1000001 /* RailTrack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RailTrack.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -103,6 +107,7 @@
 				B1000004 /* Station.swift */,
 				B1000005 /* TrainService.swift */,
 				B1000006 /* Alert.swift */,
+				B1000024 /* TripRecord.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -113,6 +118,7 @@
 				B1000007 /* SupabaseService.swift */,
 				B1000008 /* MockDataService.swift */,
 				B1000009 /* NotificationService.swift */,
+				B1000025 /* StationDatabase.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -302,6 +308,8 @@
 				A1000020 /* DelayBanner.swift in Sources */,
 				A1000021 /* ColorTheme.swift in Sources */,
 				A1000022 /* DateExtensions.swift in Sources */,
+				A1000024 /* TripRecord.swift in Sources */,
+				A1000025 /* StationDatabase.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,8 +1,16 @@
 import SwiftUI
+import SwiftData
 
 struct HomeView: View {
-    @StateObject private var vm = HomeViewModel()
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: \TripRecord.scheduledDeparture, order: .forward) private var records: [TripRecord]
     @State private var showAddTrip = false
+
+    // MARK: - Filtered sections
+    private var trips: [Trip] { records.map { $0.toTrip() } }
+    private var activeTrip: Trip? { trips.first(where: { $0.isActive }) }
+    private var upcomingTrips: [Trip] { trips.filter { $0.isUpcoming } }
+    private var pastTrips: [Trip] { trips.filter { !$0.isActive && !$0.isUpcoming }.reversed() }
 
     var body: some View {
         NavigationStack {
@@ -12,8 +20,8 @@ struct HomeView: View {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 24, pinnedViews: [.sectionHeaders]) {
 
-                        // Active trip (if any)
-                        if let active = vm.activeTrip {
+                        // Active trip
+                        if let active = activeTrip {
                             Section {
                                 NavigationLink(destination: TripDetailView(trip: active)) {
                                     TripCardView(trip: active)
@@ -25,31 +33,45 @@ struct HomeView: View {
                             }
                         }
 
-                        // Upcoming trips
-                        if !vm.upcomingTrips.isEmpty {
+                        // Upcoming
+                        if !upcomingTrips.isEmpty {
                             Section {
-                                ForEach(vm.upcomingTrips) { trip in
+                                ForEach(upcomingTrips) { trip in
                                     NavigationLink(destination: TripDetailView(trip: trip)) {
                                         TripCardView(trip: trip)
                                             .padding(.horizontal, 20)
                                     }
                                     .buttonStyle(.plain)
+                                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                        Button(role: .destructive) {
+                                            deleteTrip(id: trip.id)
+                                        } label: {
+                                            Label("Delete", systemImage: "trash")
+                                        }
+                                    }
                                 }
                             } header: {
                                 SectionHeader(title: "Upcoming", icon: "calendar", color: ColorTheme.accent)
                             }
                         }
 
-                        // Past trips
-                        if !vm.pastTrips.isEmpty {
+                        // Past
+                        if !pastTrips.isEmpty {
                             Section {
-                                ForEach(vm.pastTrips) { trip in
+                                ForEach(pastTrips) { trip in
                                     NavigationLink(destination: TripDetailView(trip: trip)) {
                                         TripCardView(trip: trip)
                                             .padding(.horizontal, 20)
-                                            .opacity(0.7)
+                                            .opacity(0.65)
                                     }
                                     .buttonStyle(.plain)
+                                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                        Button(role: .destructive) {
+                                            deleteTrip(id: trip.id)
+                                        } label: {
+                                            Label("Delete", systemImage: "trash")
+                                        }
+                                    }
                                 }
                             } header: {
                                 SectionHeader(title: "Past Trips", icon: "clock.arrow.trianglehead.counterclockwise.rotate.90", color: ColorTheme.textTertiary)
@@ -57,7 +79,7 @@ struct HomeView: View {
                         }
 
                         // Empty state
-                        if vm.allTrips.isEmpty {
+                        if records.isEmpty {
                             EmptyTripsView()
                                 .padding(.top, 60)
                         }
@@ -66,7 +88,6 @@ struct HomeView: View {
                     }
                     .padding(.top, 8)
                 }
-                .refreshable { await vm.loadTrips() }
 
                 // FAB
                 Button {
@@ -88,7 +109,14 @@ struct HomeView: View {
             .sheet(isPresented: $showAddTrip) {
                 AddTripView()
             }
-            .task { await vm.loadTrips() }
+        }
+    }
+
+    // MARK: - Delete
+
+    private func deleteTrip(id: UUID) {
+        if let record = records.first(where: { $0.id == id }) {
+            modelContext.delete(record)
         }
     }
 }
@@ -139,29 +167,8 @@ private struct EmptyTripsView: View {
     }
 }
 
-// MARK: - ViewModel
-
-@MainActor
-final class HomeViewModel: ObservableObject {
-    @Published var allTrips: [Trip] = []
-    @Published var isLoading = false
-
-    var activeTrip: Trip? { allTrips.first(where: { $0.isActive }) }
-    var upcomingTrips: [Trip] { allTrips.filter { $0.isUpcoming }.sorted { $0.scheduledDeparture < $1.scheduledDeparture } }
-    var pastTrips: [Trip] { allTrips.filter { !$0.isActive && !$0.isUpcoming }.sorted { $0.scheduledDeparture > $1.scheduledDeparture } }
-
-    func loadTrips() async {
-        isLoading = true
-        defer { isLoading = false }
-        do {
-            allTrips = try await SupabaseService.shared.fetchTrips()
-        } catch {
-            print("Error loading trips: \(error)")
-        }
-    }
-}
-
 #Preview {
     HomeView()
         .environmentObject(AppState())
+        .modelContainer(for: TripRecord.self, inMemory: true)
 }

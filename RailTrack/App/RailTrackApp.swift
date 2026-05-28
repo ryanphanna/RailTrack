@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 @main
 struct RailTrackApp: App {
@@ -10,5 +11,6 @@ struct RailTrackApp: App {
                 .environmentObject(appState)
                 .preferredColorScheme(.dark)
         }
+        .modelContainer(for: TripRecord.self)
     }
 }
