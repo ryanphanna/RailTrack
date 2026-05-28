@@ -1,48 +1,140 @@
 import SwiftUI
+import SwiftData
+import CoreLocation
 
 struct StatsView: View {
-    private let stats = MockDataService.shared.sampleStats
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: \TripRecord.scheduledDeparture, order: .forward) private var records: [TripRecord]
+    @State private var showAddTrip = false
+
+    private struct ComputedStats {
+        var totalTrips: Int
+        var totalKm: Double
+        var uniqueStations: Int
+        var onTimePercent: Int
+        var currentStreak: Int
+        var longestStreak: Int
+        var favoriteOperator: String
+    }
+
+    private var stats: ComputedStats {
+        computeStats(from: records)
+    }
 
     var body: some View {
         NavigationStack {
             ZStack {
                 ColorTheme.background.ignoresSafeArea()
 
-                ScrollView {
-                    VStack(spacing: 20) {
+                if records.isEmpty {
+                    EmptyStatsView(showAddTrip: $showAddTrip)
+                } else {
+                    ScrollView {
+                        VStack(spacing: 20) {
+                            // Hero stats row
+                            HStack(spacing: 12) {
+                                StatHeroCard(value: "\(stats.totalTrips)", label: "Trips", icon: "tram.fill", color: ColorTheme.accent)
+                                StatHeroCard(value: formattedKm(stats.totalKm), label: "Km", icon: "ruler", color: ColorTheme.accentGreen)
+                                StatHeroCard(value: "\(stats.uniqueStations)", label: "Stations", icon: "mappin.circle.fill", color: ColorTheme.accentAmber)
+                            }
+                            .padding(.horizontal, 20)
 
-                        // Hero stats row
-                        HStack(spacing: 12) {
-                            StatHeroCard(value: "\(stats.totalTrips)", label: "Trips", icon: "tram.fill", color: ColorTheme.accent)
-                            StatHeroCard(value: formattedKm(stats.totalKm), label: "Km", icon: "ruler", color: ColorTheme.accentGreen)
-                            StatHeroCard(value: "\(stats.uniqueStations)", label: "Stations", icon: "mappin.circle.fill", color: ColorTheme.accentAmber)
+                            // On-time card
+                            OnTimeCard(percent: stats.onTimePercent)
+                                .padding(.horizontal, 20)
+
+                            // Streak card
+                            StreakCard(current: stats.currentStreak, longest: stats.longestStreak)
+                                .padding(.horizontal, 20)
+
+                            // Operator breakdown
+                            OperatorBreakdownCard(favoriteOperator: stats.favoriteOperator)
+                                .padding(.horizontal, 20)
+
+                            Color.clear.frame(height: 20)
                         }
-                        .padding(.horizontal, 20)
-
-                        // On-time card
-                        OnTimeCard(percent: stats.onTimePercent)
-                            .padding(.horizontal, 20)
-
-                        // Streak card
-                        StreakCard(current: stats.currentStreak, longest: stats.longestStreak)
-                            .padding(.horizontal, 20)
-
-                        // Operator breakdown
-                        OperatorBreakdownCard(favoriteOperator: stats.favoriteOperator)
-                            .padding(.horizontal, 20)
-
-                        Color.clear.frame(height: 20)
+                        .padding(.top, 12)
                     }
-                    .padding(.top, 12)
                 }
             }
             .navigationTitle("Stats")
             .navigationBarTitleDisplayMode(.large)
+            .sheet(isPresented: $showAddTrip) {
+                AddTripView()
+            }
         }
     }
 
     private func formattedKm(_ km: Double) -> String {
         km >= 1000 ? String(format: "%.1fk", km / 1000) : "\(Int(km))"
+    }
+
+    private func computeStats(from records: [TripRecord]) -> ComputedStats {
+        let trips = records.map { $0.toTrip() }
+        let completedOrPastTrips = trips.filter { !$0.isUpcoming }
+        let validTrips = trips.filter { $0.status != .cancelled }
+
+        // Distance in km
+        var totalKm: Double = 0.0
+        for trip in validTrips {
+            let originLoc = CLLocation(latitude: trip.origin.coordinate.latitude, longitude: trip.origin.coordinate.longitude)
+            let destLoc = CLLocation(latitude: trip.destination.coordinate.latitude, longitude: trip.destination.coordinate.longitude)
+            totalKm += originLoc.distance(from: destLoc) / 1000.0
+        }
+
+        // Unique stations
+        var stationIDs = Set<String>()
+        for trip in validTrips {
+            stationIDs.insert(trip.origin.id)
+            stationIDs.insert(trip.destination.id)
+        }
+        let uniqueStations = stationIDs.count
+
+        // On-time performance: percentage of past/completed trips that were on-time
+        let pastNonCancelled = completedOrPastTrips.filter { $0.status != .cancelled }
+        let onTimeTrips = pastNonCancelled.filter { !$0.status.isNegative }
+        let onTimePercent = pastNonCancelled.isEmpty ? 100 : Int((Double(onTimeTrips.count) / Double(pastNonCancelled.count)) * 100)
+
+        // Streaks: consecutive on-time trips in pastNonCancelled sorted by departure
+        let sortedPast = pastNonCancelled.sorted { $0.scheduledDeparture < $1.scheduledDeparture }
+        var currentStreak = 0
+        var longestStreak = 0
+        var tempStreak = 0
+
+        for trip in sortedPast {
+            if !trip.status.isNegative {
+                tempStreak += 1
+                longestStreak = max(longestStreak, tempStreak)
+            } else {
+                tempStreak = 0
+            }
+        }
+        // Current streak is the streak ending at the last past trip
+        for trip in sortedPast.reversed() {
+            if !trip.status.isNegative {
+                currentStreak += 1
+            } else {
+                break
+            }
+        }
+
+        // Favorite Operator
+        let operators = validTrips.map { $0.trainOperator }
+        var counts: [String: Int] = [:]
+        for op in operators {
+            counts[op, default: 0] += 1
+        }
+        let favoriteOperator = counts.max(by: { $0.value < $1.value })?.key ?? "VIA"
+
+        return ComputedStats(
+            totalTrips: validTrips.count,
+            totalKm: totalKm,
+            uniqueStations: uniqueStations,
+            onTimePercent: onTimePercent,
+            currentStreak: currentStreak,
+            longestStreak: longestStreak,
+            favoriteOperator: favoriteOperator
+        )
     }
 }
 
@@ -185,6 +277,45 @@ private struct OperatorBreakdownCard: View {
     }
 }
 
+// MARK: - Empty Stats View
+
+private struct EmptyStatsView: View {
+    @Binding var showAddTrip: Bool
+
+    var body: some View {
+        VStack(spacing: 18) {
+            Image(systemName: "chart.bar.xaxis")
+                .font(.system(size: 56))
+                .foregroundStyle(ColorTheme.textTertiary)
+
+            Text("No Journeys Yet")
+                .font(.rtHeadline)
+                .foregroundStyle(ColorTheme.textPrimary)
+
+            Text("Tracked trips and completed train journeys will compile your distances, streaks, and carrier breakdown here.")
+                .font(.rtBody)
+                .foregroundStyle(ColorTheme.textSecondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+
+            Button {
+                showAddTrip = true
+            } label: {
+                Label("Add Your First Trip", systemImage: "plus")
+                    .font(.rtSubhead)
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
+                    .background(ColorTheme.accent, in: Capsule())
+            }
+            .padding(.top, 8)
+        }
+        .padding(40)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
 #Preview {
     StatsView()
+        .modelContainer(for: TripRecord.self, inMemory: true)
 }
