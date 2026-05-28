@@ -8,7 +8,7 @@ struct Station: Identifiable, Codable, Hashable {
     var code: String            // "TOR"
     var coordinate: Coordinate
     var timezone: String        // TimeZone identifier, e.g. "America/Toronto"
-    var operator: String?       // Owning operator (if single-operator station)
+    var railOperator: String?       // Owning operator (if single-operator station)
     var city: String
     var country: String         // "CA", "US"
 

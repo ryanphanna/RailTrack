@@ -12,27 +12,27 @@ final class MockDataService {
     let torontoUnion = Station(
         id: "VIA-TRTO", name: "Toronto Union Station", shortName: "Toronto",
         code: "TOR", coordinate: Coordinate(latitude: 43.6453, longitude: -79.3806),
-        timezone: "America/Toronto", operator: nil, city: "Toronto", country: "CA"
+        timezone: "America/Toronto", railOperator: nil, city: "Toronto", country: "CA"
     )
     let kingstonStation = Station(
         id: "VIA-KGON", name: "Kingston Station", shortName: "Kingston",
         code: "KGN", coordinate: Coordinate(latitude: 44.2312, longitude: -76.5010),
-        timezone: "America/Toronto", operator: nil, city: "Kingston", country: "CA"
+        timezone: "America/Toronto", railOperator: nil, city: "Kingston", country: "CA"
     )
     let ottawaStation = Station(
         id: "VIA-OTTW", name: "Ottawa Station", shortName: "Ottawa",
         code: "OTT", coordinate: Coordinate(latitude: 45.4168, longitude: -75.6561),
-        timezone: "America/Toronto", operator: nil, city: "Ottawa", country: "CA"
+        timezone: "America/Toronto", railOperator: nil, city: "Ottawa", country: "CA"
     )
     let montrealCentral = Station(
         id: "VIA-MTRL", name: "Montréal Central Station", shortName: "Montréal",
         code: "MTL", coordinate: Coordinate(latitude: 45.4994, longitude: -73.5686),
-        timezone: "America/Toronto", operator: nil, city: "Montréal", country: "CA"
+        timezone: "America/Toronto", railOperator: nil, city: "Montréal", country: "CA"
     )
     let newYorkPenn = Station(
         id: "AMTRAK-NYP", name: "New York Penn Station", shortName: "New York",
         code: "NYP", coordinate: Coordinate(latitude: 40.7506, longitude: -73.9971),
-        timezone: "America/New_York", operator: "Amtrak", city: "New York", country: "US"
+        timezone: "America/New_York", railOperator: "Amtrak", city: "New York", country: "US"
     )
 
     // MARK: - Sample Trips
