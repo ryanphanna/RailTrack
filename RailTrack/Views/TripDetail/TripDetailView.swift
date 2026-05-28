@@ -3,10 +3,19 @@ import MapKit
 
 struct TripDetailView: View {
     let trip: Trip
-    @State private var showShareSheet = false
     @Environment(\.dismiss) private var dismiss
 
     private var operatorColor: Color { ColorTheme.operatorColor(for: trip.trainOperator) }
+
+    private var shareText: String {
+        """
+        I'm taking \(trip.trainOperator) \(trip.trainNumber) 🚆
+        \(trip.origin.shortName) → \(trip.destination.shortName)
+        Departs: \(trip.scheduledDeparture.relativeDayString) at \(trip.scheduledDeparture.timeString)
+        Arrives: \(trip.scheduledArrival.relativeDayString) at \(trip.scheduledArrival.timeString)
+        Tracked with RailTrack
+        """
+    }
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -72,9 +81,11 @@ struct TripDetailView: View {
                         Divider().opacity(0.12)
 
                         // Share button
-                        Button {
-                            showShareSheet = true
-                        } label: {
+                        ShareLink(
+                            item: shareText,
+                            subject: Text("My Train Trip"),
+                            message: Text(shareText)
+                        ) {
                             Label("Share Trip", systemImage: "square.and.arrow.up")
                                 .font(.rtSubhead)
                                 .foregroundStyle(ColorTheme.accent)

@@ -8,14 +8,19 @@ struct LiveMapView: View {
 
     init(trip: Trip) {
         self.trip = trip
-        // Center between origin and destination
         let midLat = (trip.origin.coordinate.latitude + trip.destination.coordinate.latitude) / 2
         let midLon = (trip.origin.coordinate.longitude + trip.destination.coordinate.longitude) / 2
+
+        // Compute actual distance and add 50% padding; floor at 50 km for short hops
+        let originLoc = CLLocation(latitude: trip.origin.coordinate.latitude, longitude: trip.origin.coordinate.longitude)
+        let destLoc   = CLLocation(latitude: trip.destination.coordinate.latitude, longitude: trip.destination.coordinate.longitude)
+        let span = max(originLoc.distance(from: destLoc) * 1.5, 50_000)
+
         _position = State(initialValue: .region(
             MKCoordinateRegion(
                 center: CLLocationCoordinate2D(latitude: midLat, longitude: midLon),
-                latitudinalMeters: 400_000,
-                longitudinalMeters: 400_000
+                latitudinalMeters: span,
+                longitudinalMeters: span
             )
         ))
     }

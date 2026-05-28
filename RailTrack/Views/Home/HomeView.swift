@@ -116,6 +116,7 @@ struct HomeView: View {
 
     private func deleteTrip(id: UUID) {
         if let record = records.first(where: { $0.id == id }) {
+            NotificationService.shared.cancelNotifications(for: record.toTrip())
             modelContext.delete(record)
         }
     }

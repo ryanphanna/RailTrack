@@ -15,31 +15,43 @@ A high-level view of where RailTrack is headed. Items are roughly ordered by pri
 
 ---
 
-## 🔜 Phase 1 — Backend & Auth
+## ✅ Phase 1 — Local Persistence & Core UX (Complete)
 
-- [ ] Supabase project setup (PostgreSQL schema)
-- [ ] Supabase Swift SDK via SPM
-- [ ] Email + password sign-up / sign-in
-- [ ] Persist trips to Supabase `trips` table
-- [ ] User profile creation on sign-up
-- [ ] Row-level security policies
-- [ ] Pull real trips from DB on Home screen (replacing mock data)
+- [x] SwiftData `TripRecord` entity for on-device trip storage
+- [x] `StationDatabase` with VIA Rail, Amtrak, and GO Transit station catalogue
+- [x] `AddTripView` — operator picker, live station autocomplete, date validation, SwiftData insert
+- [x] `HomeView` — `@Query` dashboard with active / upcoming / past sections and swipe-to-delete
+- [x] `StatsView` — dynamic stats from real records (distance, streaks, on-time %, carrier breakdown)
+- [x] Departure reminders via `UNUserNotificationCenter` — scheduled on add, cancelled on delete
+- [x] `ShareLink` share sheet on Trip Detail with formatted trip summary
+- [x] Smart map camera auto-fits to actual route distance with padding
 
 ---
 
-## 🔜 Phase 2 — Live Data
+## 🔜 Phase 2 — Backend & Auth
+
+- [ ] Supabase project (or CloudKit) for cloud sync across devices
+- [ ] Email + password sign-up / sign-in
+- [ ] Sync local SwiftData trips to cloud on sign-in
+- [ ] User profile creation on sign-up
+- [ ] Row-level security policies
+- [ ] Live Activities + Dynamic Island (departure countdown, delay banner)
+- [ ] Lock Screen widget (next stop, ETA)
+
+---
+
+## 🔜 Phase 3 — Live Data
 
 - [ ] GTFS-RT feed integration (VIA Rail, Amtrak)
-- [ ] Real-time delay updates via Supabase Realtime subscriptions
 - [ ] Actual train position on map (from GTFS-RT `VehiclePosition`)
-- [ ] Platform / track change detection
+- [ ] Real-time delay updates and platform change detection
 - [ ] Push notifications for delays and platform changes (APNs)
 - [ ] Live Activities + Dynamic Island (departure countdown, delay banner)
 - [ ] Lock Screen widget (next stop, ETA)
 
 ---
 
-## 🔜 Phase 3 — Import & Intelligence
+## 🔜 Phase 4 — Import & Intelligence
 
 - [ ] Email forwarding parser (VIA Rail / Amtrak confirmation emails → auto trip creation)
 - [ ] Calendar integration (import bookings from Apple Calendar)
@@ -48,7 +60,7 @@ A high-level view of where RailTrack is headed. Items are roughly ordered by pri
 
 ---
 
-## 🔜 Phase 4 — Social
+## 🔜 Phase 5 — Social
 
 - [ ] Friend system (add by username / QR code)
 - [ ] Privacy-first trip sharing (public / friends-only / private toggle)
@@ -58,7 +70,7 @@ A high-level view of where RailTrack is headed. Items are roughly ordered by pri
 
 ---
 
-## 🔜 Phase 5 — Stats & Gamification
+## 🔜 Phase 6 — Stats & Gamification
 
 - [ ] Route heatmap (MapKit overlay of all travelled routes)
 - [ ] Full stats history and charts
@@ -68,7 +80,7 @@ A high-level view of where RailTrack is headed. Items are roughly ordered by pri
 
 ---
 
-## 🔜 Phase 6 — Expansion
+## 🔜 Phase 7 — Expansion
 
 - [ ] Crowdsourced tracking (phone as sensor when GTFS-RT unavailable)
 - [ ] GO Transit GTFS-RT integration

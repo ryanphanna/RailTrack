@@ -170,6 +170,7 @@ struct AddTripView: View {
             scheduledArrival: arrivalDate
         )
         modelContext.insert(record)
+        NotificationService.shared.scheduleDepartureReminder(for: record.toTrip(), minutesBefore: 30)
         dismiss()
     }
 }

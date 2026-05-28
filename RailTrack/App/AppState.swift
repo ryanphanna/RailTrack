@@ -16,6 +16,7 @@ final class AppState: ObservableObject {
     func completeOnboarding() {
         UserDefaults.standard.set(true, forKey: "isOnboarded")
         isOnboarded = true
+        Task { await NotificationService.shared.requestPermission() }
     }
 
     func signOut() {
