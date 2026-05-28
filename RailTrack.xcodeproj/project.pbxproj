@@ -80,9 +80,10 @@
 				E1000003 /* Services */,
 				E1000004 /* Views */,
 				E1000009 /* Utilities */,
-				B1000099 /* Assets.xcassets */,
-				C1000001 /* Products */,
+				E1000012 /* Resources */,
+				C2000001 /* Products */,
 			);
+			path = RailTrack;
 			sourceTree = "<group>";
 		};
 		E1000001 /* App */ = {
@@ -191,7 +192,15 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
-		C1000001 /* Products */ = {
+		E1000012 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B1000099 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		C2000001 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				C1000001 /* RailTrack.app */,
@@ -245,7 +254,7 @@
 				Base,
 			);
 			mainGroup = E1000000;
-			productRefGroup = C1000001 /* Products */;
+			productRefGroup = C2000001 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
