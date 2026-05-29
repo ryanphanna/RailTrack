@@ -1,41 +1,11 @@
 # RailTrack Roadmap
 
-A high-level view of where RailTrack is headed. Items are roughly ordered by priority within each section.
-
----
-
-## ✅ Foundation (Complete)
-
-- [x] Xcode project scaffold (iOS 17+, SwiftUI)
-- [x] Core data models: Trip, Station, Stop, Alert, TrainService
-- [x] Design system: dark-mode colour palette, typography scale, operator branding
-- [x] All core screens with mock data: Home, Trip Detail, Stats, Social, Add Trip, Onboarding
-- [x] MapKit integration with animated train position marker
-- [x] Git repo + initial commit
-
----
-
-## ✅ Local Persistence & Core UX (Complete)
-
-- [x] SwiftData `TripRecord` entity for on-device trip storage
-- [x] `StationDatabase` with VIA Rail, Amtrak, and GO Transit station catalogue
-- [x] `AddTripView` — operator picker, live station autocomplete, date validation, SwiftData insert
-- [x] `HomeView` — `@Query` dashboard with active / upcoming / past sections and swipe-to-delete
-- [x] `StatsView` — dynamic stats from real records (distance, streaks, on-time %, carrier breakdown)
-- [x] Departure reminders via `UNUserNotificationCenter` — scheduled on add, cancelled on delete
-- [x] `ShareLink` share sheet on Trip Detail with formatted trip summary
-- [x] Smart map camera auto-fits to actual route distance with padding
-- [x] `EditTripView` — full edit sheet with status picker (incl. delay minutes), station autocomplete, platform & notes
-- [x] `TripDetailView` — edit, delete, and "Mark Arrived" actions; platform chip; notes section
-- [x] Notification permission requested on first launch for existing users via `.task`
+A high-level view of upcoming items for RailTrack. Items are roughly ordered by priority within each section.
 
 ---
 
 ## 🔜 Cloud Sync & Auth
 
-- [x] Enable iCloud sync compatibility (CloudKit-friendly SwiftData properties & defaults)
-- [x] iCloud account state monitoring (`CloudKitService` status checking)
-- [x] User profile settings dashboard (`SettingsView`) & local profile storage
 - [ ] Store user profile details in CloudKit private database
 - [ ] Test and validate CloudKit schema sync on physical device
 - [ ] Optional: Supabase Auth for social features (friend graph only — private data stays in CloudKit)
@@ -44,7 +14,6 @@ A high-level view of where RailTrack is headed. Items are roughly ordered by pri
 
 ## 🔜 Live Data
 
-- [x] Schedule-based train position interpolation on MapKit (dynamic timer-driven updates)
 - [ ] GTFS-RT feed integration (VIA Rail, Amtrak)
 - [ ] Actual train position on map (from GTFS-RT `VehiclePosition` feed data)
 - [ ] Real-time delay updates and platform change detection
