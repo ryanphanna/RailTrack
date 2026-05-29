@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Amtrak Live GPS train position and speed tracking using the unofficial `api.amtraker.com/v3/trains` feed
+- Real-time Amtrak delay minutes calculation based on arrival offsets at current or departed stations
+- Cache for Amtrak live intermediate stops and timeline rendering in `TripDetailView`
+- Live Activity stops resolution: Dynamic Island and Lock Screen widgets now show the next unvisited station name dynamically resolved from live stop feeds
+- Fixed Amtrak station identifier prefix lookup (`AMT-` prefix alignment) in `AddTripView`
 - VIA Rail Live GPS and Delay Tracking integration using `tsimobile.viarail.ca/data/allData.json`
 - Amtrak Scheduled Service Timetable Lookup integration using the unofficial `api.amtraker.com/v3/trains` feed
 - "Transit Connections" list and detail page (`AgenciesView`) in Settings displaying supported agencies, API features, and live statuses
