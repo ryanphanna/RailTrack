@@ -33,6 +33,8 @@
 		A1000024 /* TripRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000024 /* TripRecord.swift */; };
 		A1000025 /* StationDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000025 /* StationDatabase.swift */; };
 		A1000026 /* EditTripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000026 /* EditTripView.swift */; };
+		A1000027 /* FormComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000027 /* FormComponents.swift */; };
+		A1000028 /* CloudKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000028 /* CloudKitService.swift */; };
 		A1000099 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000099 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -63,6 +65,8 @@
 		B1000024 /* TripRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripRecord.swift; sourceTree = "<group>"; };
 		B1000025 /* StationDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationDatabase.swift; sourceTree = "<group>"; };
 		B1000026 /* EditTripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTripView.swift; sourceTree = "<group>"; };
+		B1000027 /* FormComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormComponents.swift; sourceTree = "<group>"; };
+		B1000028 /* CloudKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitService.swift; sourceTree = "<group>"; };
 		B1000099 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C1000001 /* RailTrack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RailTrack.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -121,6 +125,7 @@
 				B1000008 /* MockDataService.swift */,
 				B1000009 /* NotificationService.swift */,
 				B1000025 /* StationDatabase.swift */,
+				B1000028 /* CloudKitService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -197,6 +202,7 @@
 			children = (
 				B1000019 /* StatusBadge.swift */,
 				B1000020 /* DelayBanner.swift */,
+				B1000027 /* FormComponents.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -314,6 +320,8 @@
 				A1000024 /* TripRecord.swift in Sources */,
 				A1000025 /* StationDatabase.swift in Sources */,
 				A1000026 /* EditTripView.swift in Sources */,
+				A1000027 /* FormComponents.swift in Sources */,
+				A1000028 /* CloudKitService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

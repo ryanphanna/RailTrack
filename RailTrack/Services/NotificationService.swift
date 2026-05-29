@@ -14,7 +14,7 @@ final class NotificationService {
 
     func scheduleDelayAlert(for trip: Trip, delayMinutes: Int) {
         let content = UNMutableNotificationContent()
-        content.title = "VIA \(trip.trainNumber) delayed"
+        content.title = "\(trip.trainOperator) \(trip.trainNumber) delayed"
         content.body = "Running \(delayMinutes) minutes late. New arrival: \(trip.scheduledArrival.addingTimeInterval(Double(delayMinutes) * 60).timeString)"
         content.sound = .default
 

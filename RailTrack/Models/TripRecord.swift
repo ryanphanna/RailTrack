@@ -10,46 +10,46 @@ final class TripRecord {
     @Attribute(.unique) var id: UUID
 
     // Train info
-    var trainNumber: String
-    var trainOperator: String
+    var trainNumber: String = ""
+    var trainOperator: String = ""
 
     // Origin (flattened)
-    var originID: String
-    var originName: String
-    var originShortName: String
-    var originCode: String
-    var originLat: Double
-    var originLon: Double
-    var originTimezone: String
-    var originCity: String
-    var originCountry: String
+    var originID: String = ""
+    var originName: String = ""
+    var originShortName: String = ""
+    var originCode: String = ""
+    var originLat: Double = 0.0
+    var originLon: Double = 0.0
+    var originTimezone: String = ""
+    var originCity: String = ""
+    var originCountry: String = ""
 
     // Destination (flattened)
-    var destinationID: String
-    var destinationName: String
-    var destinationShortName: String
-    var destinationCode: String
-    var destinationLat: Double
-    var destinationLon: Double
-    var destinationTimezone: String
-    var destinationCity: String
-    var destinationCountry: String
+    var destinationID: String = ""
+    var destinationName: String = ""
+    var destinationShortName: String = ""
+    var destinationCode: String = ""
+    var destinationLat: Double = 0.0
+    var destinationLon: Double = 0.0
+    var destinationTimezone: String = ""
+    var destinationCity: String = ""
+    var destinationCountry: String = ""
 
     // Status (stored as raw string + delay minutes to avoid associated-value enum)
-    var statusRaw: String       // "scheduled" | "onTime" | "delayed" | "cancelled" | "completed"
-    var delayMinutes: Int
+    var statusRaw: String = "scheduled"       // "scheduled" | "onTime" | "delayed" | "cancelled" | "completed"
+    var delayMinutes: Int = 0
 
     // Times
-    var scheduledDeparture: Date
-    var scheduledArrival: Date
+    var scheduledDeparture: Date = Date()
+    var scheduledArrival: Date = Date()
     var actualDeparture: Date?
     var actualArrival: Date?
 
     // Extras
     var currentPlatform: String?
-    var isPublic: Bool
+    var isPublic: Bool = false
     var notes: String?
-    var createdAt: Date
+    var createdAt: Date = Date()
 
     init(
         id: UUID = UUID(),

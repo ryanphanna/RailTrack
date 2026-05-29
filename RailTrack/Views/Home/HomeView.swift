@@ -25,77 +25,92 @@ struct HomeView: View {
             ZStack(alignment: .bottomTrailing) {
                 ColorTheme.background.ignoresSafeArea()
 
-                ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 24, pinnedViews: [.sectionHeaders]) {
+                List {
+                    // Active trip
+                    if let rec = activeRecord {
+                        Section {
+                            NavigationLink(destination: TripDetailView(record: rec)) {
+                                TripCardView(trip: rec.toTrip())
+                            }
+                            .buttonStyle(.plain)
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets(top: 4, leading: 20, bottom: 12, trailing: 20))
+                        } header: {
+                            SectionHeader(title: "Now Boarding", icon: "tram.fill", color: ColorTheme.accentGreen)
+                                .listRowInsets(EdgeInsets())
+                        }
+                    }
 
-                        // Active trip
-                        if let rec = activeRecord {
-                            Section {
+                    // Upcoming
+                    if !upcomingRecords.isEmpty {
+                        Section {
+                            ForEach(upcomingRecords) { rec in
                                 NavigationLink(destination: TripDetailView(record: rec)) {
                                     TripCardView(trip: rec.toTrip())
-                                        .padding(.horizontal, 20)
                                 }
                                 .buttonStyle(.plain)
-                            } header: {
-                                SectionHeader(title: "Now Boarding", icon: "tram.fill", color: ColorTheme.accentGreen)
-                            }
-                        }
-
-                        // Upcoming
-                        if !upcomingRecords.isEmpty {
-                            Section {
-                                ForEach(upcomingRecords) { rec in
-                                    NavigationLink(destination: TripDetailView(record: rec)) {
-                                        TripCardView(trip: rec.toTrip())
-                                            .padding(.horizontal, 20)
-                                    }
-                                    .buttonStyle(.plain)
-                                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                        Button(role: .destructive) {
-                                            deleteTrip(id: rec.id)
-                                        } label: {
-                                            Label("Delete", systemImage: "trash")
-                                        }
+                                .listRowBackground(Color.clear)
+                                .listRowSeparator(.hidden)
+                                .listRowInsets(EdgeInsets(top: 4, leading: 20, bottom: 12, trailing: 20))
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                    Button(role: .destructive) {
+                                        deleteTrip(id: rec.id)
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
                                     }
                                 }
-                            } header: {
-                                SectionHeader(title: "Upcoming", icon: "calendar", color: ColorTheme.accent)
                             }
+                        } header: {
+                            SectionHeader(title: "Upcoming", icon: "calendar", color: ColorTheme.accent)
+                                .listRowInsets(EdgeInsets())
                         }
-
-                        // Past
-                        if !pastRecords.isEmpty {
-                            Section {
-                                ForEach(pastRecords) { rec in
-                                    NavigationLink(destination: TripDetailView(record: rec)) {
-                                        TripCardView(trip: rec.toTrip())
-                                            .padding(.horizontal, 20)
-                                            .opacity(0.65)
-                                    }
-                                    .buttonStyle(.plain)
-                                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                        Button(role: .destructive) {
-                                            deleteTrip(id: rec.id)
-                                        } label: {
-                                            Label("Delete", systemImage: "trash")
-                                        }
-                                    }
-                                }
-                            } header: {
-                                SectionHeader(title: "Past Trips", icon: "clock.arrow.trianglehead.counterclockwise.rotate.90", color: ColorTheme.textTertiary)
-                            }
-                        }
-
-                        // Empty state
-                        if records.isEmpty {
-                            EmptyTripsView()
-                                .padding(.top, 60)
-                        }
-
-                        Color.clear.frame(height: 100)
                     }
-                    .padding(.top, 8)
+
+                    // Past
+                    if !pastRecords.isEmpty {
+                        Section {
+                            ForEach(pastRecords) { rec in
+                                NavigationLink(destination: TripDetailView(record: rec)) {
+                                    TripCardView(trip: rec.toTrip())
+                                        .opacity(0.65)
+                                }
+                                .buttonStyle(.plain)
+                                .listRowBackground(Color.clear)
+                                .listRowSeparator(.hidden)
+                                .listRowInsets(EdgeInsets(top: 4, leading: 20, bottom: 12, trailing: 20))
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                    Button(role: .destructive) {
+                                        deleteTrip(id: rec.id)
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
+                            }
+                        } header: {
+                            SectionHeader(title: "Past Trips", icon: "clock.arrow.trianglehead.counterclockwise.rotate.90", color: ColorTheme.textTertiary)
+                                .listRowInsets(EdgeInsets())
+                        }
+                    }
+
+                    // Empty state
+                    if records.isEmpty {
+                        EmptyTripsView()
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                            .listRowInsets(EdgeInsets())
+                            .padding(.top, 60)
+                    }
+
+                    Color.clear
+                        .frame(height: 100)
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets())
                 }
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+                .background(ColorTheme.background)
 
                 // FAB
                 Button {
