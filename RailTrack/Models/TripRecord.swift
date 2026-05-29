@@ -51,6 +51,12 @@ final class TripRecord {
     var notes: String?
     var createdAt: Date = Date()
 
+    // Live Tracking
+    var liveLatitude: Double?
+    var liveLongitude: Double?
+    var liveSpeed: Int?
+    var liveUpdated: Date?
+
     init(
         id: UUID = UUID(),
         trainNumber: String,
@@ -136,7 +142,9 @@ final class TripRecord {
             scheduledDeparture: scheduledDeparture, scheduledArrival: scheduledArrival,
             actualDeparture: actualDeparture, actualArrival: actualArrival,
             status: status, currentPlatform: currentPlatform,
-            isPublic: isPublic, notes: notes, createdAt: createdAt
+            isPublic: isPublic, notes: notes, createdAt: createdAt,
+            liveLatitude: liveLatitude, liveLongitude: liveLongitude,
+            liveSpeed: liveSpeed, liveUpdated: liveUpdated
         )
     }
 }

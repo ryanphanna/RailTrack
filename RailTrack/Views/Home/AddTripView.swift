@@ -18,6 +18,8 @@ struct AddTripView: View {
     @State private var selectedDestination: Station?
 
     @State private var isSaving = false
+    @State private var isLookingUp = false
+    @State private var lookupError: String? = nil
 
     private let operators = ["VIA", "Amtrak", "GO", "Other"]
 
@@ -63,15 +65,43 @@ struct AddTripView: View {
                         // Train number
                         FormCard {
                             FormRow(label: "Train Number", icon: "number") {
-                                TextField("e.g. 60", text: $trainNumber)
-                                    .font(.rtBody)
-                                    .foregroundStyle(ColorTheme.textPrimary)
-                                    .autocorrectionDisabled()
-                                    .textInputAutocapitalization(.characters)
-                                    .onSubmit {
-                                        trainNumber = cleanTrainNumber(trainNumber)
+                                HStack {
+                                    TextField("e.g. 60", text: $trainNumber)
+                                        .font(.rtBody)
+                                        .foregroundStyle(ColorTheme.textPrimary)
+                                        .autocorrectionDisabled()
+                                        .textInputAutocapitalization(.characters)
+                                        .onSubmit {
+                                            trainNumber = cleanTrainNumber(trainNumber)
+                                        }
+                                    
+                                    if selectedOperator == "VIA" && !trainNumber.isEmpty {
+                                        Button {
+                                            lookupSchedule()
+                                        } label: {
+                                            if isLookingUp {
+                                                ProgressView().tint(ColorTheme.accent)
+                                            } else {
+                                                Text("Lookup")
+                                                    .font(.rtCaption.bold())
+                                                    .foregroundStyle(ColorTheme.accent)
+                                                    .padding(.horizontal, 10)
+                                                    .padding(.vertical, 6)
+                                                    .background(ColorTheme.accent.opacity(0.12), in: Capsule())
+                                            }
+                                        }
+                                        .disabled(isLookingUp)
                                     }
+                                }
                             }
+                        }
+                        
+                        if let error = lookupError {
+                            Text(error)
+                                .font(.rtCaption)
+                                .foregroundStyle(ColorTheme.accentRed)
+                                .padding(.horizontal, 16)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                         }
 
                         // Origin station
@@ -199,7 +229,69 @@ struct AddTripView: View {
         NotificationService.shared.scheduleDepartureReminder(for: record.toTrip(), minutesBefore: 30)
         dismiss()
     }
+    
+    private func lookupSchedule() {
+        guard !trainNumber.isEmpty else { return }
+        isLookingUp = true
+        lookupError = nil
+        
+        let cleaned = cleanTrainNumber(trainNumber)
+        
+        Task {
+            if let train = await VIALiveDataService.shared.lookupTrainSchedule(trainNumber: cleaned, departureDate: departureDate) {
+                // Resolve origin station (first stop)
+                if let firstTime = train.times.first {
+                    let originStation = StationDatabase.shared.stations.first { $0.id == "VIA-\(firstTime.code)" }
+                    ?? Station(
+                        id: "VIA-\(firstTime.code)",
+                        name: firstTime.station,
+                        shortName: firstTime.station,
+                        code: firstTime.code,
+                        coordinate: Coordinate(latitude: 0, longitude: 0),
+                        timezone: "America/Toronto",
+                        railOperator: "VIA",
+                        city: firstTime.station,
+                        country: "CA"
+                    )
+                    selectedOrigin = originStation
+                    originQuery = originStation.name
+                    
+                    if let schedStr = firstTime.departure?.scheduled ?? firstTime.scheduled,
+                       let date = VIALiveDataService.shared.parseISO8601Date(schedStr) {
+                        departureDate = date
+                    }
+                }
+                
+                // Resolve destination station (last stop)
+                if let lastTime = train.times.last {
+                    let destStation = StationDatabase.shared.stations.first { $0.id == "VIA-\(lastTime.code)" }
+                    ?? Station(
+                        id: "VIA-\(lastTime.code)",
+                        name: lastTime.station,
+                        shortName: lastTime.station,
+                        code: lastTime.code,
+                        coordinate: Coordinate(latitude: 0, longitude: 0),
+                        timezone: "America/Toronto",
+                        railOperator: "VIA",
+                        city: lastTime.station,
+                        country: "CA"
+                    )
+                    selectedDestination = destStation
+                    destinationQuery = destStation.name
+                    
+                    if let schedStr = lastTime.arrival?.scheduled ?? lastTime.scheduled,
+                       let date = VIALiveDataService.shared.parseISO8601Date(schedStr) {
+                        arrivalDate = date
+                    }
+                }
+            } else {
+                lookupError = "Train not found for selected date."
+            }
+            isLookingUp = false
+        }
+    }
 }
+
 
 
 

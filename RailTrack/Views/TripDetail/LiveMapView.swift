@@ -69,6 +69,15 @@ struct LiveMapView: View {
             return
         }
 
+        // Use live coordinates if available and fresh (updated within 5 minutes)
+        if let liveLat = trip.liveLatitude,
+           let liveLng = trip.liveLongitude,
+           let liveUpd = trip.liveUpdated,
+           Date().timeIntervalSince(liveUpd) < 300 {
+            self.trainCoordinate = CLLocationCoordinate2D(latitude: liveLat, longitude: liveLng)
+            return
+        }
+
         let now = Date()
         let dep = trip.scheduledDeparture
         let arr = trip.scheduledArrival
@@ -88,6 +97,7 @@ struct LiveMapView: View {
             fraction: fraction
         )
     }
+
 
     private func interpolate(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D, fraction: Double) -> CLLocationCoordinate2D {
         CLLocationCoordinate2D(

@@ -9,6 +9,8 @@ struct TripDetailView: View {
 
     @State private var showEdit = false
     @State private var showDeleteConfirm = false
+    
+    @ObservedObject private var liveDataService = VIALiveDataService.shared
 
     // Derive display model from the persisted record
     private var trip: Trip { record.toTrip() }
@@ -22,6 +24,29 @@ struct TripDetailView: View {
         Arrives: \(trip.scheduledArrival.relativeDayString) at \(trip.scheduledArrival.timeString)
         Tracked with RailTrack
         """
+    }
+
+    private var displayedStops: [Stop] {
+        guard let allStops = liveDataService.liveStops[trip.id] else {
+            return trip.stops
+        }
+        
+        // Find indices of trip.origin and trip.destination in allStops
+        if let originIndex = allStops.firstIndex(where: { $0.station.code == trip.origin.code }),
+           let destIndex = allStops.firstIndex(where: { $0.station.code == trip.destination.code }),
+           originIndex <= destIndex {
+            
+            var segmentStops = Array(allStops[originIndex...destIndex])
+            
+            // Mark the first stop as origin and the last as destination for rendering
+            for i in 0..<segmentStops.count {
+                segmentStops[i].isOrigin = (i == 0)
+                segmentStops[i].isDestination = (i == segmentStops.count - 1)
+            }
+            return segmentStops
+        }
+        
+        return allStops
     }
 
     var body: some View {
@@ -100,7 +125,7 @@ struct TripDetailView: View {
                             .foregroundStyle(ColorTheme.textSecondary)
 
                         StationTimelineView(
-                            stops: trip.stops,
+                            stops: displayedStops,
                             operatorColor: operatorColor,
                             origin: trip.origin,
                             destination: trip.destination

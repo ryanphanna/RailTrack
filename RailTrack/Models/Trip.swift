@@ -67,6 +67,12 @@ struct Trip: Identifiable, Codable {
     var notes: String?
     var createdAt: Date
 
+    // Live Tracking
+    var liveLatitude: Double? = nil
+    var liveLongitude: Double? = nil
+    var liveSpeed: Int? = nil
+    var liveUpdated: Date? = nil
+
     // Computed
     var scheduledDurationMinutes: Int {
         Int(scheduledArrival.timeIntervalSince(scheduledDeparture) / 60)
