@@ -15,12 +15,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `StatsView` now computes stats dynamically from real `TripRecord` data: total trips, distance (km), unique stations, on-time %, streaks, and favourite operator; includes empty state
 - Departure reminders via `UNUserNotificationCenter` — scheduled 30 min before departure on trip add, cancelled on delete
 - Notification permission requested automatically when the user completes onboarding
+- Notification permission also requested on next launch for users who were already onboarded before the feature was added
 - Native `ShareLink` share sheet on Trip Detail with formatted trip summary text
 - Smart map camera auto-fits to actual great-circle route distance (1.5× padding, 50 km floor)
+- `EditTripView` — full edit sheet pre-populated from `TripRecord`; animated status picker with delay-minute stepper; station autocomplete; platform and notes fields; reschedules departure notification on save
+- `TripDetailView` now accepts `TripRecord` directly; added edit (pencil) and delete (trash) toolbar actions with confirmation dialog; "Mark Arrived" quick-action button for active trips; "Mark Completed" for upcoming trips; platform chip; notes card
 
 ### Changed
 - `HomeView` ViewModel replaced with `@Query` + pure computed properties (no more `ObservableObject`)
+- `HomeView` now iterates over `TripRecord` arrays directly and passes `TripRecord` to `TripDetailView`
+- `TripDetailView` accepts `TripRecord` (derives `Trip` internally via `toTrip()`) instead of a `Trip` value type
 - `StatsView` no longer depends on `MockDataService`
+- Form helper components (`StationPickerField`, `FormCard`, `FormRow`, `FieldLabel`) promoted from `private` to `internal` so `EditTripView` can reuse them
 
 ### Initial Scaffold (included in first commit)
 - Xcode project scaffold targeting iOS 17+, SwiftUI

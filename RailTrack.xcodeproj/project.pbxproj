@@ -32,6 +32,7 @@
 		A1000023 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000023 /* ContentView.swift */; };
 		A1000024 /* TripRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000024 /* TripRecord.swift */; };
 		A1000025 /* StationDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000025 /* StationDatabase.swift */; };
+		A1000026 /* EditTripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000026 /* EditTripView.swift */; };
 		A1000099 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000099 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -61,6 +62,7 @@
 		B1000023 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B1000024 /* TripRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripRecord.swift; sourceTree = "<group>"; };
 		B1000025 /* StationDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationDatabase.swift; sourceTree = "<group>"; };
+		B1000026 /* EditTripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTripView.swift; sourceTree = "<group>"; };
 		B1000099 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C1000001 /* RailTrack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RailTrack.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -150,6 +152,7 @@
 			isa = PBXGroup;
 			children = (
 				B1000012 /* TripDetailView.swift */,
+				B1000026 /* EditTripView.swift */,
 				B1000013 /* LiveMapView.swift */,
 				B1000014 /* StationTimelineView.swift */,
 			);
@@ -310,6 +313,7 @@
 				A1000022 /* DateExtensions.swift in Sources */,
 				A1000024 /* TripRecord.swift in Sources */,
 				A1000025 /* StationDatabase.swift in Sources */,
+				A1000026 /* EditTripView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -25,18 +25,19 @@ A high-level view of where RailTrack is headed. Items are roughly ordered by pri
 - [x] Departure reminders via `UNUserNotificationCenter` — scheduled on add, cancelled on delete
 - [x] `ShareLink` share sheet on Trip Detail with formatted trip summary
 - [x] Smart map camera auto-fits to actual route distance with padding
+- [x] `EditTripView` — full edit sheet with status picker (incl. delay minutes), station autocomplete, platform & notes
+- [x] `TripDetailView` — edit, delete, and "Mark Arrived" actions; platform chip; notes section
+- [x] Notification permission requested on first launch for existing users via `.task`
 
 ---
 
-## 🔜 Phase 2 — Backend & Auth
+## 🔜 Phase 2 — Cloud Sync & Auth
 
-- [ ] Supabase project (or CloudKit) for cloud sync across devices
-- [ ] Email + password sign-up / sign-in
-- [ ] Sync local SwiftData trips to cloud on sign-in
-- [ ] User profile creation on sign-up
-- [ ] Row-level security policies
-- [ ] Live Activities + Dynamic Island (departure countdown, delay banner)
-- [ ] Lock Screen widget (next stop, ETA)
+- [ ] Enable iCloud sync: `modelContainer(cloudKitDatabase: .automatic)` (one-line change)
+- [ ] Test and validate CloudKit schema migration
+- [ ] iCloud account state handling (signed out / restricted edge cases)
+- [ ] User profile (display name, avatar) stored in CloudKit private database
+- [ ] Optional: Supabase Auth for social features (friend graph only — private data stays in CloudKit)
 
 ---
 

@@ -177,7 +177,7 @@ struct AddTripView: View {
 
 // MARK: - Station Picker Field
 
-private struct StationPickerField: View {
+struct StationPickerField: View {
     let label: String
     let icon: String
     @Binding var query: String
@@ -253,7 +253,7 @@ private struct StationPickerField: View {
 
 // MARK: - Reusable form helpers
 
-private struct FormCard<Content: View>: View {
+struct FormCard<Content: View>: View {
     @ViewBuilder let content: Content
     var body: some View {
         VStack(spacing: 0) { content }
@@ -261,7 +261,7 @@ private struct FormCard<Content: View>: View {
     }
 }
 
-private struct FormRow<Content: View>: View {
+struct FormRow<Content: View>: View {
     let label: String
     let icon: String
     @ViewBuilder let content: Content
@@ -282,7 +282,7 @@ private struct FormRow<Content: View>: View {
     }
 }
 
-private struct FieldLabel: View {
+struct FieldLabel: View {
     let text: String
     let icon: String
     var body: some View {

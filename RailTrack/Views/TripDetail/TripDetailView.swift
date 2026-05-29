@@ -1,10 +1,17 @@
 import SwiftUI
 import MapKit
+import SwiftData
 
 struct TripDetailView: View {
-    let trip: Trip
+    let record: TripRecord
+    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
 
+    @State private var showEdit = false
+    @State private var showDeleteConfirm = false
+
+    // Derive display model from the persisted record
+    private var trip: Trip { record.toTrip() }
     private var operatorColor: Color { ColorTheme.operatorColor(for: trip.trainOperator) }
 
     private var shareText: String {
@@ -66,6 +73,22 @@ struct TripDetailView: View {
                             )
                         }
 
+                        // Platform chip
+                        if let platform = trip.currentPlatform, !platform.isEmpty {
+                            HStack(spacing: 6) {
+                                Image(systemName: "signpost.right")
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundStyle(operatorColor)
+                                Text("Platform \(platform)")
+                                    .font(.rtCaption)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(ColorTheme.textPrimary)
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 7)
+                            .background(operatorColor.opacity(0.12), in: Capsule())
+                        }
+
                         // Time summary row
                         TimeSummaryRow(trip: trip)
 
@@ -79,6 +102,38 @@ struct TripDetailView: View {
                         StationTimelineView(stops: trip.stops, operatorColor: operatorColor)
 
                         Divider().opacity(0.12)
+
+                        // Mark as Completed — shown for active or upcoming trips only
+                        if trip.isActive || trip.isUpcoming {
+                            if trip.status != .cancelled {
+                                Button { markCompleted() } label: {
+                                    Label(
+                                        trip.isActive ? "Mark Arrived" : "Mark Completed",
+                                        systemImage: "flag.checkered"
+                                    )
+                                    .font(.rtSubhead)
+                                    .foregroundStyle(ColorTheme.accentGreen)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 14)
+                                    .background(ColorTheme.accentGreen.opacity(0.1), in: RoundedRectangle(cornerRadius: 14))
+                                }
+                            }
+                        }
+
+                        // Notes
+                        if let notes = record.notes, !notes.isEmpty {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Label("Notes", systemImage: "note.text")
+                                    .font(.rtCaption)
+                                    .foregroundStyle(ColorTheme.textTertiary)
+                                Text(notes)
+                                    .font(.rtBody)
+                                    .foregroundStyle(ColorTheme.textSecondary)
+                            }
+                            .padding(16)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 14))
+                        }
 
                         // Share button
                         ShareLink(
@@ -101,6 +156,48 @@ struct TripDetailView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                HStack(spacing: 16) {
+                    Button { showEdit = true } label: {
+                        Image(systemName: "pencil")
+                    }
+                    Button(role: .destructive) {
+                        showDeleteConfirm = true
+                    } label: {
+                        Image(systemName: "trash")
+                    }
+                }
+            }
+        }
+        .sheet(isPresented: $showEdit) {
+            EditTripView(record: record)
+        }
+        .confirmationDialog(
+            "Delete \"\(trip.trainOperator) \(trip.trainNumber)\"?",
+            isPresented: $showDeleteConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Delete Trip", role: .destructive) { deleteRecord() }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This will permanently remove the trip and cancel its reminders.")
+        }
+    }
+
+    // MARK: - Actions
+
+    private func markCompleted() {
+        record.statusRaw = "completed"
+        record.actualArrival = Date()
+        record.delayMinutes = 0
+        NotificationService.shared.cancelNotifications(for: record.toTrip())
+    }
+
+    private func deleteRecord() {
+        NotificationService.shared.cancelNotifications(for: record.toTrip())
+        modelContext.delete(record)
+        dismiss()
     }
 }
 
@@ -153,7 +250,29 @@ private struct TimeSummaryRow: View {
 }
 
 #Preview {
-    NavigationStack {
-        TripDetailView(trip: MockDataService.shared.sampleTrips[0])
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: TripRecord.self, configurations: config)
+    let origin = Station(
+        id: "VIA-TRTO", name: "Toronto Union Station", shortName: "Toronto",
+        code: "TOR", coordinate: Coordinate(latitude: 43.6453, longitude: -79.3806),
+        timezone: "America/Toronto", railOperator: nil, city: "Toronto", country: "CA"
+    )
+    let dest = Station(
+        id: "VIA-OTTW", name: "Ottawa Station", shortName: "Ottawa",
+        code: "OTT", coordinate: Coordinate(latitude: 45.4168, longitude: -75.6561),
+        timezone: "America/Toronto", railOperator: nil, city: "Ottawa", country: "CA"
+    )
+    let record = TripRecord(
+        trainNumber: "60", trainOperator: "VIA",
+        origin: origin, destination: dest,
+        scheduledDeparture: Calendar.current.date(byAdding: .minute, value: -90, to: Date())!,
+        scheduledArrival: Calendar.current.date(byAdding: .minute, value: 150, to: Date())!,
+        status: .delayed(minutes: 12),
+        currentPlatform: "8"
+    )
+    container.mainContext.insert(record)
+    return NavigationStack {
+        TripDetailView(record: record)
     }
+    .modelContainer(container)
 }

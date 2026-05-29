@@ -6,11 +6,19 @@ struct HomeView: View {
     @Query(sort: \TripRecord.scheduledDeparture, order: .forward) private var records: [TripRecord]
     @State private var showAddTrip = false
 
-    // MARK: - Filtered sections
-    private var trips: [Trip] { records.map { $0.toTrip() } }
-    private var activeTrip: Trip? { trips.first(where: { $0.isActive }) }
-    private var upcomingTrips: [Trip] { trips.filter { $0.isUpcoming } }
-    private var pastTrips: [Trip] { trips.filter { !$0.isActive && !$0.isUpcoming }.reversed() }
+    // MARK: - Filtered sections (operate directly on TripRecord to avoid double-conversion)
+    private var activeRecord: TripRecord? {
+        records.first(where: { $0.toTrip().isActive })
+    }
+    private var upcomingRecords: [TripRecord] {
+        records.filter { $0.toTrip().isUpcoming }
+    }
+    private var pastRecords: [TripRecord] {
+        // Records are sorted ascending; reverse so most-recent past trips appear first
+        Array(records.filter {
+            let t = $0.toTrip(); return !t.isActive && !t.isUpcoming
+        }.reversed())
+    }
 
     var body: some View {
         NavigationStack {
@@ -21,10 +29,10 @@ struct HomeView: View {
                     LazyVStack(alignment: .leading, spacing: 24, pinnedViews: [.sectionHeaders]) {
 
                         // Active trip
-                        if let active = activeTrip {
+                        if let rec = activeRecord {
                             Section {
-                                NavigationLink(destination: TripDetailView(trip: active)) {
-                                    TripCardView(trip: active)
+                                NavigationLink(destination: TripDetailView(record: rec)) {
+                                    TripCardView(trip: rec.toTrip())
                                         .padding(.horizontal, 20)
                                 }
                                 .buttonStyle(.plain)
@@ -34,17 +42,17 @@ struct HomeView: View {
                         }
 
                         // Upcoming
-                        if !upcomingTrips.isEmpty {
+                        if !upcomingRecords.isEmpty {
                             Section {
-                                ForEach(upcomingTrips) { trip in
-                                    NavigationLink(destination: TripDetailView(trip: trip)) {
-                                        TripCardView(trip: trip)
+                                ForEach(upcomingRecords) { rec in
+                                    NavigationLink(destination: TripDetailView(record: rec)) {
+                                        TripCardView(trip: rec.toTrip())
                                             .padding(.horizontal, 20)
                                     }
                                     .buttonStyle(.plain)
                                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                         Button(role: .destructive) {
-                                            deleteTrip(id: trip.id)
+                                            deleteTrip(id: rec.id)
                                         } label: {
                                             Label("Delete", systemImage: "trash")
                                         }
@@ -56,18 +64,18 @@ struct HomeView: View {
                         }
 
                         // Past
-                        if !pastTrips.isEmpty {
+                        if !pastRecords.isEmpty {
                             Section {
-                                ForEach(pastTrips) { trip in
-                                    NavigationLink(destination: TripDetailView(trip: trip)) {
-                                        TripCardView(trip: trip)
+                                ForEach(pastRecords) { rec in
+                                    NavigationLink(destination: TripDetailView(record: rec)) {
+                                        TripCardView(trip: rec.toTrip())
                                             .padding(.horizontal, 20)
                                             .opacity(0.65)
                                     }
                                     .buttonStyle(.plain)
                                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                         Button(role: .destructive) {
-                                            deleteTrip(id: trip.id)
+                                            deleteTrip(id: rec.id)
                                         } label: {
                                             Label("Delete", systemImage: "trash")
                                         }
