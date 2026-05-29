@@ -8,7 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- VIA Rail Live GPS and Delay Tracking integration using `tsimobile.viarail.ca/data/allData.json`
+- Amtrak Scheduled Service Timetable Lookup integration using the unofficial `api.amtraker.com/v3/trains` feed
+- "Transit Connections" list and detail page (`AgenciesView`) in Settings displaying supported agencies, API features, and live statuses
+- Live GPS annotations and segmented stop timelines rendering in `LiveMapView` and `TripDetailView`
+- Dynamic schedule lookup pre-population feature in `AddTripView` supporting both VIA Rail and Amtrak trains
+- SwiftData support for live coordinates (`liveLatitude`, `liveLongitude`, `liveSpeed`, `liveUpdated`) on `Trip` and `TripRecord`
+- Active 30-second polling and scene phase active listeners in `ContentView` for real-time tracking updates
 - `TripRecord` SwiftData entity for on-device trip persistence (replaces Supabase stub)
+
 - `StationDatabase` service with 30+ VIA Rail, Amtrak, and GO Transit stations including coordinates
 - `AddTripView` rewired: live station autocomplete, operator picker with branding, date range validation, SwiftData insert
 - `HomeView` rewired: `@Query`-driven dashboard, swipe-to-delete with notification cancellation
