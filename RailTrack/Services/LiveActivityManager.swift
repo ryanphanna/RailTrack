@@ -50,11 +50,12 @@ final class LiveActivityManager: ObservableObject {
             destinationCode: trip.destination.code
         )
         
+        let stops = getLiveStops(for: trip)
         let state = TripActivityAttributes.ContentState(
             statusLabel: trip.status.label,
             delayMinutes: trip.delayMinutes ?? 0,
             isNegativeStatus: trip.status.isNegative,
-            nextStationName: trip.stops.first(where: { $0.actualArrival == nil })?.station.name ?? trip.destination.name,
+            nextStationName: stops.first(where: { $0.actualArrival == nil })?.station.name ?? trip.destination.name,
             estimatedArrivalTime: trip.scheduledArrival.addingTimeInterval(Double(trip.delayMinutes ?? 0) * 60),
             progressFraction: currentProgressFraction(for: trip)
         )
@@ -78,11 +79,12 @@ final class LiveActivityManager: ObservableObject {
         #if os(iOS)
         guard let activity = activeActivity else { return }
         
+        let stops = getLiveStops(for: trip)
         let state = TripActivityAttributes.ContentState(
             statusLabel: trip.status.label,
             delayMinutes: trip.delayMinutes ?? 0,
             isNegativeStatus: trip.status.isNegative,
-            nextStationName: trip.stops.first(where: { $0.actualArrival == nil })?.station.name ?? trip.destination.name,
+            nextStationName: stops.first(where: { $0.actualArrival == nil })?.station.name ?? trip.destination.name,
             estimatedArrivalTime: trip.scheduledArrival.addingTimeInterval(Double(trip.delayMinutes ?? 0) * 60),
             progressFraction: currentProgressFraction(for: trip)
         )
@@ -104,6 +106,15 @@ final class LiveActivityManager: ObservableObject {
             print("[LiveActivity] Ended Activity")
         }
         #endif
+    }
+    
+    private func getLiveStops(for trip: Trip) -> [Stop] {
+        if trip.trainOperator.uppercased() == "VIA" {
+            return VIALiveDataService.shared.liveStops[trip.id] ?? []
+        } else if trip.trainOperator.uppercased() == "AMTRAK" {
+            return AmtrakLiveDataService.shared.liveStops[trip.id] ?? []
+        }
+        return []
     }
     
     private func currentProgressFraction(for trip: Trip) -> Double {

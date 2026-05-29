@@ -1,10 +1,15 @@
 import Foundation
+import SwiftData
+import SwiftUI
 
-/// Service to lookup Amtrak scheduled service timetables.
+/// Service to fetch, sync, and lookup Amtrak live positions and schedules.
 /// Uses the unofficial Amtraker v3 API.
 final class AmtrakLiveDataService: ObservableObject {
     
     static let shared = AmtrakLiveDataService()
+    
+    @Published var liveStops: [UUID: [Stop]] = [:]
+    @Published var isFetching = false
     
     // Toggle for Stage 1 (Static Snapshot) vs Stage 2 (Live Networking)
     var useLocalSnapshot: Bool = false
@@ -42,6 +47,166 @@ final class AmtrakLiveDataService: ObservableObject {
         let platform: String?
     }
     
+    // MARK: - Fetching & Syncing
+    
+    @MainActor
+    func fetchAndSync(modelContext: ModelContext) async {
+        guard !isFetching else { return }
+        isFetching = true
+        defer { isFetching = false }
+        
+        let data: Data?
+        if useLocalSnapshot {
+            data = loadLocalSnapshot()
+        } else {
+            do {
+                data = try await fetchLiveFeed()
+            } catch {
+                print("[AmtrakLiveDataService] Live fetch failed: \(error.localizedDescription). Falling back to local snapshot.")
+                data = loadLocalSnapshot()
+            }
+        }
+        
+        guard let rawData = data else {
+            print("[AmtrakLiveDataService] No data loaded.")
+            return
+        }
+        
+        do {
+            let decoder = JSONDecoder()
+            let feed = try decoder.decode([String: [AmtrakTrain]].self, from: rawData)
+            syncWithDatabase(feed: feed, modelContext: modelContext)
+        } catch {
+            print("[AmtrakLiveDataService] JSON decoding failed: \(error)")
+        }
+    }
+    
+    private func syncWithDatabase(feed: [String: [AmtrakTrain]], modelContext: ModelContext) {
+        let descriptor = FetchDescriptor<TripRecord>()
+        guard let records = try? modelContext.fetch(descriptor) else { return }
+        
+        var newLiveStops: [UUID: [Stop]] = [:]
+        
+        for record in records {
+            guard record.trainOperator.uppercased() == "AMTRAK" else { continue }
+            
+            let trainNumber = record.trainNumber
+            guard let trains = feed[trainNumber] else { continue }
+            
+            var matchedTrain: AmtrakTrain? = nil
+            let tripDateStr = departureDateString(for: record)
+            
+            for train in trains {
+                guard let firstStation = train.stations.first else { continue }
+                guard let schDepStr = firstStation.schDep else { continue }
+                
+                let schDepDateStr = String(schDepStr.prefix(10))
+                if schDepDateStr == tripDateStr {
+                    matchedTrain = train
+                    break
+                }
+            }
+            
+            if let matched = matchedTrain {
+                print("[AmtrakLiveDataService] Matched train \(record.trainNumber) on date \(tripDateStr)")
+                
+                record.liveLatitude = matched.lat
+                record.liveLongitude = matched.lon
+                record.liveSpeed = matched.velocity.map(Int.init)
+                record.liveUpdated = Date()
+                
+                // Calculate delay minutes based on arrival/departure at the last visited stop
+                var calculatedDelay = 0
+                if let lastVisited = matched.stations.last(where: { $0.status == "Departed" || $0.status == "Station" }),
+                   let arrStr = lastVisited.arr,
+                   let schArrStr = lastVisited.schArr,
+                   let arrDate = parseISO8601Date(arrStr),
+                   let schArrDate = parseISO8601Date(schArrStr) {
+                    let diffSeconds = arrDate.timeIntervalSince(schArrDate)
+                    calculatedDelay = Int(diffSeconds / 60)
+                } else if let firstEnroute = matched.stations.first(where: { $0.status == "Enroute" }),
+                          let arrStr = firstEnroute.arr,
+                          let schArrStr = firstEnroute.schArr,
+                          let arrDate = parseISO8601Date(arrStr),
+                          let schArrDate = parseISO8601Date(schArrStr) {
+                    let diffSeconds = arrDate.timeIntervalSince(schArrDate)
+                    calculatedDelay = Int(diffSeconds / 60)
+                }
+                
+                record.delayMinutes = calculatedDelay
+                if calculatedDelay > 0 {
+                    record.statusRaw = "delayed"
+                } else if matched.stations.allSatisfy({ $0.status == "Departed" }) {
+                    record.statusRaw = "completed"
+                } else if matched.stations.first?.status == "Departed" {
+                    record.statusRaw = "onTime"
+                } else {
+                    record.statusRaw = "scheduled"
+                }
+                
+                // Map the stops timeline
+                var stopsList: [Stop] = []
+                for (index, amtrakStop) in matched.stations.enumerated() {
+                    let station = resolveStation(code: amtrakStop.code, name: amtrakStop.name)
+                    let isOrigin = index == 0
+                    let isDestination = index == matched.stations.count - 1
+                    
+                    let scheduledArr = parseISO8601Date(amtrakStop.schArr)
+                    let estimatedArr = parseISO8601Date(amtrakStop.arr)
+                    
+                    let scheduledDep = parseISO8601Date(amtrakStop.schDep)
+                    let estimatedDep = parseISO8601Date(amtrakStop.dep)
+                    
+                    let stop = Stop(
+                        id: UUID(),
+                        station: station,
+                        scheduledArrival: scheduledArr,
+                        scheduledDeparture: scheduledDep,
+                        actualArrival: estimatedArr,
+                        actualDeparture: estimatedDep,
+                        platform: amtrakStop.platform?.isEmpty == false ? amtrakStop.platform : nil,
+                        isOrigin: isOrigin,
+                        isDestination: isDestination
+                    )
+                    stopsList.append(stop)
+                }
+                
+                newLiveStops[record.id] = stopsList
+            }
+        }
+        
+        try? modelContext.save()
+        
+        self.liveStops = newLiveStops
+    }
+    
+    private func departureDateString(for trip: TripRecord) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        if let tz = TimeZone(identifier: trip.originTimezone) {
+            formatter.timeZone = tz
+        }
+        return formatter.string(from: trip.scheduledDeparture)
+    }
+    
+    private func resolveStation(code: String, name: String) -> Station {
+        let stationId = "AMT-\(code)"
+        if let found = StationDatabase.shared.stations.first(where: { $0.id == stationId }) {
+            return found
+        }
+        return Station(
+            id: stationId,
+            name: name,
+            shortName: name,
+            code: code,
+            coordinate: Coordinate(latitude: 0, longitude: 0),
+            timezone: "America/New_York",
+            railOperator: "Amtrak",
+            city: name,
+            country: "US"
+        )
+    }
+    
     // MARK: - Schedule Lookup
     
     func lookupTrainSchedule(trainNumber: String, departureDate: Date) async -> AmtrakTrain? {
@@ -62,7 +227,6 @@ final class AmtrakLiveDataService: ObservableObject {
             let decoder = JSONDecoder()
             let feed = try decoder.decode([String: [AmtrakTrain]].self, from: data)
             
-            // Amtraker keys trains by string train number
             guard let trains = feed[trainNumber] else { return nil }
             
             let formatter = DateFormatter()
@@ -73,7 +237,6 @@ final class AmtrakLiveDataService: ObservableObject {
                 guard let firstStation = train.stations.first else { continue }
                 guard let schDepStr = firstStation.schDep else { continue }
                 
-                // schDep is ISO8601 string prefix matching yyyy-MM-dd
                 let schDepDateStr = String(schDepStr.prefix(10))
                 
                 if schDepDateStr == targetDateStr {
@@ -109,8 +272,7 @@ final class AmtrakLiveDataService: ObservableObject {
     
     func parseISO8601Date(_ string: String?) -> Date? {
         guard let string = string else { return nil }
-        // Amtraker uses ISO8601 format with timezone offsets, so we use a custom formatter with time zone support if needed
-        // ISO8601DateFormatter defaults to handling offsets correctly.
         return isoFormatter.date(from: string)
     }
 }
+

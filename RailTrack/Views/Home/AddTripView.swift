@@ -293,9 +293,9 @@ struct AddTripView: View {
                 if let train = await AmtrakLiveDataService.shared.lookupTrainSchedule(trainNumber: cleaned, departureDate: departureDate) {
                     // Resolve origin station (first stop)
                     if let firstStop = train.stations.first {
-                        let originStation = StationDatabase.shared.stations.first { $0.id == "AMTRAK-\(firstStop.code)" }
+                        let originStation = StationDatabase.shared.stations.first { $0.id == "AMT-\(firstStop.code)" }
                         ?? Station(
-                            id: "AMTRAK-\(firstStop.code)",
+                            id: "AMT-\(firstStop.code)",
                             name: firstStop.name,
                             shortName: firstStop.name,
                             code: firstStop.code,
@@ -316,9 +316,9 @@ struct AddTripView: View {
                     
                     // Resolve destination station (last stop)
                     if let lastStop = train.stations.last {
-                        let destStation = StationDatabase.shared.stations.first { $0.id == "AMTRAK-\(lastStop.code)" }
+                        let destStation = StationDatabase.shared.stations.first { $0.id == "AMT-\(lastStop.code)" }
                         ?? Station(
-                            id: "AMTRAK-\(lastStop.code)",
+                            id: "AMT-\(lastStop.code)",
                             name: lastStop.name,
                             shortName: lastStop.name,
                             code: lastStop.code,

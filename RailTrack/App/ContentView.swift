@@ -16,17 +16,20 @@ struct ContentView: View {
         .task {
             // Initial sync on app load
             await VIALiveDataService.shared.fetchAndSync(modelContext: modelContext)
+            await AmtrakLiveDataService.shared.fetchAndSync(modelContext: modelContext)
             
             // Periodically sync every 30 seconds
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: 30 * 1_000_000_000)
                 await VIALiveDataService.shared.fetchAndSync(modelContext: modelContext)
+                await AmtrakLiveDataService.shared.fetchAndSync(modelContext: modelContext)
             }
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
                 Task {
                     await VIALiveDataService.shared.fetchAndSync(modelContext: modelContext)
+                    await AmtrakLiveDataService.shared.fetchAndSync(modelContext: modelContext)
                 }
             }
         }

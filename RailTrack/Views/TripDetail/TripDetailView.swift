@@ -10,7 +10,8 @@ struct TripDetailView: View {
     @State private var showEdit = false
     @State private var showDeleteConfirm = false
     
-    @ObservedObject private var liveDataService = VIALiveDataService.shared
+    @ObservedObject private var viaLiveDataService = VIALiveDataService.shared
+    @ObservedObject private var amtrakLiveDataService = AmtrakLiveDataService.shared
 
     // Derive display model from the persisted record
     private var trip: Trip { record.toTrip() }
@@ -27,16 +28,25 @@ struct TripDetailView: View {
     }
 
     private var displayedStops: [Stop] {
-        guard let allStops = liveDataService.liveStops[trip.id] else {
+        let allStops: [Stop]?
+        if trip.trainOperator.uppercased() == "VIA" {
+            allStops = viaLiveDataService.liveStops[trip.id]
+        } else if trip.trainOperator.uppercased() == "AMTRAK" {
+            allStops = amtrakLiveDataService.liveStops[trip.id]
+        } else {
+            allStops = nil
+        }
+        
+        guard let stops = allStops else {
             return trip.stops
         }
         
-        // Find indices of trip.origin and trip.destination in allStops
-        if let originIndex = allStops.firstIndex(where: { $0.station.code == trip.origin.code }),
-           let destIndex = allStops.firstIndex(where: { $0.station.code == trip.destination.code }),
+        // Find indices of trip.origin and trip.destination in stops
+        if let originIndex = stops.firstIndex(where: { $0.station.code == trip.origin.code }),
+           let destIndex = stops.firstIndex(where: { $0.station.code == trip.destination.code }),
            originIndex <= destIndex {
             
-            var segmentStops = Array(allStops[originIndex...destIndex])
+            var segmentStops = Array(stops[originIndex...destIndex])
             
             // Mark the first stop as origin and the last as destination for rendering
             for i in 0..<segmentStops.count {
@@ -46,7 +56,7 @@ struct TripDetailView: View {
             return segmentStops
         }
         
-        return allStops
+        return stops
     }
 
     var body: some View {

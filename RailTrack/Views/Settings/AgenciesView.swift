@@ -45,13 +45,13 @@ struct AgenciesView: View {
                         name: "Amtrak (US)",
                         opCode: "Amtrak",
                         color: ColorTheme.amtrak,
-                        status: "Schedules Supported",
-                        statusColor: ColorTheme.accent,
+                        status: "Live Tracking Active",
+                        statusColor: ColorTheme.accentGreen,
                         features: [
-
+                            AgencyFeature(name: "Live GPS Train Tracking", supported: true),
+                            AgencyFeature(name: "Real-Time Delay Metrics", supported: true),
                             AgencyFeature(name: "Timetable Auto-Lookup", supported: true),
-                            AgencyFeature(name: "Live GPS Tracking", supported: false, description: "Coming soon via Amtraker API"),
-                            AgencyFeature(name: "Real-Time Delay Info", supported: false, description: "Coming soon")
+                            AgencyFeature(name: "Dynamic Island & Lock Screen Live Activities", supported: true)
                         ]
                     )
                     
