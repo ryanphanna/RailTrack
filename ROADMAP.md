@@ -1,10 +1,10 @@
 # RailTrack Roadmap
 
-A high-level view of where RailTrack is headed. Items are roughly ordered by priority within each phase.
+A high-level view of where RailTrack is headed. Items are roughly ordered by priority within each section.
 
 ---
 
-## ✅ Phase 0 — Foundation (Complete)
+## ✅ Foundation (Complete)
 
 - [x] Xcode project scaffold (iOS 17+, SwiftUI)
 - [x] Core data models: Trip, Station, Stop, Alert, TrainService
@@ -15,7 +15,7 @@ A high-level view of where RailTrack is headed. Items are roughly ordered by pri
 
 ---
 
-## ✅ Phase 1 — Local Persistence & Core UX (Complete)
+## ✅ Local Persistence & Core UX (Complete)
 
 - [x] SwiftData `TripRecord` entity for on-device trip storage
 - [x] `StationDatabase` with VIA Rail, Amtrak, and GO Transit station catalogue
@@ -31,20 +31,22 @@ A high-level view of where RailTrack is headed. Items are roughly ordered by pri
 
 ---
 
-## 🔜 Phase 2 — Cloud Sync & Auth
+## 🔜 Cloud Sync & Auth
 
-- [ ] Enable iCloud sync: `modelContainer(cloudKitDatabase: .automatic)` (one-line change)
-- [ ] Test and validate CloudKit schema migration
-- [ ] iCloud account state handling (signed out / restricted edge cases)
-- [ ] User profile (display name, avatar) stored in CloudKit private database
+- [x] Enable iCloud sync compatibility (CloudKit-friendly SwiftData properties & defaults)
+- [x] iCloud account state monitoring (`CloudKitService` status checking)
+- [x] User profile settings dashboard (`SettingsView`) & local profile storage
+- [ ] Store user profile details in CloudKit private database
+- [ ] Test and validate CloudKit schema sync on physical device
 - [ ] Optional: Supabase Auth for social features (friend graph only — private data stays in CloudKit)
 
 ---
 
-## 🔜 Phase 3 — Live Data
+## 🔜 Live Data
 
+- [x] Schedule-based train position interpolation on MapKit (dynamic timer-driven updates)
 - [ ] GTFS-RT feed integration (VIA Rail, Amtrak)
-- [ ] Actual train position on map (from GTFS-RT `VehiclePosition`)
+- [ ] Actual train position on map (from GTFS-RT `VehiclePosition` feed data)
 - [ ] Real-time delay updates and platform change detection
 - [ ] Push notifications for delays and platform changes (APNs)
 - [ ] Live Activities + Dynamic Island (departure countdown, delay banner)
@@ -52,7 +54,7 @@ A high-level view of where RailTrack is headed. Items are roughly ordered by pri
 
 ---
 
-## 🔜 Phase 4 — Import & Intelligence
+## 🔜 Import & Intelligence
 
 - [ ] Email forwarding parser (VIA Rail / Amtrak confirmation emails → auto trip creation)
 - [ ] Calendar integration (import bookings from Apple Calendar)
@@ -61,7 +63,7 @@ A high-level view of where RailTrack is headed. Items are roughly ordered by pri
 
 ---
 
-## 🔜 Phase 5 — Social
+## 🔜 Social
 
 - [ ] Friend system (add by username / QR code)
 - [ ] Privacy-first trip sharing (public / friends-only / private toggle)
@@ -71,7 +73,7 @@ A high-level view of where RailTrack is headed. Items are roughly ordered by pri
 
 ---
 
-## 🔜 Phase 6 — Stats & Gamification
+## 🔜 Stats & Gamification
 
 - [ ] Route heatmap (MapKit overlay of all travelled routes)
 - [ ] Full stats history and charts
@@ -81,7 +83,7 @@ A high-level view of where RailTrack is headed. Items are roughly ordered by pri
 
 ---
 
-## 🔜 Phase 7 — Expansion
+## 🔜 Expansion
 
 - [ ] Crowdsourced tracking (phone as sensor when GTFS-RT unavailable)
 - [ ] GO Transit GTFS-RT integration

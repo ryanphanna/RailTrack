@@ -20,13 +20,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Smart map camera auto-fits to actual great-circle route distance (1.5× padding, 50 km floor)
 - `EditTripView` — full edit sheet pre-populated from `TripRecord`; animated status picker with delay-minute stepper; station autocomplete; platform and notes fields; reschedules departure notification on save
 - `TripDetailView` now accepts `TripRecord` directly; added edit (pencil) and delete (trash) toolbar actions with confirmation dialog; "Mark Arrived" quick-action button for active trips; "Mark Completed" for upcoming trips; platform chip; notes card
+- Persistent `UserProfile` storage (username and display name) backed by `UserDefaults`
+- `SettingsView` containing profile adjustments, iCloud sync toggle, real-time CloudKit status monitor, and data clearing actions
+- `ICloudBannerView` warning indicator presented at the top of the Home view when the iCloud account status is unavailable
+- Real-time schedule-based train coordinate interpolation in `LiveMapView` based on current progress along the route
+- Autoconnected 10-second timer to dynamically advance the train position on MapKit
 
 ### Changed
 - `HomeView` ViewModel replaced with `@Query` + pure computed properties (no more `ObservableObject`)
 - `HomeView` now iterates over `TripRecord` arrays directly and passes `TripRecord` to `TripDetailView`
 - `TripDetailView` accepts `TripRecord` (derives `Trip` internally via `toTrip()`) instead of a `Trip` value type
 - `StatsView` no longer depends on `MockDataService`
-- Form helper components (`StationPickerField`, `FormCard`, `FormRow`, `FieldLabel`) promoted from `private` to `internal` so `EditTripView` can reuse them
+- Form helper components (`StationPickerField`, `FormCard`, `FormRow`, `FieldLabel`) refactored out of `AddTripView.swift` and moved to a dedicated, shared [FormComponents.swift](file:///Users/ryan/Desktop/Dev/Coding/Long-Term/In%20Development/RailTrack/RailTrack/Views/Components/FormComponents.swift)
+- Converted `HomeView` layout from `ScrollView` + `LazyVStack` to a native SwiftUI `List` with clear rows, resolving non-functional `.swipeActions`
+- Fixed hardcoded operator title "VIA" inside delay notifications in `NotificationService` to dynamically use the trip's operator name
 
 ### Initial Scaffold (included in first commit)
 - Xcode project scaffold targeting iOS 17+, SwiftUI
