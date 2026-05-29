@@ -150,8 +150,9 @@ struct AddTripView: View {
 
     private var isFormValid: Bool {
         !trainNumber.trimmingCharacters(in: .whitespaces).isEmpty &&
-        (!originQuery.isEmpty) &&
-        (!destinationQuery.isEmpty) &&
+        selectedOrigin != nil &&
+        selectedDestination != nil &&
+        selectedOrigin?.id != selectedDestination?.id &&
         arrivalDate > departureDate
     }
 

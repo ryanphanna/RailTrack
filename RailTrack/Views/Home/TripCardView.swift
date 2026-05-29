@@ -2,13 +2,11 @@ import SwiftUI
 
 struct TripCardView: View {
     let trip: Trip
-    var onTap: () -> Void = {}
 
     private var operatorColor: Color { ColorTheme.operatorColor(for: trip.trainOperator) }
 
     var body: some View {
-        Button(action: onTap) {
-            VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 0) {
                 // Header strip
                 HStack {
                     // Operator badge
@@ -103,8 +101,6 @@ struct TripCardView: View {
                     )
             )
             .shadow(color: .black.opacity(0.25), radius: 12, x: 0, y: 4)
-        }
-        .buttonStyle(.plain)
     }
 }
 

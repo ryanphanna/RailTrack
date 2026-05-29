@@ -133,16 +133,20 @@ struct StationDatabase {
         }
     }
 
-    /// Lookup a single station by text (returns first match or a generic station).
+    /// Lookup a single station by text (returns first match or a safe generic fallback).
     func station(for query: String, operator op: String) -> Station {
         if let match = search(query).first { return match }
-        // Fallback: create a minimal station from the typed text
+        // Fallback: create a minimal station from the typed text.
+        // Use a rough central coordinate for the country rather than (0,0).
         let name = query.trimmingCharacters(in: .whitespaces)
         let code = String(name.prefix(3)).uppercased()
+        let fallbackCoord = op == "Amtrak"
+            ? Coordinate(latitude: 40.7128, longitude: -74.0060)  // NYC area
+            : Coordinate(latitude: 45.4215, longitude: -75.6972)  // Ottawa area
         return Station(
             id: "\(op)-\(code)", name: name, shortName: name, code: code,
-            coordinate: Coordinate(latitude: 0, longitude: 0),
-            timezone: "America/Toronto", railOperator: op, city: name, country: "CA"
+            coordinate: fallbackCoord,
+            timezone: "America/Toronto", railOperator: op, city: name, country: op == "Amtrak" ? "US" : "CA"
         )
     }
 }
