@@ -28,7 +28,7 @@ struct StationPickerField: View {
                         }
                     }
                 } else {
-                    TextField("Search stations…", text: $query)
+                    TextField("Search stations…", text: $query, prompt: Text("Search stations…").foregroundColor(ColorTheme.textTertiary))
                         .font(.rtBody)
                         .foregroundStyle(ColorTheme.textPrimary)
                         .onChange(of: query) { _, new in
@@ -82,6 +82,7 @@ struct FormCard<Content: View>: View {
     @ViewBuilder let content: Content
     var body: some View {
         VStack(spacing: 0) { content }
+            .padding(16)
             .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
     }
 }

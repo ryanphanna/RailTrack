@@ -597,16 +597,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentBlue;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ryanphanna.RailTrack.WidgetExtension;
 				PRODUCT_NAME = RailTrackWidget;
+				INFOPLIST_FILE = RailTrackWidget/Info.plist;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.9;
-			};
+							CURRENT_PROJECT_VERSION = 1;
+				MARKETING_VERSION = 1.0;
+};
 			name = Debug;
 		};
 		CE20783CD221EF92126BE164 /* Release */ = {
@@ -614,15 +617,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentBlue;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ryanphanna.RailTrack.WidgetExtension;
 				PRODUCT_NAME = RailTrackWidget;
+				INFOPLIST_FILE = RailTrackWidget/Info.plist;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.9;
-			};
+							CURRENT_PROJECT_VERSION = 1;
+				MARKETING_VERSION = 1.0;
+};
 			name = Release;
 		};
 		F4000001 /* Debug */ = {
@@ -806,16 +812,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentBlue;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ryanphanna.RailTrack.WidgetExtension;
 				PRODUCT_NAME = RailTrackWidget;
+				INFOPLIST_FILE = RailTrackWidget/Info.plist;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.9;
-			};
+							CURRENT_PROJECT_VERSION = 1;
+				MARKETING_VERSION = 1.0;
+};
 			name = Debug;
 		};
 		"TEMP_6730D96D-437E-4EE8-80EB-DBA03D37474B" /* Debug */ = {
@@ -823,16 +832,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentBlue;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ryanphanna.RailTrack.WidgetExtension;
 				PRODUCT_NAME = RailTrackWidget;
+				INFOPLIST_FILE = RailTrackWidget/Info.plist;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.9;
-			};
+							CURRENT_PROJECT_VERSION = 1;
+				MARKETING_VERSION = 1.0;
+};
 			name = Debug;
 		};
 		"TEMP_ADD4D93B-6D19-4E9A-A56B-E878C83FF3B4" /* Release */ = {
@@ -840,15 +852,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentBlue;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ryanphanna.RailTrack.WidgetExtension;
 				PRODUCT_NAME = RailTrackWidget;
+				INFOPLIST_FILE = RailTrackWidget/Info.plist;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.9;
-			};
+							CURRENT_PROJECT_VERSION = 1;
+				MARKETING_VERSION = 1.0;
+};
 			name = Release;
 		};
 		"TEMP_BA9A35D8-ECD7-46C5-9E92-A79CC97E700C" /* Release */ = {
@@ -856,15 +871,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentBlue;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ryanphanna.RailTrack.WidgetExtension;
 				PRODUCT_NAME = RailTrackWidget;
+				INFOPLIST_FILE = RailTrackWidget/Info.plist;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.9;
-			};
+							CURRENT_PROJECT_VERSION = 1;
+				MARKETING_VERSION = 1.0;
+};
 			name = Release;
 		};
 		"TEMP_D71BDAA6-883A-4514-BBB0-A8B502AF4F6D" /* Debug */ = {
@@ -872,16 +890,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentBlue;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ryanphanna.RailTrack.WidgetExtension;
 				PRODUCT_NAME = RailTrackWidget;
+				INFOPLIST_FILE = RailTrackWidget/Info.plist;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.9;
-			};
+							CURRENT_PROJECT_VERSION = 1;
+				MARKETING_VERSION = 1.0;
+};
 			name = Debug;
 		};
 		"TEMP_F8A83D44-E7CA-4911-BBA9-35A7BB8C57E5" /* Release */ = {
@@ -889,15 +910,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentBlue;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ryanphanna.RailTrack.WidgetExtension;
 				PRODUCT_NAME = RailTrackWidget;
+				INFOPLIST_FILE = RailTrackWidget/Info.plist;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.9;
-			};
+							CURRENT_PROJECT_VERSION = 1;
+				MARKETING_VERSION = 1.0;
+};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */

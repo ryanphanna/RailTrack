@@ -66,7 +66,7 @@ struct AddTripView: View {
                         FormCard {
                             FormRow(label: "Train Number", icon: "number") {
                                 HStack {
-                                    TextField("e.g. 60", text: $trainNumber)
+                                    TextField("e.g. 60", text: $trainNumber, prompt: Text("e.g. 60").foregroundColor(ColorTheme.textTertiary))
                                         .font(.rtBody)
                                         .foregroundStyle(ColorTheme.textPrimary)
                                         .autocorrectionDisabled()
@@ -145,26 +145,6 @@ struct AddTripView: View {
                             }
                         }
 
-                        // Save button
-                        Button { saveTrip() } label: {
-                            Group {
-                                if isSaving {
-                                    ProgressView().tint(.white)
-                                } else {
-                                    Text("Add Trip")
-                                        .font(.rtSubhead)
-                                        .foregroundStyle(.white)
-                                }
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .background(
-                                isFormValid ? ColorTheme.accent : ColorTheme.textTertiary,
-                                in: RoundedRectangle(cornerRadius: 16)
-                            )
-                        }
-                        .disabled(!isFormValid || isSaving)
-
                         Color.clear.frame(height: 20)
                     }
                     .padding(20)
@@ -186,6 +166,12 @@ struct AddTripView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Cancel") { dismiss() }
                         .foregroundStyle(ColorTheme.textSecondary)
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Add") { saveTrip() }
+                        .font(.rtSubhead.bold())
+                        .foregroundStyle(isFormValid ? ColorTheme.accent : ColorTheme.textTertiary)
+                        .disabled(!isFormValid || isSaving)
                 }
             }
         }

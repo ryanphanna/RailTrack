@@ -120,31 +120,27 @@ struct HomeView: View {
                 .scrollContentBackground(.hidden)
                 .background(ColorTheme.background)
 
-                // FAB
-                Button {
-                    showAddTrip = true
-                } label: {
-                    Image(systemName: "plus")
-                        .font(.system(size: 22, weight: .bold))
-                        .foregroundStyle(.white)
-                        .frame(width: 58, height: 58)
-                        .background(ColorTheme.accent, in: Circle())
-                        .shadow(color: ColorTheme.accent.opacity(0.5), radius: 16, x: 0, y: 6)
-                }
-                .padding(.trailing, 24)
-                .padding(.bottom, 24)
             }
             .navigationTitle("RailTrack")
             .navigationBarTitleDisplayMode(.large)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .topBarLeading) {
                     Button {
                         showSettings = true
                     } label: {
                         Image(systemName: "gearshape")
-                            .font(.system(size: 16, weight: .medium))
+                            .font(.system(size: 18, weight: .medium))
                             .foregroundStyle(ColorTheme.textSecondary)
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        showAddTrip = true
+                    } label: {
+                        Image(systemName: "plus")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(ColorTheme.accent)
                     }
                 }
             }

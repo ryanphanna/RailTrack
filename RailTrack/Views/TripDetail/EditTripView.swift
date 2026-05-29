@@ -109,154 +109,11 @@ struct EditTripView: View {
 
                 ScrollView {
                     VStack(spacing: 16) {
-
-                        // Operator chips
-                        VStack(alignment: .leading, spacing: 10) {
-                            FieldLabel(text: "Operator", icon: "tram")
-                            HStack(spacing: 8) {
-                                ForEach(operators, id: \.self) { op in
-                                    Button {
-                                        selectedOperator = op
-                                    } label: {
-                                        Text(op)
-                                            .font(.rtCaption.bold())
-                                            .foregroundStyle(selectedOperator == op ? .white : ColorTheme.textSecondary)
-                                            .padding(.horizontal, 14)
-                                            .padding(.vertical, 8)
-                                            .background(
-                                                selectedOperator == op
-                                                    ? ColorTheme.operatorColor(for: op)
-                                                    : ColorTheme.surface,
-                                                in: RoundedRectangle(cornerRadius: 10)
-                                            )
-                                    }
-                                }
-                            }
-                        }
-                        .padding(16)
-                        .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-
-                        // Train number
-                        FormCard {
-                            FormRow(label: "Train Number", icon: "number") {
-                                TextField("e.g. 60", text: $trainNumber)
-                                    .keyboardType(.numberPad)
-                                    .font(.rtBody)
-                                    .foregroundStyle(ColorTheme.textPrimary)
-                            }
-                        }
-
-                        // Origin
-                        StationPickerField(
-                            label: "From", icon: "mappin.circle",
-                            query: $originQuery, results: $originResults,
-                            selected: $selectedOrigin, operatorFilter: selectedOperator
-                        )
-
-                        // Destination
-                        StationPickerField(
-                            label: "To", icon: "mappin.and.ellipse",
-                            query: $destinationQuery, results: $destinationResults,
-                            selected: $selectedDestination, operatorFilter: selectedOperator
-                        )
-
-                        // Status picker
-                        VStack(alignment: .leading, spacing: 8) {
-                            FieldLabel(text: "Status", icon: "info.circle")
-                            VStack(spacing: 0) {
-                                ForEach(StatusOption.allCases) { opt in
-                                    Button {
-                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                            statusOption = opt
-                                        }
-                                    } label: {
-                                        HStack(spacing: 12) {
-                                            Image(systemName: opt.icon)
-                                                .font(.system(size: 16))
-                                                .foregroundStyle(opt.color)
-                                                .frame(width: 24)
-                                            Text(opt.rawValue)
-                                                .font(.rtBody)
-                                                .foregroundStyle(ColorTheme.textPrimary)
-                                            Spacer()
-                                            if statusOption == opt {
-                                                Image(systemName: "checkmark")
-                                                    .font(.system(size: 14, weight: .semibold))
-                                                    .foregroundStyle(ColorTheme.accent)
-                                            }
-                                        }
-                                        .padding(.horizontal, 16)
-                                        .padding(.vertical, 14)
-                                    }
-                                    .buttonStyle(.plain)
-                                    if opt.id != StatusOption.allCases.last?.id {
-                                        Divider().opacity(0.1).padding(.leading, 52)
-                                    }
-                                }
-                            }
-                            .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-
-                            // Delay stepper — shown only when Delayed is selected
-                            if statusOption == .delayed {
-                                HStack(spacing: 12) {
-                                    Image(systemName: "clock.badge.exclamationmark")
-                                        .font(.system(size: 16))
-                                        .foregroundStyle(ColorTheme.accentAmber)
-                                        .frame(width: 24)
-                                    Text("Delay")
-                                        .font(.rtBody)
-                                        .foregroundStyle(ColorTheme.textPrimary)
-                                    Spacer()
-                                    Stepper("", value: $delayMins, in: 1...999, step: 5)
-                                        .labelsHidden()
-                                    Text("\(delayMins) min")
-                                        .font(.rtMono)
-                                        .foregroundStyle(ColorTheme.accentAmber)
-                                        .frame(width: 68, alignment: .trailing)
-                                }
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 14)
-                                .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-                                .transition(.opacity.combined(with: .move(edge: .top)))
-                            }
-                        }
-
-                        // Departure
-                        FormCard {
-                            FormRow(label: "Departs", icon: "arrow.up.right.circle") {
-                                DatePicker("", selection: $departureDate, displayedComponents: [.date, .hourAndMinute])
-                                    .labelsHidden()
-                                    .colorScheme(.dark)
-                            }
-                        }
-
-                        // Arrival
-                        FormCard {
-                            FormRow(label: "Arrives", icon: "arrow.down.left.circle") {
-                                DatePicker("", selection: $arrivalDate, in: departureDate..., displayedComponents: [.date, .hourAndMinute])
-                                    .labelsHidden()
-                                    .colorScheme(.dark)
-                            }
-                        }
-
-                        // Platform
-                        FormCard {
-                            FormRow(label: "Platform", icon: "signpost.right") {
-                                TextField("e.g. 8", text: $platformText)
-                                    .font(.rtBody)
-                                    .foregroundStyle(ColorTheme.textPrimary)
-                            }
-                        }
-
-                        // Notes
-                        FormCard {
-                            FormRow(label: "Notes", icon: "note.text") {
-                                TextField("Optional…", text: $notesText, axis: .vertical)
-                                    .font(.rtBody)
-                                    .foregroundStyle(ColorTheme.textPrimary)
-                                    .lineLimit(2...4)
-                            }
-                        }
+                        operatorSection
+                        routeSection
+                        statusSection
+                        scheduleSection
+                        detailsSection
 
                         Color.clear.frame(height: 20)
                     }
@@ -275,6 +132,174 @@ struct EditTripView: View {
                     Button("Save") { saveChanges() }
                         .font(.rtSubhead)
                         .foregroundStyle(ColorTheme.accent)
+                }
+            }
+        }
+    }
+
+    // MARK: - Form Sections
+
+    @ViewBuilder
+    private var operatorSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            FieldLabel(text: "Operator", icon: "tram")
+            HStack(spacing: 8) {
+                ForEach(operators, id: \.self) { op in
+                    Button {
+                        selectedOperator = op
+                    } label: {
+                        Text(op)
+                            .font(.rtCaption.bold())
+                            .foregroundStyle(selectedOperator == op ? .white : ColorTheme.textSecondary)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 8)
+                            .background(
+                                selectedOperator == op
+                                    ? ColorTheme.operatorColor(for: op)
+                                    : ColorTheme.surface,
+                                in: RoundedRectangle(cornerRadius: 10)
+                            )
+                    }
+                }
+            }
+        }
+        .padding(16)
+        .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+    }
+
+    @ViewBuilder
+    private var routeSection: some View {
+        Group {
+            // Train number
+            FormCard {
+                FormRow(label: "Train Number", icon: "number") {
+                    TextField("e.g. 60", text: $trainNumber, prompt: Text("e.g. 60").foregroundColor(ColorTheme.textTertiary))
+                        .keyboardType(.numberPad)
+                        .font(.rtBody)
+                        .foregroundStyle(ColorTheme.textPrimary)
+                }
+            }
+
+            // Origin
+            StationPickerField(
+                label: "From", icon: "mappin.circle",
+                query: $originQuery, results: $originResults,
+                selected: $selectedOrigin, operatorFilter: selectedOperator
+            )
+
+            // Destination
+            StationPickerField(
+                label: "To", icon: "mappin.and.ellipse",
+                query: $destinationQuery, results: $destinationResults,
+                selected: $selectedDestination, operatorFilter: selectedOperator
+            )
+        }
+    }
+
+    @ViewBuilder
+    private var statusSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            FieldLabel(text: "Status", icon: "info.circle")
+            VStack(spacing: 0) {
+                ForEach(StatusOption.allCases) { opt in
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            statusOption = opt
+                        }
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: opt.icon)
+                                .font(.system(size: 16))
+                                .foregroundStyle(opt.color)
+                                .frame(width: 24)
+                            Text(opt.rawValue)
+                                .font(.rtBody)
+                                .foregroundStyle(ColorTheme.textPrimary)
+                            Spacer()
+                            if statusOption == opt {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundStyle(ColorTheme.accent)
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 14)
+                    }
+                    .buttonStyle(.plain)
+                    if opt.id != StatusOption.allCases.last?.id {
+                        Divider().opacity(0.1).padding(.leading, 52)
+                    }
+                }
+            }
+            .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+
+            // Delay stepper — shown only when Delayed is selected
+            if statusOption == .delayed {
+                HStack(spacing: 12) {
+                    Image(systemName: "clock.badge.exclamationmark")
+                        .font(.system(size: 16))
+                        .foregroundStyle(ColorTheme.accentAmber)
+                        .frame(width: 24)
+                    Text("Delay")
+                        .font(.rtBody)
+                        .foregroundStyle(ColorTheme.textPrimary)
+                    Spacer()
+                    Stepper("", value: $delayMins, in: 1...999, step: 5)
+                        .labelsHidden()
+                    Text("\(delayMins) min")
+                        .font(.rtMono)
+                        .foregroundStyle(ColorTheme.accentAmber)
+                        .frame(width: 68, alignment: .trailing)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 14)
+                .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var scheduleSection: some View {
+        Group {
+            // Departure
+            FormCard {
+                FormRow(label: "Departs", icon: "arrow.up.right.circle") {
+                    DatePicker("", selection: $departureDate, displayedComponents: [.date, .hourAndMinute])
+                        .labelsHidden()
+                        .colorScheme(.dark)
+                }
+            }
+
+            // Arrival
+            FormCard {
+                FormRow(label: "Arrives", icon: "arrow.down.left.circle") {
+                    DatePicker("", selection: $arrivalDate, in: departureDate..., displayedComponents: [.date, .hourAndMinute])
+                        .labelsHidden()
+                        .colorScheme(.dark)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var detailsSection: some View {
+        Group {
+            // Platform
+            FormCard {
+                FormRow(label: "Platform", icon: "signpost.right") {
+                    TextField("e.g. 8", text: $platformText, prompt: Text("e.g. 8").foregroundColor(ColorTheme.textTertiary))
+                        .font(.rtBody)
+                        .foregroundStyle(ColorTheme.textPrimary)
+                }
+            }
+
+            // Notes
+            FormCard {
+                FormRow(label: "Notes", icon: "note.text") {
+                    TextField("Optional…", text: $notesText, prompt: Text("Optional…").foregroundColor(ColorTheme.textTertiary), axis: .vertical)
+                        .font(.rtBody)
+                        .foregroundStyle(ColorTheme.textPrimary)
                 }
             }
         }

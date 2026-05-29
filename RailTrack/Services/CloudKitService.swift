@@ -34,6 +34,10 @@ final class CloudKitService: ObservableObject {
     }
 
     func checkAccountStatus() async {
+        guard FileManager.default.ubiquityIdentityToken != nil else {
+            self.accountStatus = .noAccount
+            return
+        }
         do {
             let status = try await CKContainer.default().accountStatus()
             self.accountStatus = status
