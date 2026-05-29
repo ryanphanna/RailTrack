@@ -75,8 +75,9 @@ struct AddTripView: View {
                                             trainNumber = cleanTrainNumber(trainNumber)
                                         }
                                     
-                                    if selectedOperator == "VIA" && !trainNumber.isEmpty {
+                                    if (selectedOperator == "VIA" || selectedOperator == "Amtrak") && !trainNumber.isEmpty {
                                         Button {
+
                                             lookupSchedule()
                                         } label: {
                                             if isLookingUp {
@@ -238,58 +239,113 @@ struct AddTripView: View {
         let cleaned = cleanTrainNumber(trainNumber)
         
         Task {
-            if let train = await VIALiveDataService.shared.lookupTrainSchedule(trainNumber: cleaned, departureDate: departureDate) {
-                // Resolve origin station (first stop)
-                if let firstTime = train.times.first {
-                    let originStation = StationDatabase.shared.stations.first { $0.id == "VIA-\(firstTime.code)" }
-                    ?? Station(
-                        id: "VIA-\(firstTime.code)",
-                        name: firstTime.station,
-                        shortName: firstTime.station,
-                        code: firstTime.code,
-                        coordinate: Coordinate(latitude: 0, longitude: 0),
-                        timezone: "America/Toronto",
-                        railOperator: "VIA",
-                        city: firstTime.station,
-                        country: "CA"
-                    )
-                    selectedOrigin = originStation
-                    originQuery = originStation.name
-                    
-                    if let schedStr = firstTime.departure?.scheduled ?? firstTime.scheduled,
-                       let date = VIALiveDataService.shared.parseISO8601Date(schedStr) {
-                        departureDate = date
+            if selectedOperator == "VIA" {
+                if let train = await VIALiveDataService.shared.lookupTrainSchedule(trainNumber: cleaned, departureDate: departureDate) {
+                    // Resolve origin station (first stop)
+                    if let firstTime = train.times.first {
+                        let originStation = StationDatabase.shared.stations.first { $0.id == "VIA-\(firstTime.code)" }
+                        ?? Station(
+                            id: "VIA-\(firstTime.code)",
+                            name: firstTime.station,
+                            shortName: firstTime.station,
+                            code: firstTime.code,
+                            coordinate: Coordinate(latitude: 0, longitude: 0),
+                            timezone: "America/Toronto",
+                            railOperator: "VIA",
+                            city: firstTime.station,
+                            country: "CA"
+                        )
+                        selectedOrigin = originStation
+                        originQuery = originStation.name
+                        
+                        if let schedStr = firstTime.departure?.scheduled ?? firstTime.scheduled,
+                           let date = VIALiveDataService.shared.parseISO8601Date(schedStr) {
+                            departureDate = date
+                        }
                     }
+                    
+                    // Resolve destination station (last stop)
+                    if let lastTime = train.times.last {
+                        let destStation = StationDatabase.shared.stations.first { $0.id == "VIA-\(lastTime.code)" }
+                        ?? Station(
+                            id: "VIA-\(lastTime.code)",
+                            name: lastTime.station,
+                            shortName: lastTime.station,
+                            code: lastTime.code,
+                            coordinate: Coordinate(latitude: 0, longitude: 0),
+                            timezone: "America/Toronto",
+                            railOperator: "VIA",
+                            city: lastTime.station,
+                            country: "CA"
+                        )
+                        selectedDestination = destStation
+                        destinationQuery = destStation.name
+                        
+                        if let schedStr = lastTime.arrival?.scheduled ?? lastTime.scheduled,
+                           let date = VIALiveDataService.shared.parseISO8601Date(schedStr) {
+                            arrivalDate = date
+                        }
+                    }
+                } else {
+                    lookupError = "Train not found for selected date."
                 }
-                
-                // Resolve destination station (last stop)
-                if let lastTime = train.times.last {
-                    let destStation = StationDatabase.shared.stations.first { $0.id == "VIA-\(lastTime.code)" }
-                    ?? Station(
-                        id: "VIA-\(lastTime.code)",
-                        name: lastTime.station,
-                        shortName: lastTime.station,
-                        code: lastTime.code,
-                        coordinate: Coordinate(latitude: 0, longitude: 0),
-                        timezone: "America/Toronto",
-                        railOperator: "VIA",
-                        city: lastTime.station,
-                        country: "CA"
-                    )
-                    selectedDestination = destStation
-                    destinationQuery = destStation.name
-                    
-                    if let schedStr = lastTime.arrival?.scheduled ?? lastTime.scheduled,
-                       let date = VIALiveDataService.shared.parseISO8601Date(schedStr) {
-                        arrivalDate = date
+            } else if selectedOperator == "Amtrak" {
+                if let train = await AmtrakLiveDataService.shared.lookupTrainSchedule(trainNumber: cleaned, departureDate: departureDate) {
+                    // Resolve origin station (first stop)
+                    if let firstStop = train.stations.first {
+                        let originStation = StationDatabase.shared.stations.first { $0.id == "AMTRAK-\(firstStop.code)" }
+                        ?? Station(
+                            id: "AMTRAK-\(firstStop.code)",
+                            name: firstStop.name,
+                            shortName: firstStop.name,
+                            code: firstStop.code,
+                            coordinate: Coordinate(latitude: 0, longitude: 0),
+                            timezone: firstStop.tz,
+                            railOperator: "Amtrak",
+                            city: firstStop.name,
+                            country: "US"
+                        )
+                        selectedOrigin = originStation
+                        originQuery = originStation.name
+                        
+                        if let schedStr = firstStop.schDep,
+                           let date = AmtrakLiveDataService.shared.parseISO8601Date(schedStr) {
+                            departureDate = date
+                        }
                     }
+                    
+                    // Resolve destination station (last stop)
+                    if let lastStop = train.stations.last {
+                        let destStation = StationDatabase.shared.stations.first { $0.id == "AMTRAK-\(lastStop.code)" }
+                        ?? Station(
+                            id: "AMTRAK-\(lastStop.code)",
+                            name: lastStop.name,
+                            shortName: lastStop.name,
+                            code: lastStop.code,
+                            coordinate: Coordinate(latitude: 0, longitude: 0),
+                            timezone: lastStop.tz,
+                            railOperator: "Amtrak",
+                            city: lastStop.name,
+                            country: "US"
+                        )
+                        selectedDestination = destStation
+                        destinationQuery = destStation.name
+                        
+                        if let schedStr = lastStop.schArr,
+                           let date = AmtrakLiveDataService.shared.parseISO8601Date(schedStr) {
+                            arrivalDate = date
+                        }
+                    }
+                } else {
+                    lookupError = "Train not found for selected date."
                 }
             } else {
-                lookupError = "Train not found for selected date."
+                lookupError = "Schedule lookup unsupported for \(selectedOperator)."
             }
             isLookingUp = false
         }
     }
+
 }
 
 

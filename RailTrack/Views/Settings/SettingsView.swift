@@ -90,9 +90,37 @@ struct SettingsView: View {
                             }
                         }
 
+                        // Transit Connections Section
+                        VStack(alignment: .leading, spacing: 8) {
+                            FieldLabel(text: "Transit Connections", icon: "tram.fill")
+                            FormCard {
+                                NavigationLink {
+                                    AgenciesView()
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "network")
+                                            .font(.system(size: 15))
+                                            .foregroundStyle(ColorTheme.accent)
+                                            .frame(width: 24)
+                                        Text("Supported Agencies & Status")
+                                            .font(.rtBody)
+                                            .foregroundStyle(ColorTheme.textPrimary)
+                                        Spacer()
+                                        Image(systemName: "chevron.right")
+                                            .font(.system(size: 13, weight: .bold))
+                                            .foregroundStyle(ColorTheme.textTertiary)
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 14)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+
                         // Data Management Section
                         VStack(alignment: .leading, spacing: 8) {
                             FieldLabel(text: "Data Management", icon: "exclamationmark.shield")
+
                             FormCard {
                                 Button(role: .destructive) {
                                     showClearConfirm = true

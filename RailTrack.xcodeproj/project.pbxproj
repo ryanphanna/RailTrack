@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		4CB786F53F24C27017567D13 /* viasnapshot.json in Resources */ = {isa = PBXBuildFile; fileRef = FB174E8A9A84C292BE3299D4 /* viasnapshot.json */; };
 		67FB8857E3B00AF9962123F2 /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000022 /* DateExtensions.swift */; };
+		89D011DDF3754C7E395D6781 /* amtrak_snapshot.json in Resources */ = {isa = PBXBuildFile; fileRef = F2066D44CD77CEB9B78C614D /* amtrak_snapshot.json */; };
+		9C38014B8B5FF5337B36835E /* AmtrakLiveDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E667C40746B3D76055A0D24E /* AmtrakLiveDataService.swift */; };
 		A1000001 /* RailTrackApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000001 /* RailTrackApp.swift */; };
 		A1000002 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000002 /* AppState.swift */; };
 		A1000003 /* Trip.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000003 /* Trip.swift */; };
@@ -41,24 +43,36 @@
 		A1000030 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000030 /* SettingsView.swift */; };
 		A1000099 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000099 /* Assets.xcassets */; };
 		B3228424130219A625B46714 /* RailTrackWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7548D56EA1BFD40EFC9A3AE0 /* RailTrackWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B7E1C2FCF8FFEEA313EF55E4 /* AgenciesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FDF2C84ADE94ABCCD03003C /* AgenciesView.swift */; };
 		C215459A37E7B9F8CD4480B2 /* VIALiveDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5575FFA96CE25666A6C92EA9 /* VIALiveDataService.swift */; };
 		C497D0363A19B2B57A212AE4 /* TripActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA42F4F403819047BBEE155 /* TripActivityAttributes.swift */; };
 		D0704CAE64C9E1D046D62542 /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000021 /* ColorTheme.swift */; };
 		D5BAA04414282D93B2DD6D64 /* TripActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA42F4F403819047BBEE155 /* TripActivityAttributes.swift */; };
 		E0D14A79F1A55E80545857BB /* RailTrackWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E004A3DEE11848BB77BD0AE5 /* RailTrackWidget.swift */; };
 		FA57E72627401C0D14B14EAF /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F450E2B84A16BB26DDCDF6 /* LiveActivityManager.swift */; };
+		"TEMP_003B7898-35C9-4EC7-AAEC-801731BDEA49" /* TripActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA42F4F403819047BBEE155 /* TripActivityAttributes.swift */; };
 		"TEMP_0F229E04-639D-41AD-A592-F5286E582680" /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000022 /* DateExtensions.swift */; };
 		"TEMP_134FFF88-3DFB-4AD2-A8D4-19AB723DC33B" /* TripActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA42F4F403819047BBEE155 /* TripActivityAttributes.swift */; };
 		"TEMP_2280AFA4-507C-4F25-8EAA-2C974FEE7FB4" /* RailTrackWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E004A3DEE11848BB77BD0AE5 /* RailTrackWidget.swift */; };
+		"TEMP_22CB1498-B07A-49D3-8448-7DE8C4CD178A" /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000021 /* ColorTheme.swift */; };
 		"TEMP_304E7ACE-DF57-4084-9D7C-DA97E206FE48" /* RailTrackWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E004A3DEE11848BB77BD0AE5 /* RailTrackWidget.swift */; };
 		"TEMP_3589D05D-A5F7-4218-8500-F298C8D79A45" /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000022 /* DateExtensions.swift */; };
 		"TEMP_62CA59E1-436A-4672-8884-413374A46FFD" /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000021 /* ColorTheme.swift */; };
+		"TEMP_64DC222B-8B4F-4082-80AE-2A1227F41F31" /* RailTrackWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E004A3DEE11848BB77BD0AE5 /* RailTrackWidget.swift */; };
+		"TEMP_92CE6688-0BC8-46C6-8C34-671C165D7F48" /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000022 /* DateExtensions.swift */; };
 		"TEMP_E4C3B3E9-7B2B-4604-BBAD-D367F2369C8F" /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000021 /* ColorTheme.swift */; };
 		"TEMP_F925DB60-31A7-4554-885D-4E923CC547F6" /* TripActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA42F4F403819047BBEE155 /* TripActivityAttributes.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		C3846C259C56507F4BAB6A73 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B0C10AC28FF46D391EF7B95C;
+			remoteInfo = RailTrackWidget;
+		};
+		"TEMP_2EA9B7EC-0B43-41F5-91AB-B0B38844C648" /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F0000001 /* Project object */;
 			proxyType = 1;
@@ -96,6 +110,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1FDF2C84ADE94ABCCD03003C /* AgenciesView.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = AgenciesView.swift; path = AgenciesView.swift; sourceTree = "<group>"; };
 		5575FFA96CE25666A6C92EA9 /* VIALiveDataService.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = VIALiveDataService.swift; path = VIALiveDataService.swift; sourceTree = "<group>"; };
 		7548D56EA1BFD40EFC9A3AE0 /* RailTrackWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; name = RailTrackWidget.appex; path = RailTrackWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DA42F4F403819047BBEE155 /* TripActivityAttributes.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = TripActivityAttributes.swift; path = TripActivityAttributes.swift; sourceTree = "<group>"; };
@@ -132,7 +147,9 @@
 		B1000099 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C1000001 /* RailTrack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RailTrack.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E004A3DEE11848BB77BD0AE5 /* RailTrackWidget.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = RailTrackWidget.swift; path = ../../RailTrackWidget/RailTrackWidget.swift; sourceTree = "<group>"; };
+		E667C40746B3D76055A0D24E /* AmtrakLiveDataService.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = AmtrakLiveDataService.swift; path = AmtrakLiveDataService.swift; sourceTree = "<group>"; };
 		E6F450E2B84A16BB26DDCDF6 /* LiveActivityManager.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = LiveActivityManager.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
+		F2066D44CD77CEB9B78C614D /* amtrak_snapshot.json */ = {isa = PBXFileReference; explicitFileType = text.json; lastKnownFileType = text.json; name = amtrak_snapshot.json; path = amtrak_snapshot.json; sourceTree = "<group>"; };
 		FB174E8A9A84C292BE3299D4 /* viasnapshot.json */ = {isa = PBXFileReference; explicitFileType = text.json; lastKnownFileType = text.json; name = viasnapshot.json; path = viasnapshot.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -145,6 +162,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		D1000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		"TEMP_1529D10B-ACBD-4696-B4BC-C6153ACE0826" /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -234,6 +258,7 @@
 				B1000028 /* CloudKitService.swift */,
 				E6F450E2B84A16BB26DDCDF6 /* LiveActivityManager.swift */,
 				5575FFA96CE25666A6C92EA9 /* VIALiveDataService.swift */,
+				E667C40746B3D76055A0D24E /* AmtrakLiveDataService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -322,6 +347,7 @@
 			children = (
 				B1000099 /* Assets.xcassets */,
 				FB174E8A9A84C292BE3299D4 /* viasnapshot.json */,
+				F2066D44CD77CEB9B78C614D /* amtrak_snapshot.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -330,6 +356,7 @@
 			isa = PBXGroup;
 			children = (
 				B1000030 /* SettingsView.swift */,
+				1FDF2C84ADE94ABCCD03003C /* AgenciesView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -425,6 +452,14 @@
 			files = (
 				A1000099 /* Assets.xcassets in Resources */,
 				4CB786F53F24C27017567D13 /* viasnapshot.json in Resources */,
+				89D011DDF3754C7E395D6781 /* amtrak_snapshot.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		"TEMP_559873F3-AD7C-4BF6-A1C5-E18D30BE52CA" /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -493,6 +528,8 @@
 				C497D0363A19B2B57A212AE4 /* TripActivityAttributes.swift in Sources */,
 				FA57E72627401C0D14B14EAF /* LiveActivityManager.swift in Sources */,
 				C215459A37E7B9F8CD4480B2 /* VIALiveDataService.swift in Sources */,
+				9C38014B8B5FF5337B36835E /* AmtrakLiveDataService.swift in Sources */,
+				B7E1C2FCF8FFEEA313EF55E4 /* AgenciesView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -504,6 +541,17 @@
 				"TEMP_134FFF88-3DFB-4AD2-A8D4-19AB723DC33B" /* TripActivityAttributes.swift in Sources */,
 				"TEMP_E4C3B3E9-7B2B-4604-BBAD-D367F2369C8F" /* ColorTheme.swift in Sources */,
 				"TEMP_0F229E04-639D-41AD-A592-F5286E582680" /* DateExtensions.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		"TEMP_DC6616C9-3FB0-4CC3-B8E8-83A22A8D4848" /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				"TEMP_64DC222B-8B4F-4082-80AE-2A1227F41F31" /* RailTrackWidget.swift in Sources */,
+				"TEMP_003B7898-35C9-4EC7-AAEC-801731BDEA49" /* TripActivityAttributes.swift in Sources */,
+				"TEMP_22CB1498-B07A-49D3-8448-7DE8C4CD178A" /* ColorTheme.swift in Sources */,
+				"TEMP_92CE6688-0BC8-46C6-8C34-671C165D7F48" /* DateExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -525,6 +573,11 @@
 			isa = PBXTargetDependency;
 			target = B0C10AC28FF46D391EF7B95C /* RailTrackWidget */;
 			targetProxy = C3846C259C56507F4BAB6A73 /* PBXContainerItemProxy */;
+		};
+		"TEMP_0FAAFEB9-7CF7-42DE-9BB1-2394392B48A6" /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B0C10AC28FF46D391EF7B95C /* RailTrackWidget */;
+			targetProxy = "TEMP_2EA9B7EC-0B43-41F5-91AB-B0B38844C648" /* PBXContainerItemProxy */;
 		};
 		"TEMP_B0D462E3-ACE5-4450-BA4D-323B58BC3E33" /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -765,7 +818,40 @@
 			};
 			name = Debug;
 		};
+		"TEMP_6730D96D-437E-4EE8-80EB-DBA03D37474B" /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentBlue;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ryanphanna.RailTrack.WidgetExtension;
+				PRODUCT_NAME = RailTrackWidget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
 		"TEMP_ADD4D93B-6D19-4E9A-A56B-E878C83FF3B4" /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentBlue;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ryanphanna.RailTrack.WidgetExtension;
+				PRODUCT_NAME = RailTrackWidget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		"TEMP_BA9A35D8-ECD7-46C5-9E92-A79CC97E700C" /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentBlue;
@@ -849,6 +935,15 @@
 			buildConfigurations = (
 				"TEMP_D71BDAA6-883A-4514-BBB0-A8B502AF4F6D" /* Debug */,
 				"TEMP_F8A83D44-E7CA-4911-BBA9-35A7BB8C57E5" /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		"TEMP_7C27ABE2-DBAE-415B-B75E-800772F9CEEF" = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				"TEMP_6730D96D-437E-4EE8-80EB-DBA03D37474B" /* Debug */,
+				"TEMP_BA9A35D8-ECD7-46C5-9E92-A79CC97E700C" /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
