@@ -5,6 +5,8 @@ struct LiveMapView: View {
     let trip: Trip
 
     @State private var position: MapCameraPosition
+    @State private var trainCoordinate: CLLocationCoordinate2D? = nil
+    private let timer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
 
     init(trip: Trip) {
         self.trip = trip
@@ -41,13 +43,8 @@ struct LiveMapView: View {
             MapPolyline(coordinates: [trip.origin.clCoordinate, trip.destination.clCoordinate])
                 .stroke(ColorTheme.operatorColor(for: trip.trainOperator), lineWidth: 3)
 
-            // Train position (mock: 40% along route)
-            if trip.isActive {
-                let trainCoord = interpolate(
-                    from: trip.origin.clCoordinate,
-                    to: trip.destination.clCoordinate,
-                    fraction: 0.4
-                )
+            // Train position
+            if let trainCoord = trainCoordinate {
                 Annotation("Train \(trip.trainNumber)", coordinate: trainCoord) {
                     TrainPositionMarker(operatorColor: ColorTheme.operatorColor(for: trip.trainOperator))
                 }
@@ -58,6 +55,38 @@ struct LiveMapView: View {
             MapCompass()
             MapScaleView()
         }
+        .onAppear {
+            updateTrainCoordinate()
+        }
+        .onReceive(timer) { _ in
+            updateTrainCoordinate()
+        }
+    }
+
+    private func updateTrainCoordinate() {
+        guard trip.isActive else {
+            self.trainCoordinate = nil
+            return
+        }
+
+        let now = Date()
+        let dep = trip.scheduledDeparture
+        let arr = trip.scheduledArrival
+
+        let total = arr.timeIntervalSince(dep)
+        guard total > 0 else {
+            self.trainCoordinate = nil
+            return
+        }
+
+        let elapsed = now.timeIntervalSince(dep)
+        let fraction = max(0, min(1, elapsed / total))
+
+        self.trainCoordinate = interpolate(
+            from: trip.origin.clCoordinate,
+            to: trip.destination.clCoordinate,
+            fraction: fraction
+        )
     }
 
     private func interpolate(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D, fraction: Double) -> CLLocationCoordinate2D {
