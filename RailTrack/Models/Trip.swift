@@ -74,11 +74,13 @@ struct Trip: Identifiable, Codable {
 
     var isActive: Bool {
         let now = Date()
-        return scheduledDeparture <= now && (actualArrival == nil)
+        guard status != .completed, status != .cancelled else { return false }
+        return scheduledDeparture <= now && actualArrival == nil
     }
 
     var isUpcoming: Bool {
-        scheduledDeparture > Date()
+        guard status != .cancelled, status != .completed else { return false }
+        return scheduledDeparture > Date()
     }
 
     var delayMinutes: Int? {

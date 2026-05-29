@@ -99,7 +99,12 @@ struct TripDetailView: View {
                             .font(.rtSubhead)
                             .foregroundStyle(ColorTheme.textSecondary)
 
-                        StationTimelineView(stops: trip.stops, operatorColor: operatorColor)
+                        StationTimelineView(
+                            stops: trip.stops,
+                            operatorColor: operatorColor,
+                            origin: trip.origin,
+                            destination: trip.destination
+                        )
 
                         Divider().opacity(0.12)
 

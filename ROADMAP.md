@@ -89,6 +89,7 @@ A high-level view of where RailTrack is headed. Items are roughly ordered by pri
 - [ ] Multi-modal connections (train → subway → bus handoff)
 - [ ] Android / cross-platform (future consideration)
 - [ ] Freemium model (free core + Pro subscription for Live Activities, social, advanced stats)
+- [ ] Adopt iOS 26 Liquid Glass `.glassEffect()` for custom surfaces (tab bar & nav bar are automatic)
 
 ---
 
@@ -100,3 +101,4 @@ A high-level view of where RailTrack is headed. Items are roughly ordered by pri
 - iPad optimised layout
 - TransitStats.FYI backend integration (shared stats engine)
 - Timetable offline mode (GTFS static download)
+- Bump minimum deployment target to iOS 26 once adoption reaches ~80%+
