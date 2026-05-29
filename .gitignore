@@ -28,3 +28,7 @@ xcuserdata/
 *.xcconfig
 Secrets.swift
 Config.swift
+
+# AI Agent Configuration
+agents.md
+
