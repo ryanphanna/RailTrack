@@ -10,9 +10,31 @@ final class LiveActivityManager: ObservableObject {
     
     #if os(iOS)
     private var activeActivity: Activity<TripActivityAttributes>? = nil
+    private var currentTripId: UUID? = nil
     #endif
     
     private init() {}
+    
+    func syncActiveTrip(_ trip: Trip?) {
+        #if os(iOS)
+        guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
+        
+        guard let trip = trip else {
+            if currentTripId != nil {
+                endActivity()
+                currentTripId = nil
+            }
+            return
+        }
+        
+        if currentTripId == trip.id {
+            updateActivity(for: trip)
+        } else {
+            currentTripId = trip.id
+            startActivity(for: trip)
+        }
+        #endif
+    }
     
     func startActivity(for trip: Trip) {
         #if os(iOS)

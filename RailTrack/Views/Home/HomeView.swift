@@ -6,6 +6,7 @@ struct HomeView: View {
     @Query(sort: \TripRecord.scheduledDeparture, order: .forward) private var records: [TripRecord]
     @State private var showAddTrip = false
     @State private var showSettings = false
+    private let liveActivityTimer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
 
     // MARK: - Filtered sections (operate directly on TripRecord to avoid double-conversion)
     private var activeRecord: TripRecord? {
@@ -152,6 +153,16 @@ struct HomeView: View {
             }
             .sheet(isPresented: $showSettings) {
                 SettingsView()
+            }
+            .task {
+                LiveActivityManager.shared.syncActiveTrip(activeRecord?.toTrip())
+            }
+            .onReceive(liveActivityTimer) { _ in
+                LiveActivityManager.shared.syncActiveTrip(activeRecord?.toTrip())
+            }
+            .onChange(of: records) { _, newValue in
+                let activeTrip = newValue.first(where: { $0.toTrip().isActive })?.toTrip()
+                LiveActivityManager.shared.syncActiveTrip(activeTrip)
             }
         }
     }
