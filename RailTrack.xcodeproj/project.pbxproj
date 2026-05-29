@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		67FB8857E3B00AF9962123F2 /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000022 /* DateExtensions.swift */; };
 		A1000001 /* RailTrackApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000001 /* RailTrackApp.swift */; };
 		A1000002 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000002 /* AppState.swift */; };
 		A1000003 /* Trip.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000003 /* Trip.swift */; };
@@ -38,9 +39,52 @@
 		A1000029 /* ICloudBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000029 /* ICloudBannerView.swift */; };
 		A1000030 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000030 /* SettingsView.swift */; };
 		A1000099 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000099 /* Assets.xcassets */; };
+		B3228424130219A625B46714 /* RailTrackWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7548D56EA1BFD40EFC9A3AE0 /* RailTrackWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C497D0363A19B2B57A212AE4 /* TripActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA42F4F403819047BBEE155 /* TripActivityAttributes.swift */; };
+		D0704CAE64C9E1D046D62542 /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000021 /* ColorTheme.swift */; };
+		D5BAA04414282D93B2DD6D64 /* TripActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA42F4F403819047BBEE155 /* TripActivityAttributes.swift */; };
+		E0D14A79F1A55E80545857BB /* RailTrackWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E004A3DEE11848BB77BD0AE5 /* RailTrackWidget.swift */; };
+		FA57E72627401C0D14B14EAF /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F450E2B84A16BB26DDCDF6 /* LiveActivityManager.swift */; };
+		"TEMP_0F229E04-639D-41AD-A592-F5286E582680" /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000022 /* DateExtensions.swift */; };
+		"TEMP_134FFF88-3DFB-4AD2-A8D4-19AB723DC33B" /* TripActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA42F4F403819047BBEE155 /* TripActivityAttributes.swift */; };
+		"TEMP_304E7ACE-DF57-4084-9D7C-DA97E206FE48" /* RailTrackWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E004A3DEE11848BB77BD0AE5 /* RailTrackWidget.swift */; };
+		"TEMP_E4C3B3E9-7B2B-4604-BBAD-D367F2369C8F" /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000021 /* ColorTheme.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		C3846C259C56507F4BAB6A73 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B0C10AC28FF46D391EF7B95C;
+			remoteInfo = RailTrackWidget;
+		};
+		"TEMP_D40959F3-443C-4F6C-8705-B91394FB21FE" /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B0C10AC28FF46D391EF7B95C;
+			remoteInfo = RailTrackWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		56A7F0D7838EA894FE1414E1 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B3228424130219A625B46714 /* RailTrackWidget.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		7548D56EA1BFD40EFC9A3AE0 /* RailTrackWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; name = RailTrackWidget.appex; path = RailTrackWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		9DA42F4F403819047BBEE155 /* TripActivityAttributes.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = TripActivityAttributes.swift; path = TripActivityAttributes.swift; sourceTree = "<group>"; };
 		B1000001 /* RailTrackApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RailTrackApp.swift; sourceTree = "<group>"; };
 		B1000002 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		B1000003 /* Trip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trip.swift; sourceTree = "<group>"; };
@@ -73,10 +117,26 @@
 		B1000030 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		B1000099 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C1000001 /* RailTrack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RailTrack.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E004A3DEE11848BB77BD0AE5 /* RailTrackWidget.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = RailTrackWidget.swift; path = ../../RailTrackWidget/RailTrackWidget.swift; sourceTree = "<group>"; };
+		E6F450E2B84A16BB26DDCDF6 /* LiveActivityManager.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = LiveActivityManager.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		8BD68DCE434DF901D99C18C7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D1000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		"TEMP_7F75EF1A-EF65-40C1-AD63-EF082554D8C2" /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -86,6 +146,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B72E787D3CD7E5B9BE889FAC /* RailTrackWidget */ = {
+			isa = PBXGroup;
+			children = (
+				E004A3DEE11848BB77BD0AE5 /* RailTrackWidget.swift */,
+			);
+			name = RailTrackWidget;
+			path = RailTrackWidget;
+			sourceTree = "<group>";
+		};
+		C2000001 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C1000001 /* RailTrack.app */,
+				7548D56EA1BFD40EFC9A3AE0 /* RailTrackWidget.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		E1000000 /* RailTrack */ = {
 			isa = PBXGroup;
 			children = (
@@ -96,6 +174,7 @@
 				E1000009 /* Utilities */,
 				E1000012 /* Resources */,
 				C2000001 /* Products */,
+				B72E787D3CD7E5B9BE889FAC /* RailTrackWidget */,
 			);
 			path = RailTrack;
 			sourceTree = "<group>";
@@ -118,6 +197,7 @@
 				B1000005 /* TrainService.swift */,
 				B1000006 /* Alert.swift */,
 				B1000024 /* TripRecord.swift */,
+				9DA42F4F403819047BBEE155 /* TripActivityAttributes.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -130,6 +210,7 @@
 				B1000009 /* NotificationService.swift */,
 				B1000025 /* StationDatabase.swift */,
 				B1000028 /* CloudKitService.swift */,
+				E6F450E2B84A16BB26DDCDF6 /* LiveActivityManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -146,14 +227,6 @@
 				E1000013 /* Settings */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		E1000013 /* Settings */ = {
-			isa = PBXGroup;
-			children = (
-				B1000030 /* SettingsView.swift */,
-			);
-			path = Settings;
 			sourceTree = "<group>";
 		};
 		E1000005 /* Home */ = {
@@ -229,17 +302,36 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		C2000001 /* Products */ = {
+		E1000013 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				C1000001 /* RailTrack.app */,
+				B1000030 /* SettingsView.swift */,
 			);
-			name = Products;
+			path = Settings;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		B0C10AC28FF46D391EF7B95C /* RailTrackWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E67F2FEC9838DD30106B0817 /* Build configuration list for PBXNativeTarget "RailTrackWidget" */;
+			buildPhases = (
+				BACF4CE5255B93965F6C800D /* Sources */,
+				8BD68DCE434DF901D99C18C7 /* Frameworks */,
+				448018EFC41D8EF65418C9EF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RailTrackWidget;
+			packageProductDependencies = (
+			);
+			productName = RailTrackWidget;
+			productReference = 7548D56EA1BFD40EFC9A3AE0 /* RailTrackWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		F1000001 /* RailTrack */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F2000001 /* Build configuration list for PBXNativeTarget "RailTrack" */;
@@ -247,10 +339,12 @@
 				F3000001 /* Sources */,
 				D1000001 /* Frameworks */,
 				F3000002 /* Resources */,
+				56A7F0D7838EA894FE1414E1 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				54AF0193509D11087DA142AE /* PBXTargetDependency */,
 			);
 			name = RailTrack;
 			packageProductDependencies = (
@@ -282,17 +376,25 @@
 				en,
 				Base,
 			);
-			mainGroup = E1000000;
+			mainGroup = E1000000 /* RailTrack */;
 			productRefGroup = C2000001 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				F1000001 /* RailTrack */,
+				B0C10AC28FF46D391EF7B95C /* RailTrackWidget */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		448018EFC41D8EF65418C9EF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F3000002 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -301,9 +403,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		"TEMP_98ADFBE4-0B54-4ABF-BB23-F2AACC0718AE" /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		BACF4CE5255B93965F6C800D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E0D14A79F1A55E80545857BB /* RailTrackWidget.swift in Sources */,
+				D5BAA04414282D93B2DD6D64 /* TripActivityAttributes.swift in Sources */,
+				D0704CAE64C9E1D046D62542 /* ColorTheme.swift in Sources */,
+				67FB8857E3B00AF9962123F2 /* DateExtensions.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F3000001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -338,12 +458,71 @@
 				A1000028 /* CloudKitService.swift in Sources */,
 				A1000029 /* ICloudBannerView.swift in Sources */,
 				A1000030 /* SettingsView.swift in Sources */,
+				C497D0363A19B2B57A212AE4 /* TripActivityAttributes.swift in Sources */,
+				FA57E72627401C0D14B14EAF /* LiveActivityManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		"TEMP_D81DA409-BB01-4862-95CC-88DA3C0B5A8B" /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				"TEMP_304E7ACE-DF57-4084-9D7C-DA97E206FE48" /* RailTrackWidget.swift in Sources */,
+				"TEMP_134FFF88-3DFB-4AD2-A8D4-19AB723DC33B" /* TripActivityAttributes.swift in Sources */,
+				"TEMP_E4C3B3E9-7B2B-4604-BBAD-D367F2369C8F" /* ColorTheme.swift in Sources */,
+				"TEMP_0F229E04-639D-41AD-A592-F5286E582680" /* DateExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		54AF0193509D11087DA142AE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B0C10AC28FF46D391EF7B95C /* RailTrackWidget */;
+			targetProxy = C3846C259C56507F4BAB6A73 /* PBXContainerItemProxy */;
+		};
+		"TEMP_C577F407-94E7-4DD3-9FFD-5FCF74A3097D" /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B0C10AC28FF46D391EF7B95C /* RailTrackWidget */;
+			targetProxy = "TEMP_D40959F3-443C-4F6C-8705-B91394FB21FE" /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		2FDFC438A613EFC43E079C4E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentBlue;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ryanphanna.RailTrack.WidgetExtension;
+				PRODUCT_NAME = RailTrackWidget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		CE20783CD221EF92126BE164 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentBlue;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ryanphanna.RailTrack.WidgetExtension;
+				PRODUCT_NAME = RailTrackWidget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
 		F4000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -520,9 +699,51 @@
 			};
 			name = Release;
 		};
+		"TEMP_262E1CD0-2006-4599-B9FC-EF64772D20FE" /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentBlue;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ryanphanna.RailTrack.WidgetExtension;
+				PRODUCT_NAME = RailTrackWidget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		"TEMP_ADD4D93B-6D19-4E9A-A56B-E878C83FF3B4" /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentBlue;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ryanphanna.RailTrack.WidgetExtension;
+				PRODUCT_NAME = RailTrackWidget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		E67F2FEC9838DD30106B0817 /* Build configuration list for PBXNativeTarget "RailTrackWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2FDFC438A613EFC43E079C4E /* Debug */,
+				CE20783CD221EF92126BE164 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		F2000001 /* Build configuration list for PBXNativeTarget "RailTrack" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -541,8 +762,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		"TEMP_86A85829-7035-4F22-A12F-B84F8CBD3370" = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				"TEMP_262E1CD0-2006-4599-B9FC-EF64772D20FE" /* Debug */,
+				"TEMP_ADD4D93B-6D19-4E9A-A56B-E878C83FF3B4" /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
-
 	};
 	rootObject = F0000001 /* Project object */;
 }

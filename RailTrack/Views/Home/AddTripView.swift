@@ -64,9 +64,13 @@ struct AddTripView: View {
                         FormCard {
                             FormRow(label: "Train Number", icon: "number") {
                                 TextField("e.g. 60", text: $trainNumber)
-                                    .keyboardType(.numberPad)
                                     .font(.rtBody)
                                     .foregroundStyle(ColorTheme.textPrimary)
+                                    .autocorrectionDisabled()
+                                    .textInputAutocapitalization(.characters)
+                                    .onSubmit {
+                                        trainNumber = cleanTrainNumber(trainNumber)
+                                    }
                             }
                         }
 
@@ -134,6 +138,16 @@ struct AddTripView: View {
                     }
                     .padding(20)
                 }
+                .onChange(of: trainNumber) { _, newValue in
+                    let lower = newValue.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+                    if lower.hasPrefix("via") {
+                        selectedOperator = "VIA"
+                    } else if lower.hasPrefix("amtrak") || lower.hasPrefix("amt") {
+                        selectedOperator = "Amtrak"
+                    } else if lower.hasPrefix("go") {
+                        selectedOperator = "GO"
+                    }
+                }
             }
             .navigationTitle("Add Trip")
             .navigationBarTitleDisplayMode(.inline)
@@ -158,12 +172,23 @@ struct AddTripView: View {
 
     // MARK: - Save
 
+    private func cleanTrainNumber(_ input: String) -> String {
+        let lower = input.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        for op in ["via", "amtrak", "amt", "go"] {
+            if lower.hasPrefix(op) {
+                return String(input.dropFirst(op.count)).trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+        }
+        return input.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     private func saveTrip() {
         isSaving = true
+        let finalNumber = cleanTrainNumber(trainNumber)
         let origin = selectedOrigin ?? StationDatabase.shared.station(for: originQuery, operator: selectedOperator)
         let destination = selectedDestination ?? StationDatabase.shared.station(for: destinationQuery, operator: selectedOperator)
         let record = TripRecord(
-            trainNumber: trainNumber.trimmingCharacters(in: .whitespaces),
+            trainNumber: finalNumber,
             trainOperator: selectedOperator,
             origin: origin,
             destination: destination,
