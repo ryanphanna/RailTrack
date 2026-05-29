@@ -25,17 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ICloudBannerView` warning indicator presented at the top of the Home view when the iCloud account status is unavailable
 - Real-time schedule-based train coordinate interpolation in `LiveMapView` based on current progress along the route
 - Autoconnected 10-second timer to dynamically advance the train position on MapKit
-
-### Changed
-- `HomeView` ViewModel replaced with `@Query` + pure computed properties (no more `ObservableObject`)
-- `HomeView` now iterates over `TripRecord` arrays directly and passes `TripRecord` to `TripDetailView`
-- `TripDetailView` accepts `TripRecord` (derives `Trip` internally via `toTrip()`) instead of a `Trip` value type
-- `StatsView` no longer depends on `MockDataService`
-- Form helper components (`StationPickerField`, `FormCard`, `FormRow`, `FieldLabel`) refactored out of `AddTripView.swift` and moved to a dedicated, shared [FormComponents.swift](file:///Users/ryan/Desktop/Dev/Coding/Long-Term/In%20Development/RailTrack/RailTrack/Views/Components/FormComponents.swift)
-- Converted `HomeView` layout from `ScrollView` + `LazyVStack` to a native SwiftUI `List` with clear rows, resolving non-functional `.swipeActions`
-- Fixed hardcoded operator title "VIA" inside delay notifications in `NotificationService` to dynamically use the trip's operator name
-
-### Initial Scaffold (included in first commit)
 - Xcode project scaffold targeting iOS 17+, SwiftUI
 - Core data models: `Trip`, `Station`, `Stop`, `TrainAlert`, `TrainService`
 - `AppState` environment object managing onboarding and auth state
@@ -54,3 +43,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `OnboardingView` — 4-page animated onboarding with spring entrance animations
 - `StatusBadge` and `DelayBanner` reusable components
 - Full `Assets.xcassets` dark-mode colour palette (AccentBlue, AccentGreen, AccentAmber, AccentRed, Background, Surface, SurfaceHigh, TextPrimary, TextSecondary, TextTertiary)
+
+### Changed
+- `HomeView` ViewModel replaced with `@Query` + pure computed properties (no more `ObservableObject`)
+- `HomeView` now iterates over `TripRecord` arrays directly and passes `TripRecord` to `TripDetailView`
+- `TripDetailView` accepts `TripRecord` (derives `Trip` internally via `toTrip()`) instead of a `Trip` value type
+- `StatsView` no longer depends on `MockDataService`
+- Form helper components (`StationPickerField`, `FormCard`, `FormRow`, `FieldLabel`) refactored out of `AddTripView.swift` and moved to a dedicated, shared [FormComponents.swift](file:///Users/ryan/Desktop/Dev/Coding/Long-Term/In%20Development/RailTrack/RailTrack/Views/Components/FormComponents.swift)
+- Converted `HomeView` layout from `ScrollView` + `LazyVStack` to a native SwiftUI `List` with clear rows, resolving non-functional `.swipeActions`
+- Fixed hardcoded operator title "VIA" inside delay notifications in `NotificationService` to dynamically use the trip's operator name
+
+
