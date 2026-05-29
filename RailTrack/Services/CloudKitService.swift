@@ -7,9 +7,14 @@ final class CloudKitService: ObservableObject {
     static let shared = CloudKitService()
 
     @Published var accountStatus: CKAccountStatus = .couldNotDetermine
-    @Published var isSyncEnabled: Bool = true
+    @Published var isSyncEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(isSyncEnabled, forKey: "isSyncEnabled")
+        }
+    }
 
     private init() {
+        self.isSyncEnabled = UserDefaults.standard.object(forKey: "isSyncEnabled") as? Bool ?? true
         Task {
             await checkAccountStatus()
         }

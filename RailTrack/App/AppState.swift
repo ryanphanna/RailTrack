@@ -10,7 +10,12 @@ final class AppState: ObservableObject {
 
     init() {
         self.isOnboarded = UserDefaults.standard.bool(forKey: "isOnboarded")
-        self.currentUser = nil
+        if let data = UserDefaults.standard.data(forKey: "currentUser"),
+           let profile = try? JSONDecoder().decode(UserProfile.self, from: data) {
+            self.currentUser = profile
+        } else {
+            self.currentUser = nil
+        }
     }
 
     func completeOnboarding() {
@@ -19,10 +24,25 @@ final class AppState: ObservableObject {
         Task { await NotificationService.shared.requestPermission() }
     }
 
+    func updateProfile(username: String, displayName: String) {
+        let currentId = currentUser?.id ?? UUID()
+        let newProfile = UserProfile(
+            id: currentId,
+            username: username.trimmingCharacters(in: .whitespacesAndNewlines),
+            displayName: displayName.trimmingCharacters(in: .whitespacesAndNewlines),
+            avatarURL: currentUser?.avatarURL
+        )
+        self.currentUser = newProfile
+        if let data = try? JSONEncoder().encode(newProfile) {
+            UserDefaults.standard.set(data, forKey: "currentUser")
+        }
+    }
+
     func signOut() {
         currentUser = nil
         isOnboarded = false
         UserDefaults.standard.set(false, forKey: "isOnboarded")
+        UserDefaults.standard.removeObject(forKey: "currentUser")
     }
 }
 

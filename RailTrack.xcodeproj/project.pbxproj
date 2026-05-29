@@ -35,6 +35,8 @@
 		A1000026 /* EditTripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000026 /* EditTripView.swift */; };
 		A1000027 /* FormComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000027 /* FormComponents.swift */; };
 		A1000028 /* CloudKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000028 /* CloudKitService.swift */; };
+		A1000029 /* ICloudBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000029 /* ICloudBannerView.swift */; };
+		A1000030 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000030 /* SettingsView.swift */; };
 		A1000099 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000099 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -67,6 +69,8 @@
 		B1000026 /* EditTripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTripView.swift; sourceTree = "<group>"; };
 		B1000027 /* FormComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormComponents.swift; sourceTree = "<group>"; };
 		B1000028 /* CloudKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitService.swift; sourceTree = "<group>"; };
+		B1000029 /* ICloudBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudBannerView.swift; sourceTree = "<group>"; };
+		B1000030 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		B1000099 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C1000001 /* RailTrack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RailTrack.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -139,8 +143,17 @@
 				E1000008 /* Social */,
 				E1000010 /* Onboarding */,
 				E1000011 /* Components */,
+				E1000013 /* Settings */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		E1000013 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				B1000030 /* SettingsView.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 		E1000005 /* Home */ = {
@@ -203,6 +216,7 @@
 				B1000019 /* StatusBadge.swift */,
 				B1000020 /* DelayBanner.swift */,
 				B1000027 /* FormComponents.swift */,
+				B1000029 /* ICloudBannerView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -322,6 +336,8 @@
 				A1000026 /* EditTripView.swift in Sources */,
 				A1000027 /* FormComponents.swift in Sources */,
 				A1000028 /* CloudKitService.swift in Sources */,
+				A1000029 /* ICloudBannerView.swift in Sources */,
+				A1000030 /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -5,6 +5,7 @@ struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \TripRecord.scheduledDeparture, order: .forward) private var records: [TripRecord]
     @State private var showAddTrip = false
+    @State private var showSettings = false
 
     // MARK: - Filtered sections (operate directly on TripRecord to avoid double-conversion)
     private var activeRecord: TripRecord? {
@@ -26,6 +27,12 @@ struct HomeView: View {
                 ColorTheme.background.ignoresSafeArea()
 
                 List {
+                    // iCloud warning banner (only shown if iCloud is not available)
+                    ICloudBannerView()
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: 8, leading: 20, bottom: 8, trailing: 20))
+
                     // Active trip
                     if let rec = activeRecord {
                         Section {
@@ -129,8 +136,22 @@ struct HomeView: View {
             .navigationTitle("RailTrack")
             .navigationBarTitleDisplayMode(.large)
             .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        showSettings = true
+                    } label: {
+                        Image(systemName: "gearshape")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundStyle(ColorTheme.textSecondary)
+                    }
+                }
+            }
             .sheet(isPresented: $showAddTrip) {
                 AddTripView()
+            }
+            .sheet(isPresented: $showSettings) {
+                SettingsView()
             }
         }
     }
