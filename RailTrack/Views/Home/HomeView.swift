@@ -225,7 +225,7 @@ struct HomeView: View {
                                         .padding(.top, 16)
                                 }
                                 
-                                Color.clear.frame(height: 50)
+                                Color.clear.frame(height: 100)
                             }
                             .padding(.horizontal, 20)
                             .padding(.top, 4)
@@ -256,6 +256,7 @@ struct HomeView: View {
                                 }
                             }
                     )
+                    .ignoresSafeArea(edges: .bottom)
                 }
             }
             .toolbar(.hidden, for: .navigationBar) // Hide standard nav bar to let the map take center stage

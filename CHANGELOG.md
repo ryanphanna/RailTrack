@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Redesigned `HomeView` with a full-screen interactive Map background showing all active/upcoming trip routes and a sliding bottom drawer panel peeking out for journey lists, mimicking premium travel apps.
 - Made `StationMarker` and `TrainPositionMarker` internal to reuse them directly on the new Home screen background map.
 
+### Fixed
+- Fixed a layout bug on `HomeView` where the bottom sliding panel floated in mid-air above the bottom tab bar and revealed a gap of map underneath by ignoring the bottom safe area and increasing list spacer height.
+
 ## [1.0.0] - 2026-05-30
 
 ### Added
