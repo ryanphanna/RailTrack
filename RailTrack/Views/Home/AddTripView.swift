@@ -199,21 +199,18 @@ struct AddTripView: View {
                     .foregroundStyle(ColorTheme.textTertiary)
                     .tracking(1)
                 
-                if isOriginFocused {
+                ZStack(alignment: .leading) {
                     TextField("Search…", text: $originQuery, prompt: Text("Search…").foregroundColor(ColorTheme.textTertiary.opacity(0.5)))
                         .font(.rtBody.bold())
                         .foregroundStyle(ColorTheme.textPrimary)
                         .focused($isOriginFocused)
                         .autocorrectionDisabled()
+                        .opacity(isOriginFocused || (selectedOrigin == nil && originQuery.isEmpty) ? 1 : 0)
                         .onChange(of: originQuery) { _, new in
                             originResults = StationDatabase.shared.search(new)
                         }
-                } else {
-                    Button {
-                        selectedOrigin = nil
-                        originQuery = ""
-                        isOriginFocused = true
-                    } label: {
+                    
+                    if !isOriginFocused && (selectedOrigin != nil || !originQuery.isEmpty) {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(originCode)
                                 .font(.system(size: 32, weight: .black, design: .rounded))
@@ -223,8 +220,13 @@ struct AddTripView: View {
                                 .foregroundStyle(ColorTheme.textSecondary)
                                 .lineLimit(1)
                         }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            selectedOrigin = nil
+                            originQuery = ""
+                            isOriginFocused = true
+                        }
                     }
-                    .buttonStyle(.plain)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -250,21 +252,18 @@ struct AddTripView: View {
                     .foregroundStyle(ColorTheme.textTertiary)
                     .tracking(1)
                 
-                if isDestinationFocused {
+                ZStack(alignment: .leading) {
                     TextField("Search…", text: $destinationQuery, prompt: Text("Search…").foregroundColor(ColorTheme.textTertiary.opacity(0.5)))
                         .font(.rtBody.bold())
                         .foregroundStyle(ColorTheme.textPrimary)
                         .focused($isDestinationFocused)
                         .autocorrectionDisabled()
+                        .opacity(isDestinationFocused || (selectedDestination == nil && destinationQuery.isEmpty) ? 1 : 0)
                         .onChange(of: destinationQuery) { _, new in
                             destinationResults = StationDatabase.shared.search(new)
                         }
-                } else {
-                    Button {
-                        selectedDestination = nil
-                        destinationQuery = ""
-                        isDestinationFocused = true
-                    } label: {
+                    
+                    if !isDestinationFocused && (selectedDestination != nil || !destinationQuery.isEmpty) {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(destinationCode)
                                 .font(.system(size: 32, weight: .black, design: .rounded))
@@ -274,8 +273,13 @@ struct AddTripView: View {
                                 .foregroundStyle(ColorTheme.textSecondary)
                                 .lineLimit(1)
                         }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            selectedDestination = nil
+                            destinationQuery = ""
+                            isDestinationFocused = true
+                        }
                     }
-                    .buttonStyle(.plain)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
