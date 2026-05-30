@@ -31,4 +31,6 @@ Config.swift
 
 # AI Agent Configuration
 agents.md
+build_dir/
+
 

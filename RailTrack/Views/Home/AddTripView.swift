@@ -1,6 +1,47 @@
 import SwiftUI
 import SwiftData
 
+struct TicketShape: Shape {
+    var notchRadius: CGFloat = 12
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.minX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
+        
+        let notchY = rect.maxY * 0.62
+        // Right notch
+        path.addLine(to: CGPoint(x: rect.maxX, y: notchY - notchRadius))
+        path.addArc(center: CGPoint(x: rect.maxX, y: notchY),
+                    radius: notchRadius,
+                    startAngle: .degrees(-90),
+                    endAngle: .degrees(90),
+                    clockwise: true)
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+        
+        // Left notch
+        path.addLine(to: CGPoint(x: rect.minX, y: notchY + notchRadius))
+        path.addArc(center: CGPoint(x: rect.minX, y: notchY),
+                    radius: notchRadius,
+                    startAngle: .degrees(90),
+                    endAngle: .degrees(-90),
+                    clockwise: true)
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.minY))
+        
+        return path
+    }
+}
+
+struct DashedLine: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.minX, y: rect.midY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.midY))
+        return path
+    }
+}
+
 struct AddTripView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
@@ -21,7 +62,44 @@ struct AddTripView: View {
     @State private var isLookingUp = false
     @State private var lookupError: String? = nil
 
+    @FocusState private var isOriginFocused: Bool
+    @FocusState private var isDestinationFocused: Bool
+    @FocusState private var isTrainFocused: Bool
+
     private let operators = ["VIA", "Amtrak", "GO", "Other"]
+
+    private func operatorDisplayName(_ op: String) -> String {
+        switch op {
+        case "VIA": return "VIA Rail"
+        case "Amtrak": return "Amtrak"
+        case "GO": return "GO Transit"
+        default: return "Other"
+        }
+    }
+
+    private var originCode: String {
+        if let o = selectedOrigin { return o.code }
+        if !originQuery.isEmpty { return String(originQuery.prefix(3)).uppercased() }
+        return "---"
+    }
+
+    private var originName: String {
+        if let o = selectedOrigin { return o.shortName }
+        if !originQuery.isEmpty { return originQuery }
+        return "Select Origin"
+    }
+
+    private var destinationCode: String {
+        if let d = selectedDestination { return d.code }
+        if !destinationQuery.isEmpty { return String(destinationQuery.prefix(3)).uppercased() }
+        return "---"
+    }
+
+    private var destinationName: String {
+        if let d = selectedDestination { return d.shortName }
+        if !destinationQuery.isEmpty { return destinationQuery }
+        return "Select Destination"
+    }
 
     var body: some View {
         NavigationStack {
@@ -29,143 +107,20 @@ struct AddTripView: View {
                 ColorTheme.background.ignoresSafeArea()
 
                 ScrollView {
-                    VStack(spacing: 16) {
-
-                        // Operator picker
-                        VStack(alignment: .leading, spacing: 10) {
-                            FieldLabel(text: "Operator", icon: "tram")
-                            HStack(spacing: 8) {
-                                ForEach(operators, id: \.self) { op in
-                                    Button {
-                                        selectedOperator = op
-                                        // Clear stations when operator changes
-                                        selectedOrigin = nil
-                                        selectedDestination = nil
-                                        originQuery = ""
-                                        destinationQuery = ""
-                                    } label: {
-                                        Text(op)
-                                            .font(.rtCaption.bold())
-                                            .foregroundStyle(selectedOperator == op ? .white : ColorTheme.textSecondary)
-                                            .padding(.horizontal, 14)
-                                            .padding(.vertical, 8)
-                                            .background(
-                                                selectedOperator == op
-                                                    ? ColorTheme.operatorColor(for: op)
-                                                    : ColorTheme.surface,
-                                                in: RoundedRectangle(cornerRadius: 10)
-                                            )
-                                    }
-                                }
-                            }
-                        }
-                        .padding(16)
-                        .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-
-                        // Train number
-                        FormCard {
-                            FormRow(label: "Train Number", icon: "number") {
-                                HStack {
-                                    TextField("e.g. 60", text: $trainNumber, prompt: Text("e.g. 60").foregroundColor(ColorTheme.textTertiary))
-                                        .font(.rtBody)
-                                        .foregroundStyle(ColorTheme.textPrimary)
-                                        .autocorrectionDisabled()
-                                        .textInputAutocapitalization(.characters)
-                                        .onSubmit {
-                                            trainNumber = cleanTrainNumber(trainNumber)
-                                        }
-                                    
-                                    if (selectedOperator == "VIA" || selectedOperator == "Amtrak" || selectedOperator == "GO") && !trainNumber.isEmpty {
-                                        Button {
-                                            lookupSchedule()
-                                        } label: {
-                                            if isLookingUp {
-                                                ProgressView().tint(ColorTheme.accent)
-                                            } else {
-                                                Text("Lookup")
-                                                    .font(.rtCaption.bold())
-                                                    .foregroundStyle(ColorTheme.accent)
-                                                    .padding(.horizontal, 10)
-                                                    .padding(.vertical, 6)
-                                                    .background(ColorTheme.accent.opacity(0.12), in: Capsule())
-                                            }
-                                        }
-                                        .buttonStyle(.plain)
-                                        .disabled(isLookingUp)
-                                    }
-                                }
-                            }
-                        }
+                    VStack(spacing: 20) {
+                        ticketCard
+                        
+                        searchResultsCard
                         
                         if let error = lookupError {
                             Text(error)
                                 .font(.rtCaption)
                                 .foregroundStyle(ColorTheme.accentRed)
-                                .padding(.horizontal, 16)
+                                .padding(.horizontal, 8)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
 
-                        // Origin station
-                        StationPickerField(
-                            label: "From",
-                            icon: "mappin.circle",
-                            query: $originQuery,
-                            results: $originResults,
-                            selected: $selectedOrigin,
-                            operatorFilter: selectedOperator
-                        )
-
-                        // Destination station
-                        StationPickerField(
-                            label: "To",
-                            icon: "mappin.and.ellipse",
-                            query: $destinationQuery,
-                            results: $destinationResults,
-                            selected: $selectedDestination,
-                            operatorFilter: selectedOperator
-                        )
-
-                        // Departure
-                        FormCard {
-                            HStack {
-                                Image(systemName: "arrow.up.right.circle")
-                                    .font(.system(size: 16))
-                                    .foregroundStyle(ColorTheme.accent)
-                                    .frame(width: 24)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("Departs")
-                                        .font(.rtCaption)
-                                        .foregroundStyle(ColorTheme.textTertiary)
-                                }
-                                Spacer()
-                                DatePicker("", selection: $departureDate, displayedComponents: [.date, .hourAndMinute])
-                                    .labelsHidden()
-                                    .colorScheme(.dark)
-                                    .tint(ColorTheme.accent)
-                            }
-                        }
-
-                        // Arrival
-                        FormCard {
-                            HStack {
-                                Image(systemName: "arrow.down.left.circle")
-                                    .font(.system(size: 16))
-                                    .foregroundStyle(ColorTheme.accent)
-                                    .frame(width: 24)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("Arrives")
-                                        .font(.rtCaption)
-                                        .foregroundStyle(ColorTheme.textTertiary)
-                                }
-                                Spacer()
-                                DatePicker("", selection: $arrivalDate,
-                                           in: departureDate...,
-                                           displayedComponents: [.date, .hourAndMinute])
-                                    .labelsHidden()
-                                    .colorScheme(.dark)
-                                    .tint(ColorTheme.accent)
-                            }
-                        }
+                        scheduleCard
 
                         Color.clear.frame(height: 20)
                     }
@@ -202,13 +157,377 @@ struct AddTripView: View {
         }
     }
 
+    // MARK: - Subviews
+
+    @ViewBuilder
+    private var ticketCard: some View {
+        VStack(spacing: 0) {
+            routeSection
+            
+            // Ticket dashed separator
+            GeometryReader { geo in
+                let notchY = geo.size.height / 2
+                DashedLine()
+                    .stroke(style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
+                    .foregroundStyle(ColorTheme.textTertiary.opacity(0.25))
+                    .frame(height: 1)
+                    .position(x: geo.size.width / 2, y: notchY)
+            }
+            .frame(height: 1)
+            
+            trainSection
+        }
+        .background(
+            TicketShape()
+                .fill(ColorTheme.surface)
+        )
+        .overlay(
+            TicketShape()
+                .stroke(ColorTheme.operatorColor(for: selectedOperator).opacity(0.12), lineWidth: 1.5)
+        )
+    }
+
+    @ViewBuilder
+    private var routeSection: some View {
+        HStack(alignment: .center, spacing: 12) {
+            // Origin
+            VStack(alignment: .leading, spacing: 4) {
+                Text("FROM")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(ColorTheme.textTertiary)
+                    .tracking(1)
+                
+                if isOriginFocused {
+                    TextField("Search…", text: $originQuery, prompt: Text("Search…").foregroundColor(ColorTheme.textTertiary.opacity(0.5)))
+                        .font(.rtBody.bold())
+                        .foregroundStyle(ColorTheme.textPrimary)
+                        .focused($isOriginFocused)
+                        .autocorrectionDisabled()
+                        .onChange(of: originQuery) { _, new in
+                            originResults = StationDatabase.shared.search(new)
+                        }
+                } else {
+                    Button {
+                        selectedOrigin = nil
+                        originQuery = ""
+                        isOriginFocused = true
+                    } label: {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(originCode)
+                                .font(.system(size: 32, weight: .black, design: .rounded))
+                                .foregroundStyle(selectedOrigin != nil ? ColorTheme.textPrimary : ColorTheme.textTertiary.opacity(0.6))
+                            Text(originName)
+                                .font(.system(size: 11, weight: .semibold))
+                                .foregroundStyle(ColorTheme.textSecondary)
+                                .lineLimit(1)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+            // Router dot line
+            VStack(spacing: 4) {
+                Image(systemName: "tram.fill")
+                    .font(.system(size: 15))
+                    .foregroundStyle(ColorTheme.operatorColor(for: selectedOperator))
+                
+                HStack(spacing: 3) {
+                    ForEach(0..<4) { _ in
+                        Circle().fill(ColorTheme.textTertiary.opacity(0.3)).frame(width: 4, height: 4)
+                    }
+                }
+            }
+            .frame(width: 32)
+            
+            // Destination
+            VStack(alignment: .leading, spacing: 4) {
+                Text("TO")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(ColorTheme.textTertiary)
+                    .tracking(1)
+                
+                if isDestinationFocused {
+                    TextField("Search…", text: $destinationQuery, prompt: Text("Search…").foregroundColor(ColorTheme.textTertiary.opacity(0.5)))
+                        .font(.rtBody.bold())
+                        .foregroundStyle(ColorTheme.textPrimary)
+                        .focused($isDestinationFocused)
+                        .autocorrectionDisabled()
+                        .onChange(of: destinationQuery) { _, new in
+                            destinationResults = StationDatabase.shared.search(new)
+                        }
+                } else {
+                    Button {
+                        selectedDestination = nil
+                        destinationQuery = ""
+                        isDestinationFocused = true
+                    } label: {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(destinationCode)
+                                .font(.system(size: 32, weight: .black, design: .rounded))
+                                .foregroundStyle(selectedDestination != nil ? ColorTheme.textPrimary : ColorTheme.textTertiary.opacity(0.6))
+                            Text(destinationName)
+                                .font(.system(size: 11, weight: .semibold))
+                                .foregroundStyle(ColorTheme.textSecondary)
+                                .lineLimit(1)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(.top, 22)
+        .padding(.bottom, 28)
+        .padding(.horizontal, 20)
+    }
+
+    @ViewBuilder
+    private var trainSection: some View {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("TRAIN NUMBER")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(ColorTheme.textTertiary)
+                    .tracking(1)
+                
+                TextField("e.g. 60", text: $trainNumber, prompt: Text("e.g. 60").foregroundColor(ColorTheme.textTertiary.opacity(0.5)))
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .foregroundStyle(ColorTheme.textPrimary)
+                    .focused($isTrainFocused)
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.characters)
+                    .onSubmit {
+                        trainNumber = cleanTrainNumber(trainNumber)
+                    }
+            }
+            
+            Spacer()
+            
+            // Smart operator switcher badge
+            Menu {
+                ForEach(operators, id: \.self) { op in
+                    Button(operatorDisplayName(op)) {
+                        selectedOperator = op
+                    }
+                }
+            } label: {
+                HStack(spacing: 4) {
+                    Text(operatorDisplayName(selectedOperator))
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 8, weight: .bold))
+                }
+                .foregroundStyle(.white)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(ColorTheme.operatorColor(for: selectedOperator), in: Capsule())
+            }
+            
+            // Schedule lookup button
+            if (selectedOperator == "VIA" || selectedOperator == "Amtrak" || selectedOperator == "GO") && !trainNumber.isEmpty {
+                Button {
+                    lookupSchedule()
+                } label: {
+                    if isLookingUp {
+                        ProgressView().tint(ColorTheme.accent)
+                    } else {
+                        Text("Lookup")
+                            .font(.system(size: 11, weight: .bold, design: .rounded))
+                            .foregroundStyle(ColorTheme.accent)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(ColorTheme.accent.opacity(0.12), in: Capsule())
+                    }
+                }
+                .buttonStyle(.plain)
+                .disabled(isLookingUp)
+            }
+        }
+        .padding(.top, 26)
+        .padding(.bottom, 22)
+        .padding(.horizontal, 20)
+    }
+
+    @ViewBuilder
+    private var searchResultsCard: some View {
+        if isOriginFocused && !originResults.isEmpty {
+            VStack(alignment: .leading, spacing: 0) {
+                Text("MATCHING ORIGIN STATIONS")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(ColorTheme.textTertiary)
+                    .tracking(1)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                    .padding(.bottom, 6)
+                
+                ForEach(originResults.prefix(4)) { station in
+                    Button {
+                        selectedOrigin = station
+                        originQuery = station.name
+                        originResults = []
+                        isOriginFocused = false
+                        if let op = station.railOperator {
+                            selectedOperator = op
+                        }
+                    } label: {
+                        HStack(spacing: 12) {
+                            Text(station.code)
+                                .font(.rtMono)
+                                .foregroundStyle(ColorTheme.operatorColor(for: station.railOperator ?? ""))
+                                .frame(width: 36)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(station.name)
+                                    .font(.rtBody)
+                                    .foregroundStyle(ColorTheme.textPrimary)
+                                Text(station.city)
+                                    .font(.rtCaption)
+                                    .foregroundStyle(ColorTheme.textTertiary)
+                            }
+                            Spacer()
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                    }
+                    .buttonStyle(.plain)
+                    
+                    if station.id != originResults.prefix(4).last?.id {
+                        Divider().padding(.leading, 64).opacity(0.08)
+                    }
+                }
+            }
+            .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(ColorTheme.operatorColor(for: selectedOperator).opacity(0.15), lineWidth: 1)
+            )
+        } else if isDestinationFocused && !destinationResults.isEmpty {
+            VStack(alignment: .leading, spacing: 0) {
+                Text("MATCHING DESTINATION STATIONS")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(ColorTheme.textTertiary)
+                    .tracking(1)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                    .padding(.bottom, 6)
+                
+                ForEach(destinationResults.prefix(4)) { station in
+                    Button {
+                        selectedDestination = station
+                        destinationQuery = station.name
+                        destinationResults = []
+                        isDestinationFocused = false
+                        if let op = station.railOperator {
+                            selectedOperator = op
+                        }
+                    } label: {
+                        HStack(spacing: 12) {
+                            Text(station.code)
+                                .font(.rtMono)
+                                .foregroundStyle(ColorTheme.operatorColor(for: station.railOperator ?? ""))
+                                .frame(width: 36)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(station.name)
+                                    .font(.rtBody)
+                                    .foregroundStyle(ColorTheme.textPrimary)
+                                Text(station.city)
+                                    .font(.rtCaption)
+                                    .foregroundStyle(ColorTheme.textTertiary)
+                            }
+                            Spacer()
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                    }
+                    .buttonStyle(.plain)
+                    
+                    if station.id != destinationResults.prefix(4).last?.id {
+                        Divider().padding(.leading, 64).opacity(0.08)
+                    }
+                }
+            }
+            .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(ColorTheme.operatorColor(for: selectedOperator).opacity(0.15), lineWidth: 1)
+            )
+        }
+    }
+
+    @ViewBuilder
+    private var scheduleCard: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Image(systemName: "arrow.up.right.circle.fill")
+                    .font(.system(size: 18))
+                    .foregroundStyle(ColorTheme.operatorColor(for: selectedOperator))
+                    .frame(width: 24)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("DEPARTS")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundStyle(ColorTheme.textTertiary)
+                        .tracking(1)
+                    Text(departureDate.formatted(.dateTime.day().month().hour().minute()))
+                        .font(.rtBody.bold())
+                        .foregroundStyle(ColorTheme.textPrimary)
+                }
+                
+                Spacer()
+                
+                DatePicker("", selection: $departureDate, displayedComponents: [.date, .hourAndMinute])
+                    .labelsHidden()
+                    .colorScheme(.dark)
+                    .tint(ColorTheme.operatorColor(for: selectedOperator))
+            }
+            .padding(.vertical, 14)
+            .padding(.horizontal, 16)
+            
+            Divider().opacity(0.08).padding(.leading, 56)
+            
+            HStack {
+                Image(systemName: "arrow.down.left.circle.fill")
+                    .font(.system(size: 18))
+                    .foregroundStyle(ColorTheme.operatorColor(for: selectedOperator))
+                    .frame(width: 24)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("ARRIVES")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundStyle(ColorTheme.textTertiary)
+                        .tracking(1)
+                    Text(arrivalDate.formatted(.dateTime.day().month().hour().minute()))
+                        .font(.rtBody.bold())
+                        .foregroundStyle(ColorTheme.textPrimary)
+                }
+                
+                Spacer()
+                
+                DatePicker("", selection: $arrivalDate,
+                           in: departureDate...,
+                           displayedComponents: [.date, .hourAndMinute])
+                    .labelsHidden()
+                    .colorScheme(.dark)
+                    .tint(ColorTheme.operatorColor(for: selectedOperator))
+            }
+            .padding(.vertical, 14)
+            .padding(.horizontal, 16)
+        }
+        .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(ColorTheme.operatorColor(for: selectedOperator).opacity(0.08), lineWidth: 1)
+        )
+    }
+
     // MARK: - Validation
 
     private var isFormValid: Bool {
         !trainNumber.trimmingCharacters(in: .whitespaces).isEmpty &&
-        selectedOrigin != nil &&
-        selectedDestination != nil &&
-        selectedOrigin?.id != selectedDestination?.id &&
+        (!originQuery.trimmingCharacters(in: .whitespaces).isEmpty || selectedOrigin != nil) &&
+        (!destinationQuery.trimmingCharacters(in: .whitespaces).isEmpty || selectedDestination != nil) &&
+        (selectedOrigin?.id != selectedDestination?.id || selectedOrigin == nil) &&
         arrivalDate > departureDate
     }
 
@@ -252,7 +571,6 @@ struct AddTripView: View {
         Task {
             if selectedOperator == "VIA" {
                 if let train = await VIALiveDataService.shared.lookupTrainSchedule(trainNumber: cleaned, departureDate: departureDate) {
-                    // Resolve origin station (first stop)
                     if let firstTime = train.times.first {
                         let originStation = StationDatabase.shared.stations.first { $0.id == "VIA-\(firstTime.code)" }
                         ?? Station(
@@ -275,7 +593,6 @@ struct AddTripView: View {
                         }
                     }
                     
-                    // Resolve destination station (last stop)
                     if let lastTime = train.times.last {
                         let destStation = StationDatabase.shared.stations.first { $0.id == "VIA-\(lastTime.code)" }
                         ?? Station(
@@ -302,7 +619,6 @@ struct AddTripView: View {
                 }
             } else if selectedOperator == "Amtrak" {
                 if let train = await AmtrakLiveDataService.shared.lookupTrainSchedule(trainNumber: cleaned, departureDate: departureDate) {
-                    // Resolve origin station (first stop)
                     if let firstStop = train.stations.first {
                         let originStation = StationDatabase.shared.stations.first { $0.id == "AMT-\(firstStop.code)" }
                         ?? Station(
@@ -325,7 +641,6 @@ struct AddTripView: View {
                         }
                     }
                     
-                    // Resolve destination station (last stop)
                     if let lastStop = train.stations.last {
                         let destStation = StationDatabase.shared.stations.first { $0.id == "AMT-\(lastStop.code)" }
                         ?? Station(
@@ -352,7 +667,6 @@ struct AddTripView: View {
                 }
             } else if selectedOperator == "GO" {
                 if let train = await GOLiveDataService.shared.lookupTrainSchedule(trainNumber: cleaned, departureDate: departureDate) {
-                    // Resolve origin station (first stop)
                     if let firstStop = train.times.first {
                         let originStation = GOLiveDataService.shared.resolveStation(code: firstStop.code, name: firstStop.station)
                         selectedOrigin = originStation
@@ -364,7 +678,6 @@ struct AddTripView: View {
                         }
                     }
                     
-                    // Resolve destination station (last stop)
                     if let lastStop = train.times.last {
                         let destStation = GOLiveDataService.shared.resolveStation(code: lastStop.code, name: lastStop.station)
                         selectedDestination = destStation
@@ -384,12 +697,7 @@ struct AddTripView: View {
             isLookingUp = false
         }
     }
-
 }
-
-
-
-
 
 #Preview {
     AddTripView()
