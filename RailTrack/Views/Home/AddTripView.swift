@@ -68,6 +68,20 @@ struct AddTripView: View {
 
     private let operators = ["VIA", "Amtrak", "GO", "Other"]
 
+    init(
+        initialOrigin: Station? = nil,
+        initialDestination: Station? = nil,
+        initialTrainNumber: String = "",
+        initialOperator: String = "VIA"
+    ) {
+        _selectedOrigin = State(initialValue: initialOrigin)
+        _originQuery = State(initialValue: initialOrigin?.name ?? "")
+        _selectedDestination = State(initialValue: initialDestination)
+        _destinationQuery = State(initialValue: initialDestination?.name ?? "")
+        _trainNumber = State(initialValue: initialTrainNumber)
+        _selectedOperator = State(initialValue: initialOperator)
+    }
+
     private func operatorDisplayName(_ op: String) -> String {
         switch op {
         case "VIA": return "VIA Rail"
@@ -134,6 +148,11 @@ struct AddTripView: View {
                         selectedOperator = "Amtrak"
                     } else if lower.hasPrefix("go") {
                         selectedOperator = "GO"
+                    }
+                }
+                .onAppear {
+                    if !trainNumber.isEmpty {
+                        lookupSchedule()
                     }
                 }
             }

@@ -2,11 +2,24 @@ import SwiftUI
 import SwiftData
 import MapKit
 
+struct PrepopulatedTrip: Identifiable {
+    var id: String { "\(trainNumber)-\(operatorName)-\(origin?.id ?? "")-\(destination?.id ?? "")" }
+    let origin: Station?
+    let destination: Station?
+    let trainNumber: String
+    let operatorName: String
+}
+
 struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \TripRecord.scheduledDeparture, order: .forward) private var records: [TripRecord]
-    @State private var showAddTrip = false
+    
+    @State private var activePrepopulatedTrip: PrepopulatedTrip? = nil
     @State private var showSettings = false
+    
+    // Smart Search Query
+    @State private var searchQuery = ""
+    @FocusState private var isSearchFocused: Bool
     
     // Map camera position
     @State private var cameraPosition: MapCameraPosition = .automatic
@@ -34,6 +47,55 @@ struct HomeView: View {
         }.reversed())
     }
 
+    // MARK: - Parser helpers
+    private struct ParsedRoute {
+        let origin: Station
+        let destination: Station
+    }
+    
+    private func parseRouteQuery(_ query: String) -> ParsedRoute? {
+        let clean = query.lowercased()
+        let separators = [" to ", " -> ", " ->", "->", " - ", "-"]
+        
+        for sep in separators {
+            if clean.contains(sep) {
+                let parts = clean.components(separatedBy: sep)
+                guard parts.count == 2 else { continue }
+                let origPart = parts[0].trimmingCharacters(in: .whitespacesAndNewlines)
+                let destPart = parts[1].trimmingCharacters(in: .whitespacesAndNewlines)
+                
+                if let origStation = StationDatabase.shared.search(origPart).first,
+                   let destStation = StationDatabase.shared.search(destPart).first,
+                   origStation.id != destStation.id {
+                    return ParsedRoute(origin: origStation, destination: destStation)
+                }
+            }
+        }
+        return nil
+    }
+    
+    private func parseTrainQuery(_ query: String) -> (number: String, op: String)? {
+        let clean = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !clean.isEmpty else { return nil }
+        
+        // Match operator prefix
+        for op in ["via", "amtrak", "amt", "go"] {
+            if clean.hasPrefix(op) {
+                let num = clean.dropFirst(op.count).trimmingCharacters(in: .whitespacesAndNewlines)
+                if !num.isEmpty {
+                    return (number: num.uppercased(), op: op == "amt" ? "Amtrak" : op.uppercased())
+                }
+            }
+        }
+        
+        // Pure number -> guess VIA Rail
+        if let val = Int(clean) {
+            return (number: "\(val)", op: "VIA")
+        }
+        
+        return nil
+    }
+
     var body: some View {
         NavigationStack {
             GeometryReader { geo in
@@ -47,21 +109,17 @@ struct HomeView: View {
                     // 1. Background Interactive Map
                     Map(position: $cameraPosition) {
                         ForEach(records.map { $0.toTrip() }.filter { $0.isActive || $0.isUpcoming }) { trip in
-                            // Origin station marker
                             Annotation(trip.origin.shortName, coordinate: trip.origin.clCoordinate) {
                                 StationMarker(code: trip.origin.code, isOrigin: true)
                             }
                             
-                            // Destination station marker
                             Annotation(trip.destination.shortName, coordinate: trip.destination.clCoordinate) {
                                 StationMarker(code: trip.destination.code, isOrigin: false)
                             }
                             
-                            // Polyline track
                             MapPolyline(coordinates: [trip.origin.clCoordinate, trip.destination.clCoordinate])
                                 .stroke(ColorTheme.operatorColor(for: trip.trainOperator), lineWidth: 3)
                             
-                            // Live train position (interpolated or GPS)
                             if trip.isActive, let trainCoord = getInterpolatedCoordinate(for: trip) {
                                 Annotation("Train \(trip.trainNumber)", coordinate: trainCoord) {
                                     TrainPositionMarker(operatorColor: ColorTheme.operatorColor(for: trip.trainOperator))
@@ -76,12 +134,13 @@ struct HomeView: View {
                     }
                     .ignoresSafeArea(edges: .all)
                     
-                    // Transparent scrim when drawer is expanded to focus on list
+                    // Scrim overlay
                     if drawerState == .expanded {
                         Color.black
                             .opacity(max(0, min(0.4, (currentHeight - peekHeight) / (expandedHeight - peekHeight) * 0.4)))
                             .ignoresSafeArea()
                             .onTapGesture {
+                                isSearchFocused = false
                                 withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
                                     drawerState = .peek
                                 }
@@ -97,138 +156,352 @@ struct HomeView: View {
                             .padding(.top, 10)
                             .padding(.bottom, 12)
                         
-                        // Header section inside drawer
-                        HStack {
-                            Text("RailTrack")
-                                .font(.system(size: 26, weight: .black, design: .rounded))
-                                .foregroundStyle(ColorTheme.textPrimary)
+                        // Header Search Bar
+                        HStack(spacing: 12) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "magnifyingglass")
+                                    .font(.system(size: 15, weight: .bold))
+                                    .foregroundStyle(ColorTheme.textTertiary)
+                                
+                                TextField("Search train, station, or route…", text: $searchQuery, prompt: Text("Search train, station, or route…").foregroundColor(ColorTheme.textTertiary.opacity(0.6)))
+                                    .font(.rtBody.bold())
+                                    .foregroundStyle(ColorTheme.textPrimary)
+                                    .focused($isSearchFocused)
+                                    .autocorrectionDisabled()
+                                
+                                if !searchQuery.isEmpty {
+                                    Button {
+                                        searchQuery = ""
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundStyle(ColorTheme.textTertiary)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 10)
+                            .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 14))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .stroke(ColorTheme.textTertiary.opacity(0.15), lineWidth: 1)
+                            )
                             
-                            Spacer()
-                            
-                            // Settings gear
+                            // Gear settings button
                             Button {
                                 showSettings = true
                             } label: {
                                 Image(systemName: "gearshape.fill")
-                                    .font(.system(size: 15, weight: .semibold))
+                                    .font(.system(size: 16, weight: .bold))
                                     .foregroundStyle(ColorTheme.textSecondary)
-                                    .padding(9)
-                                    .background(ColorTheme.surfaceHigh, in: Circle())
-                            }
-                            .buttonStyle(.plain)
-                            
-                            // Add trip plus
-                            Button {
-                                showAddTrip = true
-                            } label: {
-                                Image(systemName: "plus")
-                                    .font(.system(size: 15, weight: .bold))
-                                    .foregroundStyle(.white)
-                                    .padding(9)
-                                    .background(ColorTheme.accent, in: Circle())
+                                    .padding(11)
+                                    .background(ColorTheme.surface, in: Circle())
+                                    .overlay(Circle().stroke(ColorTheme.textTertiary.opacity(0.15), lineWidth: 1))
                             }
                             .buttonStyle(.plain)
                         }
                         .padding(.horizontal, 20)
-                        .padding(.bottom, 14)
+                        .padding(.bottom, 16)
                         
-                        // Scrollable trip list content
+                        // Scrollable Content: Lists or Smart Results
                         ScrollView {
-                            VStack(spacing: 20) {
-                                ICloudBannerView()
-                                
-                                // Active trip section
-                                if let rec = activeRecord {
-                                    VStack(alignment: .leading, spacing: 8) {
-                                        HStack(spacing: 6) {
-                                            Image(systemName: "tram.fill")
-                                                .font(.system(size: 11, weight: .bold))
-                                                .foregroundStyle(ColorTheme.accentGreen)
-                                            Text("NOW BOARDING")
-                                                .font(.rtCaption.bold())
-                                                .foregroundStyle(ColorTheme.textSecondary)
-                                                .tracking(0.6)
-                                        }
-                                        .padding(.horizontal, 4)
-                                        
-                                        NavigationLink(destination: TripDetailView(record: rec)) {
-                                            TripCardView(trip: rec.toTrip())
-                                        }
-                                        .buttonStyle(.plain)
-                                    }
-                                }
-                                
-                                // Upcoming section
-                                if !upcomingRecords.isEmpty {
-                                    VStack(alignment: .leading, spacing: 8) {
-                                        HStack(spacing: 6) {
-                                            Image(systemName: "calendar")
-                                                .font(.system(size: 11, weight: .bold))
-                                                .foregroundStyle(ColorTheme.accent)
-                                            Text("UPCOMING")
-                                                .font(.rtCaption.bold())
-                                                .foregroundStyle(ColorTheme.textSecondary)
-                                                .tracking(0.6)
-                                        }
-                                        .padding(.horizontal, 4)
-                                        
-                                        ForEach(upcomingRecords) { rec in
+                            if searchQuery.isEmpty {
+                                // Default Journeys lists
+                                VStack(spacing: 20) {
+                                    ICloudBannerView()
+                                    
+                                    if let rec = activeRecord {
+                                        VStack(alignment: .leading, spacing: 8) {
+                                            HStack(spacing: 6) {
+                                                Image(systemName: "tram.fill")
+                                                    .font(.system(size: 11, weight: .bold))
+                                                    .foregroundStyle(ColorTheme.accentGreen)
+                                                Text("NOW BOARDING")
+                                                    .font(.rtCaption.bold())
+                                                    .foregroundStyle(ColorTheme.textSecondary)
+                                                    .tracking(0.6)
+                                            }
+                                            .padding(.horizontal, 4)
+                                            
                                             NavigationLink(destination: TripDetailView(record: rec)) {
                                                 TripCardView(trip: rec.toTrip())
                                             }
                                             .buttonStyle(.plain)
-                                            .contextMenu {
-                                                Button(role: .destructive) {
-                                                    deleteTrip(id: rec.id)
-                                                } label: {
-                                                    Label("Delete", systemImage: "trash")
+                                        }
+                                    }
+                                    
+                                    if !upcomingRecords.isEmpty {
+                                        VStack(alignment: .leading, spacing: 8) {
+                                            HStack(spacing: 6) {
+                                                Image(systemName: "calendar")
+                                                    .font(.system(size: 11, weight: .bold))
+                                                    .foregroundStyle(ColorTheme.accent)
+                                                Text("UPCOMING")
+                                                    .font(.rtCaption.bold())
+                                                    .foregroundStyle(ColorTheme.textSecondary)
+                                                    .tracking(0.6)
+                                            }
+                                            .padding(.horizontal, 4)
+                                            
+                                            ForEach(upcomingRecords) { rec in
+                                                NavigationLink(destination: TripDetailView(record: rec)) {
+                                                    TripCardView(trip: rec.toTrip())
+                                                }
+                                                .buttonStyle(.plain)
+                                                .contextMenu {
+                                                    Button(role: .destructive) {
+                                                        deleteTrip(id: rec.id)
+                                                    } label: {
+                                                        Label("Delete", systemImage: "trash")
+                                                    }
                                                 }
                                             }
                                         }
                                     }
+                                    
+                                    if !pastRecords.isEmpty {
+                                        VStack(alignment: .leading, spacing: 8) {
+                                            HStack(spacing: 6) {
+                                                Image(systemName: "clock.fill")
+                                                    .font(.system(size: 11, weight: .bold))
+                                                    .foregroundStyle(ColorTheme.textTertiary)
+                                                Text("PAST JOURNEYS")
+                                                    .font(.rtCaption.bold())
+                                                    .foregroundStyle(ColorTheme.textSecondary)
+                                                    .tracking(0.6)
+                                            }
+                                            .padding(.horizontal, 4)
+                                            
+                                            ForEach(pastRecords) { rec in
+                                                NavigationLink(destination: TripDetailView(record: rec)) {
+                                                    TripCardView(trip: rec.toTrip())
+                                                        .opacity(0.65)
+                                                }
+                                                .buttonStyle(.plain)
+                                                .contextMenu {
+                                                    Button(role: .destructive) {
+                                                        deleteTrip(id: rec.id)
+                                                    } label: {
+                                                        Label("Delete", systemImage: "trash")
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    
+                                    if records.isEmpty {
+                                        EmptyTripsView()
+                                            .padding(.top, 16)
+                                    }
+                                    
+                                    Color.clear.frame(height: 100)
                                 }
-                                
-                                // Past section
-                                if !pastRecords.isEmpty {
-                                    VStack(alignment: .leading, spacing: 8) {
-                                        HStack(spacing: 6) {
-                                            Image(systemName: "clock.fill")
-                                                .font(.system(size: 11, weight: .bold))
+                                .padding(.horizontal, 20)
+                                .padding(.top, 4)
+                            } else {
+                                // Smart Search Results
+                                VStack(spacing: 20) {
+                                    let parsedTrain = parseTrainQuery(searchQuery)
+                                    let parsedRoute = parseRouteQuery(searchQuery)
+                                    let stationResults = StationDatabase.shared.search(searchQuery)
+                                    
+                                    // 1. Train lookup result
+                                    if let train = parsedTrain {
+                                        VStack(alignment: .leading, spacing: 8) {
+                                            Text("SCHEDULE LOOKUP")
+                                                .font(.system(size: 9, weight: .bold))
                                                 .foregroundStyle(ColorTheme.textTertiary)
-                                            Text("PAST JOURNEYS")
-                                                .font(.rtCaption.bold())
-                                                .foregroundStyle(ColorTheme.textSecondary)
-                                                .tracking(0.6)
-                                        }
-                                        .padding(.horizontal, 4)
-                                        
-                                        ForEach(pastRecords) { rec in
-                                            NavigationLink(destination: TripDetailView(record: rec)) {
-                                                TripCardView(trip: rec.toTrip())
-                                                    .opacity(0.65)
+                                                .tracking(1)
+                                                .padding(.horizontal, 4)
+                                            
+                                            Button {
+                                                isSearchFocused = false
+                                                activePrepopulatedTrip = PrepopulatedTrip(
+                                                    origin: nil,
+                                                    destination: nil,
+                                                    trainNumber: train.number,
+                                                    operatorName: train.op
+                                                )
+                                            } label: {
+                                                HStack(spacing: 14) {
+                                                    Image(systemName: "magnifyingglass.circle.fill")
+                                                        .font(.system(size: 26))
+                                                        .foregroundStyle(ColorTheme.operatorColor(for: train.op))
+                                                    
+                                                    VStack(alignment: .leading, spacing: 3) {
+                                                        Text("Look up Schedule for Train \(train.number)")
+                                                            .font(.rtBody.bold())
+                                                            .foregroundStyle(ColorTheme.textPrimary)
+                                                        Text("Queries \(train.op) database for live departure/arrival times")
+                                                            .font(.rtCaption)
+                                                            .foregroundStyle(ColorTheme.textTertiary)
+                                                    }
+                                                    Spacer()
+                                                    Image(systemName: "chevron.right")
+                                                        .font(.system(size: 12, weight: .semibold))
+                                                        .foregroundStyle(ColorTheme.textTertiary)
+                                                }
+                                                .padding(16)
+                                                .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 16)
+                                                        .stroke(ColorTheme.operatorColor(for: train.op).opacity(0.15), lineWidth: 1)
+                                                )
                                             }
                                             .buttonStyle(.plain)
-                                            .contextMenu {
-                                                Button(role: .destructive) {
-                                                    deleteTrip(id: rec.id)
-                                                } label: {
-                                                    Label("Delete", systemImage: "trash")
-                                                }
-                                            }
                                         }
                                     }
+                                    
+                                    // 2. Route parsed result
+                                    if let route = parsedRoute {
+                                        VStack(alignment: .leading, spacing: 8) {
+                                            Text("ROUTE MATCH")
+                                                .font(.system(size: 9, weight: .bold))
+                                                .foregroundStyle(ColorTheme.textTertiary)
+                                                .tracking(1)
+                                                .padding(.horizontal, 4)
+                                            
+                                            Button {
+                                                isSearchFocused = false
+                                                activePrepopulatedTrip = PrepopulatedTrip(
+                                                    origin: route.origin,
+                                                    destination: route.destination,
+                                                    trainNumber: "",
+                                                    operatorName: route.origin.railOperator ?? "VIA"
+                                                )
+                                            } label: {
+                                                HStack(spacing: 14) {
+                                                    Image(systemName: "arrow.up.right.and.arrow.down.left.rectangle.fill")
+                                                        .font(.system(size: 26))
+                                                        .foregroundStyle(ColorTheme.accent)
+                                                    
+                                                    VStack(alignment: .leading, spacing: 3) {
+                                                        Text("Add Trip: \(route.origin.shortName) ➔ \(route.destination.shortName)")
+                                                            .font(.rtBody.bold())
+                                                            .foregroundStyle(ColorTheme.textPrimary)
+                                                        Text("Pre-populates origin and destination stations")
+                                                            .font(.rtCaption)
+                                                            .foregroundStyle(ColorTheme.textTertiary)
+                                                    }
+                                                    Spacer()
+                                                    Image(systemName: "plus")
+                                                        .font(.system(size: 14, weight: .bold))
+                                                        .foregroundStyle(ColorTheme.accent)
+                                                        .padding(8)
+                                                        .background(ColorTheme.accent.opacity(0.12), in: Circle())
+                                                }
+                                                .padding(16)
+                                                .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 16)
+                                                        .stroke(ColorTheme.accent.opacity(0.15), lineWidth: 1)
+                                                )
+                                            }
+                                            .buttonStyle(.plain)
+                                        }
+                                    }
+                                    
+                                    // 3. Station search results
+                                    if !stationResults.isEmpty {
+                                        VStack(alignment: .leading, spacing: 8) {
+                                            Text("STATIONS")
+                                                .font(.system(size: 9, weight: .bold))
+                                                .foregroundStyle(ColorTheme.textTertiary)
+                                                .tracking(1)
+                                                .padding(.horizontal, 4)
+                                            
+                                            VStack(spacing: 0) {
+                                                ForEach(stationResults.prefix(4)) { station in
+                                                    Menu {
+                                                        Button {
+                                                            isSearchFocused = false
+                                                            activePrepopulatedTrip = PrepopulatedTrip(
+                                                                origin: station,
+                                                                destination: nil,
+                                                                trainNumber: "",
+                                                                operatorName: station.railOperator ?? "VIA"
+                                                            )
+                                                        } label: {
+                                                            Label("Set as Departure", systemImage: "arrow.up.right.circle")
+                                                        }
+                                                        
+                                                        Button {
+                                                            isSearchFocused = false
+                                                            activePrepopulatedTrip = PrepopulatedTrip(
+                                                                origin: nil,
+                                                                destination: station,
+                                                                trainNumber: "",
+                                                                operatorName: station.railOperator ?? "VIA"
+                                                            )
+                                                        } label: {
+                                                            Label("Set as Arrival", systemImage: "arrow.down.left.circle")
+                                                        }
+                                                    } label: {
+                                                        HStack(spacing: 12) {
+                                                            Text(station.code)
+                                                                .font(.rtMono)
+                                                                .foregroundStyle(ColorTheme.operatorColor(for: station.railOperator ?? ""))
+                                                                .frame(width: 36)
+                                                            VStack(alignment: .leading, spacing: 2) {
+                                                                Text(station.name)
+                                                                    .font(.rtBody.bold())
+                                                                    .foregroundStyle(ColorTheme.textPrimary)
+                                                                Text("\(station.city) • \(station.railOperator ?? "Other")")
+                                                                    .font(.rtCaption)
+                                                                    .foregroundStyle(ColorTheme.textTertiary)
+                                                            }
+                                                            Spacer()
+                                                            Image(systemName: "plus.circle.fill")
+                                                                    .font(.system(size: 16))
+                                                                    .foregroundStyle(ColorTheme.textTertiary.opacity(0.7))
+                                                        }
+                                                        .padding(.horizontal, 16)
+                                                        .padding(.vertical, 12)
+                                                        .contentShape(Rectangle())
+                                                    }
+                                                    .buttonStyle(.plain)
+                                                    
+                                                    if station.id != stationResults.prefix(4).last?.id {
+                                                        Divider().padding(.leading, 64).opacity(0.08)
+                                                    }
+                                                }
+                                            }
+                                            .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 16)
+                                                    .stroke(ColorTheme.textTertiary.opacity(0.12), lineWidth: 1)
+                                            )
+                                        }
+                                    }
+                                    
+                                    // 4. Manual Add fallback
+                                    Button {
+                                        isSearchFocused = false
+                                        activePrepopulatedTrip = PrepopulatedTrip(
+                                            origin: nil,
+                                            destination: nil,
+                                            trainNumber: "",
+                                            operatorName: "VIA"
+                                        )
+                                    } label: {
+                                        Text("Add Trip Manually")
+                                            .font(.rtSubhead.bold())
+                                            .foregroundStyle(.white)
+                                            .frame(maxWidth: .infinity)
+                                            .padding(.vertical, 14)
+                                            .background(ColorTheme.surfaceHigh, in: RoundedRectangle(cornerRadius: 14))
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 14)
+                                                    .stroke(ColorTheme.textTertiary.opacity(0.15), lineWidth: 1)
+                                            )
+                                    }
+                                    .buttonStyle(.plain)
+                                    .padding(.top, 10)
+                                    
+                                    Color.clear.frame(height: 100)
                                 }
-                                
-                                // Empty state
-                                if records.isEmpty {
-                                    EmptyTripsView()
-                                        .padding(.top, 16)
-                                }
-                                
-                                Color.clear.frame(height: 100)
+                                .padding(.horizontal, 20)
                             }
-                            .padding(.horizontal, 20)
-                            .padding(.top, 4)
                         }
                         .scrollDisabled(drawerState == .peek)
                     }
@@ -239,6 +512,7 @@ struct HomeView: View {
                             .shadow(color: Color.black.opacity(0.35), radius: 12, y: -4)
                     )
                     .cornerRadius(24, corners: [.topLeft, .topRight])
+                    .ignoresSafeArea(edges: .bottom)
                     .gesture(
                         DragGesture()
                             .onChanged { value in
@@ -256,13 +530,17 @@ struct HomeView: View {
                                 }
                             }
                     )
-                    .ignoresSafeArea(edges: .bottom)
                 }
             }
             .ignoresSafeArea(edges: .bottom)
-            .toolbar(.hidden, for: .navigationBar) // Hide standard nav bar to let the map take center stage
-            .sheet(isPresented: $showAddTrip) {
-                AddTripView()
+            .toolbar(.hidden, for: .navigationBar)
+            .sheet(item: $activePrepopulatedTrip) { trip in
+                AddTripView(
+                    initialOrigin: trip.origin,
+                    initialDestination: trip.destination,
+                    initialTrainNumber: trip.trainNumber,
+                    initialOperator: trip.operatorName
+                )
             }
             .sheet(isPresented: $showSettings) {
                 SettingsView()
@@ -270,6 +548,13 @@ struct HomeView: View {
             .onAppear {
                 updateMapPosition()
                 LiveActivityManager.shared.syncActiveTrip(activeRecord?.toTrip())
+            }
+            .onChange(of: isSearchFocused) { _, isFocused in
+                if isFocused {
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                        drawerState = .expanded
+                    }
+                }
             }
             .onReceive(liveActivityTimer) { _ in
                 LiveActivityManager.shared.syncActiveTrip(activeRecord?.toTrip())
@@ -321,7 +606,6 @@ struct HomeView: View {
         let activeOrUpcoming = records.map { $0.toTrip() }.filter { $0.isActive || $0.isUpcoming }
         
         if activeOrUpcoming.isEmpty {
-            // Default region: Northeast Corridor (covers Toronto, Montreal, New York)
             let region = MKCoordinateRegion(
                 center: CLLocationCoordinate2D(latitude: 42.8, longitude: -77.2),
                 span: MKCoordinateSpan(latitudeDelta: 7.0, longitudeDelta: 8.0)
@@ -344,7 +628,6 @@ struct HomeView: View {
         let centerLat = (minLat + maxLat) / 2
         let centerLon = (minLon + maxLon) / 2
         
-        // Add 40% padding so markers aren't right at the screen edge
         let latDelta = max(1.2, (maxLat - minLat) * 1.4)
         let lonDelta = max(1.2, (maxLon - minLon) * 1.4)
         
@@ -385,7 +668,7 @@ private struct EmptyTripsView: View {
             Text("No trips yet")
                 .font(.rtHeadline)
                 .foregroundStyle(ColorTheme.textPrimary)
-            Text("Tap + to add your first train journey.")
+            Text("Use the search bar above to look up schedules or add a station route.")
                 .font(.rtBody)
                 .foregroundStyle(ColorTheme.textSecondary)
                 .multilineTextAlignment(.center)
