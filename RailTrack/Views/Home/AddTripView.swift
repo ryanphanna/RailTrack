@@ -141,10 +141,12 @@ struct AddTripView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") { dismiss() }
-                        .font(.rtSubhead)
-                        .foregroundStyle(ColorTheme.textSecondary)
-                        .buttonStyle(.plain)
+                    Button { dismiss() } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(ColorTheme.textSecondary)
+                    }
+                    .buttonStyle(.plain)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Add") { saveTrip() }
