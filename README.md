@@ -13,10 +13,29 @@ Rail travellers have almost no personal tracking tools built for train transit. 
 - **Dynamic Island & Lock Screen Live Activities**: Active widgets displaying live countdowns, ETAs, and dynamically resolved next unvisited stations.
 - **Offline-First SwiftData Storage**: On-device trip logbook persistence, fully editable with automatic departure alerts and reminders.
 
-## Tech Stack
+## Stack
 
-- **UI**: SwiftUI (iOS 17+)
-- **Storage**: SwiftData
+- **Frontend**: SwiftUI (iOS 17+)
+- **Database & Sync**: SwiftData & CloudKit
 - **Live Widgets**: ActivityKit / WidgetKit
 - **Maps**: MapKit (Apple Maps)
-- **Notifications**: UserNotifications framework for departure reminders
+- **Notifications**: UserNotifications framework
+
+## Roadmap
+
+See [ROADMAP.md](ROADMAP.md) for the full plan.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for the list of changes.
+
+## Security
+
+This project adheres to privacy-first travel logging. All private trip data is kept on-device and synced via private iCloud containers.
+
+## Documents
+
+See the [LICENSE](LICENSE) file for license details.
+
+---
+Created by Ryan Hanna | ryanisnota.pro
