@@ -20,9 +20,3 @@ Rail travellers have almost no personal tracking tools built for train transit. 
 - **Live Widgets**: ActivityKit / WidgetKit
 - **Maps**: MapKit (Apple Maps)
 - **Notifications**: UserNotifications framework for departure reminders
-
-## Getting Started
-
-1. Open `RailTrack.xcodeproj` in Xcode 15+.
-2. Select a simulator or target device running iOS 17+.
-3. Build and run. No external backend is required.
