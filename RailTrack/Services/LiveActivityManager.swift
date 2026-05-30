@@ -113,6 +113,8 @@ final class LiveActivityManager: ObservableObject {
             return VIALiveDataService.shared.liveStops[trip.id] ?? []
         } else if trip.trainOperator.uppercased() == "AMTRAK" {
             return AmtrakLiveDataService.shared.liveStops[trip.id] ?? []
+        } else if trip.trainOperator.uppercased() == "GO" {
+            return GOLiveDataService.shared.liveStops[trip.id] ?? []
         }
         return []
     }

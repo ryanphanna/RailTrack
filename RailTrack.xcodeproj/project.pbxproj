@@ -10,6 +10,7 @@
 		4CB786F53F24C27017567D13 /* viasnapshot.json in Resources */ = {isa = PBXBuildFile; fileRef = FB174E8A9A84C292BE3299D4 /* viasnapshot.json */; };
 		67FB8857E3B00AF9962123F2 /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000022 /* DateExtensions.swift */; };
 		89D011DDF3754C7E395D6781 /* amtrak_snapshot.json in Resources */ = {isa = PBXBuildFile; fileRef = F2066D44CD77CEB9B78C614D /* amtrak_snapshot.json */; };
+		A10000B1 /* go_snapshot.json in Resources */ = {isa = PBXBuildFile; fileRef = A10000B2 /* go_snapshot.json */; };
 		9C38014B8B5FF5337B36835E /* AmtrakLiveDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E667C40746B3D76055A0D24E /* AmtrakLiveDataService.swift */; };
 		A1000001 /* RailTrackApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000001 /* RailTrackApp.swift */; };
 		A1000002 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000002 /* AppState.swift */; };
@@ -45,6 +46,7 @@
 		B3228424130219A625B46714 /* RailTrackWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7548D56EA1BFD40EFC9A3AE0 /* RailTrackWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B7E1C2FCF8FFEEA313EF55E4 /* AgenciesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FDF2C84ADE94ABCCD03003C /* AgenciesView.swift */; };
 		C215459A37E7B9F8CD4480B2 /* VIALiveDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5575FFA96CE25666A6C92EA9 /* VIALiveDataService.swift */; };
+		A10000C1 /* GOLiveDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000C2 /* GOLiveDataService.swift */; };
 		C497D0363A19B2B57A212AE4 /* TripActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA42F4F403819047BBEE155 /* TripActivityAttributes.swift */; };
 		D0704CAE64C9E1D046D62542 /* ColorTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000021 /* ColorTheme.swift */; };
 		D5BAA04414282D93B2DD6D64 /* TripActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA42F4F403819047BBEE155 /* TripActivityAttributes.swift */; };
@@ -148,9 +150,11 @@
 		C1000001 /* RailTrack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RailTrack.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E004A3DEE11848BB77BD0AE5 /* RailTrackWidget.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = RailTrackWidget.swift; path = ../../RailTrackWidget/RailTrackWidget.swift; sourceTree = "<group>"; };
 		E667C40746B3D76055A0D24E /* AmtrakLiveDataService.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = AmtrakLiveDataService.swift; path = AmtrakLiveDataService.swift; sourceTree = "<group>"; };
+		A10000C2 /* GOLiveDataService.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = GOLiveDataService.swift; path = GOLiveDataService.swift; sourceTree = "<group>"; };
 		E6F450E2B84A16BB26DDCDF6 /* LiveActivityManager.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; lastKnownFileType = sourcecode.swift; name = LiveActivityManager.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
 		F2066D44CD77CEB9B78C614D /* amtrak_snapshot.json */ = {isa = PBXFileReference; explicitFileType = text.json; lastKnownFileType = text.json; name = amtrak_snapshot.json; path = amtrak_snapshot.json; sourceTree = "<group>"; };
 		FB174E8A9A84C292BE3299D4 /* viasnapshot.json */ = {isa = PBXFileReference; explicitFileType = text.json; lastKnownFileType = text.json; name = viasnapshot.json; path = viasnapshot.json; sourceTree = "<group>"; };
+		A10000B2 /* go_snapshot.json */ = {isa = PBXFileReference; explicitFileType = text.json; lastKnownFileType = text.json; name = go_snapshot.json; path = go_snapshot.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -259,6 +263,7 @@
 				E6F450E2B84A16BB26DDCDF6 /* LiveActivityManager.swift */,
 				5575FFA96CE25666A6C92EA9 /* VIALiveDataService.swift */,
 				E667C40746B3D76055A0D24E /* AmtrakLiveDataService.swift */,
+				A10000C2 /* GOLiveDataService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -348,6 +353,7 @@
 				B1000099 /* Assets.xcassets */,
 				FB174E8A9A84C292BE3299D4 /* viasnapshot.json */,
 				F2066D44CD77CEB9B78C614D /* amtrak_snapshot.json */,
+				A10000B2 /* go_snapshot.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -453,6 +459,7 @@
 				A1000099 /* Assets.xcassets in Resources */,
 				4CB786F53F24C27017567D13 /* viasnapshot.json in Resources */,
 				89D011DDF3754C7E395D6781 /* amtrak_snapshot.json in Resources */,
+				A10000B1 /* go_snapshot.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -529,6 +536,7 @@
 				FA57E72627401C0D14B14EAF /* LiveActivityManager.swift in Sources */,
 				C215459A37E7B9F8CD4480B2 /* VIALiveDataService.swift in Sources */,
 				9C38014B8B5FF5337B36835E /* AmtrakLiveDataService.swift in Sources */,
+				A10000C1 /* GOLiveDataService.swift in Sources */,
 				B7E1C2FCF8FFEEA313EF55E4 /* AgenciesView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -60,11 +60,13 @@ struct AgenciesView: View {
                         name: "GO Transit (Ontario)",
                         opCode: "GO",
                         color: ColorTheme.go,
-                        status: "Offline Schedules",
-                        statusColor: ColorTheme.textTertiary,
+                        status: "Live Tracking Active",
+                        statusColor: ColorTheme.accentGreen,
                         features: [
-                            AgencyFeature(name: "Local Database Timetables", supported: true),
-                            AgencyFeature(name: "Live Updates", supported: false, description: "GTFS-RT planned for future release")
+                            AgencyFeature(name: "Simulated GTFS-RT Live Tracking", supported: true),
+                            AgencyFeature(name: "Real-Time Delay Metrics", supported: true),
+                            AgencyFeature(name: "Lakeshore Corridor Timetable Auto-Lookup", supported: true),
+                            AgencyFeature(name: "Dynamic Island & Lock Screen Live Activities", supported: true)
                         ]
                     )
                     

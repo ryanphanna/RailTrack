@@ -82,6 +82,7 @@ struct FormCard<Content: View>: View {
     @ViewBuilder let content: Content
     var body: some View {
         VStack(spacing: 0) { content }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(16)
             .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
     }

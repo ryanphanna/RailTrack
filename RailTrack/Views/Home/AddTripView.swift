@@ -75,9 +75,8 @@ struct AddTripView: View {
                                             trainNumber = cleanTrainNumber(trainNumber)
                                         }
                                     
-                                    if (selectedOperator == "VIA" || selectedOperator == "Amtrak") && !trainNumber.isEmpty {
+                                    if (selectedOperator == "VIA" || selectedOperator == "Amtrak" || selectedOperator == "GO") && !trainNumber.isEmpty {
                                         Button {
-
                                             lookupSchedule()
                                         } label: {
                                             if isLookingUp {
@@ -91,6 +90,7 @@ struct AddTripView: View {
                                                     .background(ColorTheme.accent.opacity(0.12), in: Capsule())
                                             }
                                         }
+                                        .buttonStyle(.plain)
                                         .disabled(isLookingUp)
                                     }
                                 }
@@ -127,21 +127,43 @@ struct AddTripView: View {
 
                         // Departure
                         FormCard {
-                            FormRow(label: "Departs", icon: "arrow.up.right.circle") {
+                            HStack {
+                                Image(systemName: "arrow.up.right.circle")
+                                    .font(.system(size: 16))
+                                    .foregroundStyle(ColorTheme.accent)
+                                    .frame(width: 24)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Departs")
+                                        .font(.rtCaption)
+                                        .foregroundStyle(ColorTheme.textTertiary)
+                                }
+                                Spacer()
                                 DatePicker("", selection: $departureDate, displayedComponents: [.date, .hourAndMinute])
                                     .labelsHidden()
                                     .colorScheme(.dark)
+                                    .tint(ColorTheme.accent)
                             }
                         }
 
                         // Arrival
                         FormCard {
-                            FormRow(label: "Arrives", icon: "arrow.down.left.circle") {
+                            HStack {
+                                Image(systemName: "arrow.down.left.circle")
+                                    .font(.system(size: 16))
+                                    .foregroundStyle(ColorTheme.accent)
+                                    .frame(width: 24)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Arrives")
+                                        .font(.rtCaption)
+                                        .foregroundStyle(ColorTheme.textTertiary)
+                                }
+                                Spacer()
                                 DatePicker("", selection: $arrivalDate,
                                            in: departureDate...,
                                            displayedComponents: [.date, .hourAndMinute])
                                     .labelsHidden()
                                     .colorScheme(.dark)
+                                    .tint(ColorTheme.accent)
                             }
                         }
 
@@ -165,12 +187,15 @@ struct AddTripView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Cancel") { dismiss() }
+                        .font(.rtSubhead)
                         .foregroundStyle(ColorTheme.textSecondary)
+                        .buttonStyle(.plain)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Add") { saveTrip() }
                         .font(.rtSubhead.bold())
                         .foregroundStyle(isFormValid ? ColorTheme.accent : ColorTheme.textTertiary)
+                        .buttonStyle(.plain)
                         .disabled(!isFormValid || isSaving)
                 }
             }
@@ -319,6 +344,34 @@ struct AddTripView: View {
                         
                         if let schedStr = lastStop.schArr,
                            let date = AmtrakLiveDataService.shared.parseISO8601Date(schedStr) {
+                            arrivalDate = date
+                        }
+                    }
+                } else {
+                    lookupError = "Train not found for selected date."
+                }
+            } else if selectedOperator == "GO" {
+                if let train = await GOLiveDataService.shared.lookupTrainSchedule(trainNumber: cleaned, departureDate: departureDate) {
+                    // Resolve origin station (first stop)
+                    if let firstStop = train.times.first {
+                        let originStation = GOLiveDataService.shared.resolveStation(code: firstStop.code, name: firstStop.station)
+                        selectedOrigin = originStation
+                        originQuery = originStation.name
+                        
+                        if let schedStr = firstStop.departure?.scheduled ?? firstStop.scheduled,
+                           let date = GOLiveDataService.shared.parseISO8601Date(schedStr) {
+                            departureDate = date
+                        }
+                    }
+                    
+                    // Resolve destination station (last stop)
+                    if let lastStop = train.times.last {
+                        let destStation = GOLiveDataService.shared.resolveStation(code: lastStop.code, name: lastStop.station)
+                        selectedDestination = destStation
+                        destinationQuery = destStation.name
+                        
+                        if let schedStr = lastStop.arrival?.scheduled ?? lastStop.scheduled,
+                           let date = GOLiveDataService.shared.parseISO8601Date(schedStr) {
                             arrivalDate = date
                         }
                     }

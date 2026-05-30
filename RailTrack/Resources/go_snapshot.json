@@ -1,0 +1,174 @@
+{
+  "100": {
+    "lat": 43.4502,
+    "lng": -79.6828,
+    "speed": 95,
+    "direction": 45.0,
+    "poll": "2026-05-30T16:00:00Z",
+    "departed": true,
+    "arrived": false,
+    "from": "Hamilton",
+    "to": "Toronto",
+    "instance": "2026-05-30",
+    "times": [
+      {
+        "station": "Hamilton GO Centre",
+        "code": "HAM",
+        "estimated": "2026-05-30T15:00:00Z",
+        "scheduled": "2026-05-30T15:00:00Z",
+        "eta": "ARR",
+        "departure": {
+          "estimated": "2026-05-30T15:02:00Z",
+          "scheduled": "2026-05-30T15:02:00Z"
+        },
+        "diffMin": 0
+      },
+      {
+        "station": "Burlington GO Station",
+        "code": "BUR",
+        "estimated": "2026-05-30T15:20:00Z",
+        "scheduled": "2026-05-30T15:20:00Z",
+        "eta": "ARR",
+        "arrival": {
+          "estimated": "2026-05-30T15:20:00Z",
+          "scheduled": "2026-05-30T15:20:00Z"
+        },
+        "departure": {
+          "estimated": "2026-05-30T15:22:00Z",
+          "scheduled": "2026-05-30T15:22:00Z"
+        },
+        "diffMin": 0
+      },
+      {
+        "station": "Oakville GO Station",
+        "code": "OAK",
+        "estimated": "2026-05-30T15:35:00Z",
+        "scheduled": "2026-05-30T15:35:00Z",
+        "eta": "ARR",
+        "arrival": {
+          "estimated": "2026-05-30T15:35:00Z",
+          "scheduled": "2026-05-30T15:35:00Z"
+        },
+        "departure": {
+          "estimated": "2026-05-30T15:37:00Z",
+          "scheduled": "2026-05-30T15:37:00Z"
+        },
+        "diffMin": 0
+      },
+      {
+        "station": "Mississauga GO Station",
+        "code": "MIS",
+        "estimated": "2026-05-30T15:48:00Z",
+        "scheduled": "2026-05-30T15:45:00Z",
+        "eta": "ARR",
+        "arrival": {
+          "estimated": "2026-05-30T15:48:00Z",
+          "scheduled": "2026-05-30T15:45:00Z"
+        },
+        "departure": {
+          "estimated": "2026-05-30T15:50:00Z",
+          "scheduled": "2026-05-30T15:47:00Z"
+        },
+        "diffMin": 3
+      },
+      {
+        "station": "Toronto Union Station",
+        "code": "TOR",
+        "estimated": "2026-05-30T16:08:00Z",
+        "scheduled": "2026-05-30T16:05:00Z",
+        "eta": "ARR",
+        "arrival": {
+          "estimated": "2026-05-30T16:08:00Z",
+          "scheduled": "2026-05-30T16:05:00Z"
+        },
+        "diffMin": 3
+      }
+    ]
+  },
+  "101": {
+    "lat": 43.6453,
+    "lng": -79.3806,
+    "speed": 0,
+    "direction": 225.0,
+    "poll": "2026-05-30T16:30:00Z",
+    "departed": false,
+    "arrived": false,
+    "from": "Toronto",
+    "to": "Hamilton",
+    "instance": "2026-05-30",
+    "times": [
+      {
+        "station": "Toronto Union Station",
+        "code": "TOR",
+        "estimated": "2026-05-30T17:00:00Z",
+        "scheduled": "2026-05-30T17:00:00Z",
+        "eta": "ARR",
+        "departure": {
+          "estimated": "2026-05-30T17:00:00Z",
+          "scheduled": "2026-05-30T17:00:00Z"
+        },
+        "diffMin": 0
+      },
+      {
+        "station": "Mississauga GO Station",
+        "code": "MIS",
+        "estimated": "2026-05-30T17:15:00Z",
+        "scheduled": "2026-05-30T17:15:00Z",
+        "eta": "ARR",
+        "arrival": {
+          "estimated": "2026-05-30T17:15:00Z",
+          "scheduled": "2026-05-30T17:15:00Z"
+        },
+        "departure": {
+          "estimated": "2026-05-30T17:17:00Z",
+          "scheduled": "2026-05-30T17:17:00Z"
+        },
+        "diffMin": 0
+      },
+      {
+        "station": "Oakville GO Station",
+        "code": "OAK",
+        "estimated": "2026-05-30T17:28:00Z",
+        "scheduled": "2026-05-30T17:28:00Z",
+        "eta": "ARR",
+        "arrival": {
+          "estimated": "2026-05-30T17:28:00Z",
+          "scheduled": "2026-05-30T17:28:00Z"
+        },
+        "departure": {
+          "estimated": "2026-05-30T17:30:00Z",
+          "scheduled": "2026-05-30T17:30:00Z"
+        },
+        "diffMin": 0
+      },
+      {
+        "station": "Burlington GO Station",
+        "code": "BUR",
+        "estimated": "2026-05-30T17:43:00Z",
+        "scheduled": "2026-05-30T17:43:00Z",
+        "eta": "ARR",
+        "arrival": {
+          "estimated": "2026-05-30T17:43:00Z",
+          "scheduled": "2026-05-30T17:43:00Z"
+        },
+        "departure": {
+          "estimated": "2026-05-30T17:45:00Z",
+          "scheduled": "2026-05-30T17:45:00Z"
+        },
+        "diffMin": 0
+      },
+      {
+        "station": "Hamilton GO Centre",
+        "code": "HAM",
+        "estimated": "2026-05-30T18:05:00Z",
+        "scheduled": "2026-05-30T18:05:00Z",
+        "eta": "ARR",
+        "arrival": {
+          "estimated": "2026-05-30T18:05:00Z",
+          "scheduled": "2026-05-30T18:05:00Z"
+        },
+        "diffMin": 0
+      }
+    ]
+  }
+}

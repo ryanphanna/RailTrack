@@ -12,6 +12,7 @@ struct TripDetailView: View {
     
     @ObservedObject private var viaLiveDataService = VIALiveDataService.shared
     @ObservedObject private var amtrakLiveDataService = AmtrakLiveDataService.shared
+    @ObservedObject private var goLiveDataService = GOLiveDataService.shared
 
     // Derive display model from the persisted record
     private var trip: Trip { record.toTrip() }
@@ -33,6 +34,8 @@ struct TripDetailView: View {
             allStops = viaLiveDataService.liveStops[trip.id]
         } else if trip.trainOperator.uppercased() == "AMTRAK" {
             allStops = amtrakLiveDataService.liveStops[trip.id]
+        } else if trip.trainOperator.uppercased() == "GO" {
+            allStops = goLiveDataService.liveStops[trip.id]
         } else {
             allStops = nil
         }
