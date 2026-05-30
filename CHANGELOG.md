@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- GO Transit schedule autocompletes and simulated GTFS-RT live tracking using a local `go_snapshot.json` feed
+- Upgraded `StatsView` with a premium Boarding Pass profile header card, travel hours tracking, and Train Passport Stamps collection displaying concentric postmark badges for visited stations
+- DatePicker HStack row layout alignment improvements and plain button styling in `AddTripView` resolving system capsule button borders
 - Amtrak Live GPS train position and speed tracking using the unofficial `api.amtraker.com/v3/trains` feed
 - Real-time Amtrak delay minutes calculation based on arrival offsets at current or departed stations
 - Cache for Amtrak live intermediate stops and timeline rendering in `TripDetailView`
