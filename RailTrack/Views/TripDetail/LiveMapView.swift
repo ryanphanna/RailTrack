@@ -109,7 +109,7 @@ struct LiveMapView: View {
 
 // MARK: - Markers
 
-private struct StationMarker: View {
+struct StationMarker: View {
     let code: String
     let isOrigin: Bool
 
@@ -131,7 +131,7 @@ private struct StationMarker: View {
     }
 }
 
-private struct TrainPositionMarker: View {
+struct TrainPositionMarker: View {
     let operatorColor: Color
     @State private var pulse = false
 
@@ -158,7 +158,7 @@ private struct TrainPositionMarker: View {
     }
 }
 
-private struct Triangle: Shape {
+struct Triangle: Shape {
     func path(in rect: CGRect) -> Path {
         Path { p in
             p.move(to: CGPoint(x: rect.midX, y: rect.maxY))
