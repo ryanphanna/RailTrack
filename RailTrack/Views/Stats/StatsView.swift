@@ -24,6 +24,9 @@ struct StatsView: View {
         var longestStreak: Int
         var favoriteOperator: String
         var stamps: [StationStamp]
+        var uniqueCountries: Int
+        var onTimeCount: Int
+        var cancelledCount: Int
     }
 
     private var stats: ComputedStats {
@@ -40,37 +43,35 @@ struct StatsView: View {
                 } else {
                     ScrollView {
                         VStack(spacing: 20) {
-                            
-                            // Traveler Boarding Pass Profile Card
+
+                            // Profile + Stats card
                             let userProfile = appState.currentUser ?? UserProfile(
                                 id: UUID(),
                                 username: "traveler",
                                 displayName: "Rail Traveler"
                             )
-                            
+
                             BoardingPassProfileCard(
                                 displayName: userProfile.displayName,
                                 username: userProfile.username,
                                 totalTrips: stats.totalTrips,
                                 totalKm: stats.totalKm,
-                                totalHours: stats.totalHours
+                                totalHours: stats.totalHours,
+                                uniqueStations: stats.uniqueStations,
+                                onTimeCount: stats.onTimeCount,
+                                currentStreak: stats.currentStreak,
+                                longestStreak: stats.longestStreak,
+                                uniqueCountries: stats.uniqueCountries,
+                                cancelledCount: stats.cancelledCount
                             )
                             .padding(.horizontal, 20)
 
-                            // Train Passport Stamps Collection
+                            // Scattered passport stamps
                             PassportStampCard(stamps: stats.stamps)
                                 .padding(.horizontal, 20)
 
                             // On-time card
                             OnTimeCard(percent: stats.onTimePercent)
-                                .padding(.horizontal, 20)
-
-                            // Streak card
-                            StreakCard(current: stats.currentStreak, longest: stats.longestStreak)
-                                .padding(.horizontal, 20)
-
-                            // Operator breakdown
-                            OperatorBreakdownCard(favoriteOperator: stats.favoriteOperator)
                                 .padding(.horizontal, 20)
 
                             Color.clear.frame(height: 20)
@@ -91,6 +92,7 @@ struct StatsView: View {
         let trips = records.map { $0.toTrip() }
         let completedOrPastTrips = trips.filter { !$0.isUpcoming }
         let validTrips = trips.filter { $0.status != .cancelled }
+        let cancelledCount = trips.filter { $0.status == .cancelled }.count
 
         // Distance in km
         var totalKm: Double = 0.0
@@ -147,10 +149,16 @@ struct StatsView: View {
         // Favorite Operator
         let operators = validTrips.map { $0.trainOperator }
         var counts: [String: Int] = [:]
-        for op in operators {
-            counts[op, default: 0] += 1
-        }
+        for op in operators { counts[op, default: 0] += 1 }
         let favoriteOperator = counts.max(by: { $0.value < $1.value })?.key ?? "VIA"
+
+        // Unique countries
+        var stationObjs: [Station] = []
+        for trip in validTrips {
+            stationObjs.append(trip.origin)
+            stationObjs.append(trip.destination)
+        }
+        let uniqueCountries = Set(stationObjs.map { $0.country }).count
 
         // Build passport stamps from visited stations
         var stationVisits: [String: Date] = [:]
@@ -159,7 +167,7 @@ struct StatsView: View {
             stationVisits[trip.origin.id] = min(stationVisits[trip.origin.id] ?? .distantFuture, dep)
             stationVisits[trip.destination.id] = min(stationVisits[trip.destination.id] ?? .distantFuture, dep)
         }
-        
+
         var stamps: [StationStamp] = []
         for (stationId, date) in stationVisits {
             if let station = StationDatabase.shared.stations.first(where: { $0.id == stationId }) {
@@ -193,7 +201,10 @@ struct StatsView: View {
             currentStreak: currentStreak,
             longestStreak: longestStreak,
             favoriteOperator: favoriteOperator,
-            stamps: stamps
+            stamps: stamps,
+            uniqueCountries: uniqueCountries,
+            onTimeCount: onTimeTrips.count,
+            cancelledCount: cancelledCount
         )
     }
 }
@@ -206,86 +217,94 @@ private struct BoardingPassProfileCard: View {
     let totalTrips: Int
     let totalKm: Double
     let totalHours: Int
-    
+    let uniqueStations: Int
+    let onTimeCount: Int
+    let currentStreak: Int
+    let longestStreak: Int
+    let uniqueCountries: Int
+    let cancelledCount: Int
+
     var body: some View {
-        VStack(spacing: 16) {
-            HStack(spacing: 16) {
-                // Circular initials avatar with a premium gradient background
-                ZStack {
-                    Circle()
-                        .fill(LinearGradient(colors: [ColorTheme.accent, ColorTheme.accent.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                        .frame(width: 56, height: 56)
-                    
-                    Text(getInitials(displayName))
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
+        VStack(spacing: 0) {
+            // Top: Avatar + name + big stats row
+            VStack(spacing: 16) {
+                HStack(spacing: 14) {
+                    // Avatar
+                    ZStack {
+                        Circle()
+                            .fill(LinearGradient(
+                                colors: [ColorTheme.accent, ColorTheme.accent.opacity(0.55)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ))
+                            .frame(width: 52, height: 52)
+                        Text(getInitials(displayName))
+                            .font(.system(size: 18, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                    }
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(displayName)
+                            .font(.rtHeadline)
+                            .foregroundStyle(ColorTheme.textPrimary)
+                        Text("RailTrack")
+                            .font(.rtCaption)
+                            .foregroundStyle(ColorTheme.textTertiary)
+                    }
+
+                    Spacer()
                 }
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(displayName)
-                        .font(.rtHeadline)
-                        .foregroundStyle(ColorTheme.textPrimary)
-                    
-                    Text("@\(username)")
-                        .font(.rtCaption)
-                        .foregroundStyle(ColorTheme.textTertiary)
-                }
-                
-                Spacer()
-                
-                Image(systemName: "airplane.arrival")
-                    .font(.system(size: 16))
-                    .foregroundStyle(ColorTheme.textTertiary)
-                    .opacity(0.3)
-            }
-            
-            Divider().opacity(0.08)
-            
-            // Value metrics
-            HStack(alignment: .center) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("DISTANCE")
-                        .font(.system(size: 9, weight: .bold))
-                        .foregroundStyle(ColorTheme.textTertiary)
-                        .tracking(1)
-                    Text("\(Int(totalKm)) km")
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
-                        .foregroundStyle(ColorTheme.textPrimary)
-                }
-                
-                Spacer()
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("TIME")
-                        .font(.system(size: 9, weight: .bold))
-                        .foregroundStyle(ColorTheme.textTertiary)
-                        .tracking(1)
-                    Text("\(totalHours) hrs")
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
-                        .foregroundStyle(ColorTheme.textPrimary)
-                }
-                
-                Spacer()
-                
-                VStack(alignment: .trailing, spacing: 4) {
-                    Text("JOURNEYS")
-                        .font(.system(size: 9, weight: .bold))
-                        .foregroundStyle(ColorTheme.textTertiary)
-                        .tracking(1)
-                    Text("\(totalTrips)")
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
-                        .foregroundStyle(ColorTheme.textPrimary)
+
+                // Primary big stats — distance · hours with chevron (App in the Air style)
+                HStack(spacing: 0) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Statistics")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(ColorTheme.textTertiary)
+                        HStack(alignment: .firstTextBaseline, spacing: 16) {
+                            Text("\(Int(totalKm)) km")
+                                .font(.system(size: 22, weight: .bold, design: .rounded))
+                                .foregroundStyle(ColorTheme.textPrimary)
+                            Text("\(totalHours) hrs")
+                                .font(.system(size: 22, weight: .bold, design: .rounded))
+                                .foregroundStyle(ColorTheme.textPrimary)
+                        }
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(ColorTheme.textTertiary.opacity(0.5))
                 }
             }
+            .padding(20)
+
+            // Divider with dashed feel
+            Rectangle()
+                .fill(ColorTheme.textTertiary.opacity(0.08))
+                .frame(height: 1)
+
+            // Compact icon-stat grid (App in the Air bottom row)
+            HStack(spacing: 0) {
+                IconStatCell(icon: "tram.fill", value: totalTrips, label: nil)
+                Divider().frame(height: 28).opacity(0.15)
+                IconStatCell(icon: "building.2.fill", value: uniqueStations, label: nil)
+                Divider().frame(height: 28).opacity(0.15)
+                IconStatCell(icon: "flag.fill", value: uniqueCountries, label: nil)
+                Divider().frame(height: 28).opacity(0.15)
+                IconStatCell(icon: "checkmark.seal.fill", value: onTimeCount, label: nil)
+                Divider().frame(height: 28).opacity(0.15)
+                IconStatCell(icon: "flame.fill", value: currentStreak, label: nil)
+            }
+            .padding(.vertical, 14)
+            .padding(.horizontal, 20)
         }
-        .padding(20)
         .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 18))
         .overlay(
             RoundedRectangle(cornerRadius: 18)
-                .strokeBorder(ColorTheme.accent.opacity(0.15), lineWidth: 1)
+                .strokeBorder(ColorTheme.accent.opacity(0.12), lineWidth: 1)
         )
     }
-    
+
     private func getInitials(_ name: String) -> String {
         let parts = name.split(separator: " ")
         if parts.count >= 2 {
@@ -295,44 +314,136 @@ private struct BoardingPassProfileCard: View {
     }
 }
 
+// MARK: - Icon Stat Cell
+
+private struct IconStatCell: View {
+    let icon: String
+    let value: Int
+    let label: String?
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.system(size: 14))
+                .foregroundStyle(ColorTheme.textTertiary.opacity(0.7))
+            Text("\(value)")
+                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                .foregroundStyle(ColorTheme.textSecondary)
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
+
 // MARK: - Passport Stamp Card
 
 private struct PassportStampCard: View {
     let stamps: [StationStamp]
-    
+
+    // For the two-column header numbers (Special / Countries)
+    private var viaCount: Int { stamps.filter { $0.station.railOperator == "VIA" }.count }
+    private var countryCount: Int { Set(stamps.compactMap { $0.station.country }).count }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack {
-                Label("Transit Passport Stamps", systemImage: "text.book.closed.fill")
-                    .font(.rtSubhead)
-                    .foregroundStyle(ColorTheme.textPrimary)
-                Spacer()
-                Text("\(stamps.count) unlocked")
-                    .font(.rtCaption.bold())
-                    .foregroundStyle(ColorTheme.accent)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
-                    .background(ColorTheme.accent.opacity(0.12), in: Capsule())
+        VStack(alignment: .leading, spacing: 0) {
+
+            // Header row: two big stats + title (App in the Air style)
+            HStack(alignment: .top, spacing: 0) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Stations")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(ColorTheme.textSecondary)
+                    Text("\(stamps.count)")
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                        .foregroundStyle(ColorTheme.textPrimary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Countries")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(ColorTheme.textSecondary)
+                    Text("\(countryCount)")
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                        .foregroundStyle(ColorTheme.textPrimary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            
+            .padding(.horizontal, 20)
+            .padding(.top, 20)
+            .padding(.bottom, 16)
+
             if stamps.isEmpty {
-                Text("Lock Screen widgets and on-time train travels will populate postage stamps for each station visited.")
+                Text("Complete trips to earn passport stamps for each station visited.")
                     .font(.rtCaption)
                     .foregroundStyle(ColorTheme.textTertiary)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 20)
             } else {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 18) {
-                    ForEach(stamps) { stamp in
-                        PassportStampView(stamp: stamp)
-                    }
-                }
-                .padding(.vertical, 8)
+                // Freeform scattered stamp layout
+                ScatteredStampsCanvas(stamps: stamps)
+                    .padding(.horizontal, 12)
+                    .padding(.bottom, 20)
             }
         }
-        .padding(20)
         .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 18))
+    }
+}
+
+// MARK: - Scattered Stamps Canvas
+
+private struct ScatteredStampsCanvas: View {
+    let stamps: [StationStamp]
+
+    // Deterministic offset/rotation per stamp using its code as seed
+    private func seed(for stamp: StationStamp) -> Int {
+        stamp.station.code.unicodeScalars.reduce(0) { $0 + Int($1.value) }
+    }
+
+    private func rotation(for stamp: StationStamp) -> Double {
+        let s = seed(for: stamp)
+        return Double((s % 22) - 11) // -11° to +11°
+    }
+
+    private func xOffset(for stamp: StationStamp, in width: CGFloat) -> CGFloat {
+        let s = seed(for: stamp)
+        let band = CGFloat((s * 37 + 13) % 100) / 100.0 // 0…1
+        return -width * 0.3 + band * width * 0.6
+    }
+
+    private func yOffset(for stamp: StationStamp, index: Int) -> CGFloat {
+        let s = seed(for: stamp)
+        let jitter = CGFloat((s * 17 + index * 31) % 24) - 12
+        return jitter
+    }
+
+    var body: some View {
+        GeometryReader { geo in
+            let displayStamps = Array(stamps.prefix(9)) // Show up to 9
+            let stampSize: CGFloat = 82
+            let columns = 3
+            let colWidth = geo.size.width / CGFloat(columns)
+
+            ZStack {
+                ForEach(Array(displayStamps.enumerated()), id: \.element.id) { index, stamp in
+                    let col = index % columns
+                    let row = index / columns
+                    let baseX = colWidth * CGFloat(col) + colWidth / 2
+                    let baseY = stampSize * 1.1 * CGFloat(row) + stampSize / 2
+                    let extraX = xOffset(for: stamp, in: colWidth * 0.25)
+                    let extraY = yOffset(for: stamp, index: index)
+
+                    PassportStampView(stamp: stamp)
+                        .frame(width: stampSize, height: stampSize + 22)
+                        .rotationEffect(.degrees(rotation(for: stamp)))
+                        .position(x: baseX + extraX, y: baseY + extraY)
+                        .zIndex(Double(displayStamps.count - index))
+                }
+            }
+            .frame(height: CGFloat(((displayStamps.count - 1) / columns + 1)) * stampSize * 1.15 + 16)
+        }
+        .fixedSize(horizontal: false, vertical: true)
     }
 }
 
@@ -340,51 +451,45 @@ private struct PassportStampCard: View {
 
 private struct PassportStampView: View {
     let stamp: StationStamp
-    @State private var rotationAngle: Double = 0.0
-    
+
     private var inkColor: Color {
         ColorTheme.operatorColor(for: stamp.station.railOperator ?? "VIA")
     }
-    
+
     var body: some View {
-        VStack(spacing: 6) {
+        VStack(spacing: 5) {
             ZStack {
-                // Postmark cancellation outer border
+                // Outer ring
                 Circle()
-                    .stroke(inkColor.opacity(0.65), lineWidth: 2)
-                    .frame(width: 72, height: 72)
-                
+                    .stroke(inkColor.opacity(0.55), lineWidth: 2.5)
+                    .frame(width: 68, height: 68)
+                // Inner ring
                 Circle()
-                    .stroke(inkColor.opacity(0.65), lineWidth: 1)
-                    .frame(width: 64, height: 64)
-                
+                    .stroke(inkColor.opacity(0.35), lineWidth: 1)
+                    .frame(width: 58, height: 58)
+
+                // Stamp content
                 VStack(spacing: 0) {
                     Text(stamp.station.railOperator?.uppercased() ?? "RAIL")
                         .font(.system(size: 7, weight: .bold, design: .rounded))
-                        .foregroundStyle(inkColor.opacity(0.75))
-                        .tracking(1)
-                    
+                        .foregroundStyle(inkColor.opacity(0.7))
+                        .tracking(1.2)
+
                     Text(stamp.station.code)
-                        .font(.system(size: 18, weight: .black, design: .monospaced))
+                        .font(.system(size: 17, weight: .black, design: .monospaced))
                         .foregroundStyle(inkColor)
-                        .padding(.vertical, -3)
-                    
+                        .padding(.vertical, -2)
+
                     Text(stamp.date.formatted(.dateTime.day().month(.twoDigits).year(.twoDigits)))
-                        .font(.system(size: 7, weight: .bold, design: .monospaced))
-                        .foregroundStyle(inkColor.opacity(0.75))
+                        .font(.system(size: 6.5, weight: .bold, design: .monospaced))
+                        .foregroundStyle(inkColor.opacity(0.65))
                 }
             }
-            .rotationEffect(.degrees(rotationAngle))
-            
+
             Text(stamp.station.shortName)
-                .font(.rtCaption)
+                .font(.system(size: 10, weight: .medium, design: .rounded))
                 .foregroundStyle(ColorTheme.textSecondary)
                 .lineLimit(1)
-        }
-        .frame(maxWidth: .infinity)
-        .onAppear {
-            let seed = stamp.station.code.unicodeScalars.reduce(0) { $0 + Int($1.value) }
-            rotationAngle = Double((seed % 14) - 7) // Deterministic tilt between -7 and +7 degrees
         }
     }
 }
@@ -422,82 +527,6 @@ private struct OnTimeCard: View {
         }
         .padding(20)
         .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 18))
-    }
-}
-
-// MARK: - Streak Card
-
-private struct StreakCard: View {
-    let current: Int
-    let longest: Int
-
-    var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("🔥 Current Streak")
-                    .font(.rtCaption)
-                    .foregroundStyle(ColorTheme.textSecondary)
-                Text("\(current) trips")
-                    .font(.rtHeadline)
-                    .foregroundStyle(ColorTheme.textPrimary)
-            }
-            Spacer()
-            Divider().frame(height: 40).opacity(0.2)
-            Spacer()
-            VStack(alignment: .trailing, spacing: 4) {
-                Text("Best Streak")
-                    .font(.rtCaption)
-                    .foregroundStyle(ColorTheme.textSecondary)
-                Text("\(longest) trips")
-                    .font(.rtHeadline)
-                    .foregroundStyle(ColorTheme.accentAmber)
-            }
-        }
-        .padding(20)
-        .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 18))
-    }
-}
-
-// MARK: - Operator Breakdown
-
-private struct OperatorBreakdownCard: View {
-    let favoriteOperator: String
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Favourite Operator")
-                .font(.rtSubhead)
-                .foregroundStyle(ColorTheme.textPrimary)
-
-            HStack(spacing: 10) {
-                Text(favoriteOperator)
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 8)
-                    .background(ColorTheme.operatorColor(for: favoriteOperator), in: RoundedRectangle(cornerRadius: 10))
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Most trips taken with")
-                        .font(.rtCaption)
-                        .foregroundStyle(ColorTheme.textTertiary)
-                    Text(operatorFullName(favoriteOperator))
-                        .font(.rtBody)
-                        .foregroundStyle(ColorTheme.textSecondary)
-                }
-            }
-        }
-        .padding(20)
-        .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 18))
-    }
-
-    private func operatorFullName(_ op: String) -> String {
-        switch op {
-        case "VIA":    return "VIA Rail Canada"
-        case "Amtrak": return "Amtrak"
-        case "GO":     return "GO Transit"
-        default:       return op
-        }
     }
 }
 

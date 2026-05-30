@@ -25,7 +25,8 @@ Rail travellers have almost no personal tracking tools built for train transit. 
 
 - [ROADMAP.md](ROADMAP.md)
 - [CHANGELOG.md](CHANGELOG.md)
+- [SECURITY.md](SECURITY.md)
 - [LICENSE](LICENSE)
 
-Created by Ryan Hanna | ryanisnota.pro
+Created by [Ryan Hanna](https://github.com/ryanphanna) | [ryanisnota.pro](https://ryanisnota.pro)
 
