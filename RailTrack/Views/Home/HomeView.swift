@@ -259,6 +259,7 @@ struct HomeView: View {
                     .ignoresSafeArea(edges: .bottom)
                 }
             }
+            .ignoresSafeArea(edges: .bottom)
             .toolbar(.hidden, for: .navigationBar) // Hide standard nav bar to let the map take center stage
             .sheet(isPresented: $showAddTrip) {
                 AddTripView()
