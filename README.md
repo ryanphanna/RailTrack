@@ -21,21 +21,11 @@ Rail travellers have almost no personal tracking tools built for train transit. 
 - **Maps**: MapKit (Apple Maps)
 - **Notifications**: UserNotifications framework
 
-## Roadmap
-
-See [ROADMAP.md](ROADMAP.md) for the full plan.
-
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for the list of changes.
-
-## Security
-
-This project adheres to privacy-first travel logging. All private trip data is kept on-device and synced via private iCloud containers.
-
-## Documents
-
-See the [LICENSE](LICENSE) file for license details.
-
 ---
+
+- [ROADMAP.md](ROADMAP.md)
+- [CHANGELOG.md](CHANGELOG.md)
+- [LICENSE](LICENSE)
+
 Created by Ryan Hanna | ryanisnota.pro
+
