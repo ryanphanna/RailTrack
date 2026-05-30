@@ -66,4 +66,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Converted `HomeView` layout from `ScrollView` + `LazyVStack` to a native SwiftUI `List` with clear rows, resolving non-functional `.swipeActions`
 - Fixed hardcoded operator title "VIA" inside delay notifications in `NotificationService` to dynamically use the trip's operator name
 
+### Fixed
+- Startup crash in `CloudKitService` when checking account status without valid iCloud entitlements on the simulator
+- Overlapping navigation/tab elements by relocating the Home screen `+` (Add Trip) button to the navigation bar trailing and the Settings button to leading
+- Form card layouts by adding standard 16pt padding to `FormCard` wrappers
+- Text field placeholder legibility by applying custom colored prompts on dark form inputs
+
 
