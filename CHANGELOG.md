@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Route-to-Train suggestions card in `AddTripView` to present train recommendations when origin and destination stations are selected.
 - Added sequential operator failover retry (trying Amtrak, GO, and VIA Rail sequentially) when looking up train schedules in `AddTripView`.
 - Refreshed local schedule snapshots for Amtrak and VIA Rail with fresh data, specifically including trains 57 and 60.
+- Added a brand-new **Explore** tab featuring an interactive live train map, nearby location-based departures board, searchable station schedule boards, and an active trains directory list.
+- Integrated `CoreLocation` support to identify the closest station and display a "Departing Soon Nearby" horizontal carousel of trains departing in the next 3 hours.
+- Created a dark LED split-flap style visual departures/arrivals layout for station boards in the Explore tab.
 
 ### Fixed
 - Fixed a layout bug on `HomeView` where the bottom sliding panel floated in mid-air above the bottom tab bar and revealed a gap of map underneath by ignoring the bottom safe area and increasing list spacer height.
