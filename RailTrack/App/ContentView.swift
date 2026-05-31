@@ -66,7 +66,7 @@ struct MainTabView: View {
 
             StatsView()
                 .tabItem {
-                    Label("Stats", systemImage: "chart.bar.fill")
+                    Label("Profile", systemImage: "person.crop.circle.fill")
                 }
                 .tag(Tab.stats)
 

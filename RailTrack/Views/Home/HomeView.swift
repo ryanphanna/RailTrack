@@ -134,6 +134,46 @@ struct HomeView: View {
                     }
                     .ignoresSafeArea(edges: .all)
                     
+                    // Floating Settings & Locate Buttons in Top Right
+                    VStack {
+                        HStack {
+                            Spacer()
+                            VStack(spacing: 12) {
+                                Button {
+                                    showSettings = true
+                                } label: {
+                                    Image(systemName: "gearshape.fill")
+                                        .font(.system(size: 16, weight: .bold))
+                                        .foregroundStyle(ColorTheme.textSecondary)
+                                        .padding(12)
+                                        .background(ColorTheme.surface, in: Circle())
+                                        .overlay(Circle().stroke(ColorTheme.textTertiary.opacity(0.15), lineWidth: 1))
+                                        .shadow(color: Color.black.opacity(0.15), radius: 6, x: 0, y: 3)
+                                }
+                                .buttonStyle(.plain)
+                                
+                                Button {
+                                    withAnimation(.spring()) {
+                                        updateMapPosition()
+                                    }
+                                } label: {
+                                    Image(systemName: "location.fill")
+                                        .font(.system(size: 16, weight: .bold))
+                                        .foregroundStyle(ColorTheme.textSecondary)
+                                        .padding(12)
+                                        .background(ColorTheme.surface, in: Circle())
+                                        .overlay(Circle().stroke(ColorTheme.textTertiary.opacity(0.15), lineWidth: 1))
+                                        .shadow(color: Color.black.opacity(0.15), radius: 6, x: 0, y: 3)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                            .padding(.top, 60)
+                            .padding(.trailing, 20)
+                        }
+                        Spacer()
+                    }
+                    .ignoresSafeArea()
+                    
                     // Scrim overlay
                     if drawerState == .expanded {
                         Color.black
@@ -157,49 +197,34 @@ struct HomeView: View {
                             .padding(.bottom, 12)
                         
                         // Header Search Bar
-                        HStack(spacing: 12) {
-                            HStack(spacing: 8) {
-                                Image(systemName: "magnifyingglass")
-                                    .font(.system(size: 15, weight: .bold))
-                                    .foregroundStyle(ColorTheme.textTertiary)
-                                
-                                TextField("Search train, station, or route…", text: $searchQuery, prompt: Text("Search train, station, or route…").foregroundColor(ColorTheme.textTertiary.opacity(0.6)))
-                                    .font(.rtBody.bold())
-                                    .foregroundStyle(ColorTheme.textPrimary)
-                                    .focused($isSearchFocused)
-                                    .autocorrectionDisabled()
-                                
-                                if !searchQuery.isEmpty {
-                                    Button {
-                                        searchQuery = ""
-                                    } label: {
-                                        Image(systemName: "xmark.circle.fill")
-                                            .foregroundStyle(ColorTheme.textTertiary)
-                                    }
-                                    .buttonStyle(.plain)
-                                }
-                            }
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 10)
-                            .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 14))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 14)
-                                    .stroke(ColorTheme.textTertiary.opacity(0.15), lineWidth: 1)
-                            )
+                        HStack(spacing: 8) {
+                            Image(systemName: "magnifyingglass")
+                                .font(.system(size: 15, weight: .bold))
+                                .foregroundStyle(ColorTheme.textTertiary)
                             
-                            // Gear settings button
-                            Button {
-                                showSettings = true
-                            } label: {
-                                Image(systemName: "gearshape.fill")
-                                    .font(.system(size: 16, weight: .bold))
-                                    .foregroundStyle(ColorTheme.textSecondary)
-                                    .padding(11)
-                                    .background(ColorTheme.surface, in: Circle())
-                                    .overlay(Circle().stroke(ColorTheme.textTertiary.opacity(0.15), lineWidth: 1))
+                            TextField("Search train, station, or route…", text: $searchQuery, prompt: Text("Search train, station, or route…").foregroundColor(ColorTheme.textTertiary.opacity(0.6)))
+                                .font(.rtBody.bold())
+                                .foregroundStyle(ColorTheme.textPrimary)
+                                .focused($isSearchFocused)
+                                .autocorrectionDisabled()
+                            
+                            if !searchQuery.isEmpty {
+                                Button {
+                                    searchQuery = ""
+                                } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundStyle(ColorTheme.textTertiary)
+                                }
+                                .buttonStyle(.plain)
                             }
-                            .buttonStyle(.plain)
                         }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 10)
+                        .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 14))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14)
+                                .stroke(ColorTheme.textTertiary.opacity(0.15), lineWidth: 1)
+                        )
                         .padding(.horizontal, 20)
                         .padding(.bottom, 16)
                         

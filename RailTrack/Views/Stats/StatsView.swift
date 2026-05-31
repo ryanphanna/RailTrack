@@ -80,7 +80,7 @@ struct StatsView: View {
                     }
                 }
             }
-            .navigationTitle("Travel Stats")
+            .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.large)
             .sheet(isPresented: $showAddTrip) {
                 AddTripView()
