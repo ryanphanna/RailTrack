@@ -255,18 +255,87 @@ final class VIALiveDataService: ObservableObject {
             
             guard let trainInt = Int(trainNumber) else { return nil }
             
+            var fallbackTrain: VIALiveTrain? = nil
+            
             for (key, train) in feed {
                 let parts = key.split(separator: " ")
                 guard let trainPart = parts.first, let feedTrainInt = Int(trainPart) else { continue }
                 
-                if trainInt == feedTrainInt && train.instance == dateStr {
-                    return train
+                if trainInt == feedTrainInt {
+                    if train.instance == dateStr {
+                        return train
+                    }
+                    fallbackTrain = train
                 }
             }
+            
+            return fallbackTrain
         } catch {
             print("[VIALiveDataService] Parse failed during lookup: \(error)")
         }
         return nil
     }
+
+    func findTrains(originCode: String, destinationCode: String, date: Date) async -> [String: VIALiveTrain] {
+        let rawData: Data?
+        if useLocalSnapshot {
+            rawData = loadLocalSnapshot()
+        } else {
+            do {
+                rawData = try await fetchLiveFeed()
+            } catch {
+                rawData = loadLocalSnapshot()
+            }
+        }
+        guard let data = rawData else { return [:] }
+        
+        do {
+            let decoder = JSONDecoder()
+            let feed = try decoder.decode([String: VIALiveTrain].self, from: data)
+            
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd"
+            let dateStr = formatter.string(from: date)
+            
+            var matches: [String: VIALiveTrain] = [:]
+            
+            for (key, train) in feed {
+                let parts = key.split(separator: " ")
+                guard let trainPart = parts.first, let _ = Int(trainPart) else { continue }
+                
+                guard train.instance == dateStr else { continue }
+                
+                let times = train.times
+                if let originIndex = times.firstIndex(where: { $0.code == originCode }),
+                   let destIndex = times.firstIndex(where: { $0.code == destinationCode }),
+                   originIndex < destIndex {
+                    let cleanNumber = String(trainPart)
+                    matches[cleanNumber] = train
+                }
+            }
+            
+            // Fallback: If no matches on exact date (common for snapshots/offline), try matching without date constraint
+            if matches.isEmpty {
+                for (key, train) in feed {
+                    let parts = key.split(separator: " ")
+                    guard let trainPart = parts.first, let _ = Int(trainPart) else { continue }
+                    
+                    let times = train.times
+                    if let originIndex = times.firstIndex(where: { $0.code == originCode }),
+                       let destIndex = times.firstIndex(where: { $0.code == destinationCode }),
+                       originIndex < destIndex {
+                        let cleanNumber = String(trainPart)
+                        matches[cleanNumber] = train
+                    }
+                }
+            }
+            
+            return matches
+        } catch {
+            print("[VIALiveDataService] findTrains failed: \(error)")
+        }
+        return [:]
+    }
+
 }
 

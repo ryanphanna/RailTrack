@@ -233,6 +233,8 @@ final class AmtrakLiveDataService: ObservableObject {
             formatter.dateFormat = "yyyy-MM-dd"
             let targetDateStr = formatter.string(from: departureDate)
             
+            var fallbackTrain: AmtrakTrain? = nil
+            
             for train in trains {
                 guard let firstStation = train.stations.first else { continue }
                 guard let schDepStr = firstStation.schDep else { continue }
@@ -242,12 +244,82 @@ final class AmtrakLiveDataService: ObservableObject {
                 if schDepDateStr == targetDateStr {
                     return train
                 }
+                fallbackTrain = train
             }
+            
+            return fallbackTrain
         } catch {
             print("[AmtrakLiveDataService] Parse failed during lookup: \(error)")
         }
         return nil
     }
+    
+    func findTrains(originCode: String, destinationCode: String, date: Date) async -> [AmtrakTrain] {
+        let rawData: Data?
+        if useLocalSnapshot {
+            rawData = loadLocalSnapshot()
+        } else {
+            do {
+                rawData = try await fetchLiveFeed()
+            } catch {
+                rawData = loadLocalSnapshot()
+            }
+        }
+        guard let data = rawData else { return [] }
+        
+        do {
+            let decoder = JSONDecoder()
+            let feed = try decoder.decode([String: [AmtrakTrain]].self, from: data)
+            
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd"
+            let targetDateStr = formatter.string(from: date)
+            
+            var matches: [AmtrakTrain] = []
+            
+            for (_, trainList) in feed {
+                for train in trainList {
+                    if let firstStation = train.stations.first,
+                       let schDepStr = firstStation.schDep {
+                        let schDepDateStr = String(schDepStr.prefix(10))
+                        guard schDepDateStr == targetDateStr else { continue }
+                    }
+                    
+                    let stations = train.stations
+                    if let originIndex = stations.firstIndex(where: { $0.code == originCode }),
+                       let destIndex = stations.firstIndex(where: { $0.code == destinationCode }),
+                       originIndex < destIndex {
+                        matches.append(train)
+                    }
+                }
+            }
+            
+            // Fallback: If no matches on exact date (common for snapshots/offline), try matching without date constraint
+            if matches.isEmpty {
+                for (_, trainList) in feed {
+                    for train in trainList {
+                        let stations = train.stations
+                        if let originIndex = stations.firstIndex(where: { $0.code == originCode }),
+                           let destIndex = stations.firstIndex(where: { $0.code == destinationCode }),
+                           originIndex < destIndex {
+                            matches.append(train)
+                        }
+                    }
+                }
+            }
+            
+            // Deduplicate by train number
+            var uniqueMatches: [String: AmtrakTrain] = [:]
+            for train in matches {
+                uniqueMatches[train.trainNum] = train
+            }
+            return Array(uniqueMatches.values).sorted(by: { $0.trainNum < $1.trainNum })
+        } catch {
+            print("[AmtrakLiveDataService] findTrains failed: \(error)")
+        }
+        return []
+    }
+
     
     private func loadLocalSnapshot() -> Data? {
         guard let url = Bundle.main.url(forResource: "amtrak_snapshot", withExtension: "json") else {
