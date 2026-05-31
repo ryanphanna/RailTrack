@@ -236,6 +236,29 @@ final class GOLiveDataService: ObservableObject {
         return isoFormatter.date(from: string)
     }
 
+    func getActiveTrains() async -> [String: GOLiveTrain] {
+        let rawData: Data?
+        if useLocalSnapshot {
+            rawData = loadLocalSnapshot()
+        } else {
+            do {
+                rawData = try await fetchLiveFeed()
+            } catch {
+                print("[GOLiveDataService] Live fetch failed for active trains: \(error.localizedDescription). Falling back to local snapshot.")
+                rawData = loadLocalSnapshot()
+            }
+        }
+        guard let data = rawData else { return [:] }
+        
+        do {
+            let decoder = JSONDecoder()
+            return try decoder.decode([String: GOLiveTrain].self, from: data)
+        } catch {
+            print("[GOLiveDataService] Parse failed during getActiveTrains: \(error)")
+        }
+        return [:]
+    }
+
     // MARK: - Schedule Lookup
 
     func lookupTrainSchedule(trainNumber: String, departureDate: Date) async -> GOLiveTrain? {

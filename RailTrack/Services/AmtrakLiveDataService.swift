@@ -207,6 +207,30 @@ final class AmtrakLiveDataService: ObservableObject {
         )
     }
     
+    func getActiveTrains() async -> [AmtrakTrain] {
+        let rawData: Data?
+        if useLocalSnapshot {
+            rawData = loadLocalSnapshot()
+        } else {
+            do {
+                rawData = try await fetchLiveFeed()
+            } catch {
+                print("[AmtrakLiveDataService] Live fetch failed for active trains: \(error.localizedDescription). Falling back to local snapshot.")
+                rawData = loadLocalSnapshot()
+            }
+        }
+        guard let data = rawData else { return [] }
+        
+        do {
+            let decoder = JSONDecoder()
+            let feed = try decoder.decode([String: [AmtrakTrain]].self, from: data)
+            return feed.values.flatMap { $0 }
+        } catch {
+            print("[AmtrakLiveDataService] Parse failed during getActiveTrains: \(error)")
+        }
+        return []
+    }
+    
     // MARK: - Schedule Lookup
     
     func lookupTrainSchedule(trainNumber: String, departureDate: Date) async -> AmtrakTrain? {

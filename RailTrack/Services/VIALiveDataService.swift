@@ -229,6 +229,29 @@ final class VIALiveDataService: ObservableObject {
         return isoFormatter.date(from: string)
     }
 
+    func getActiveTrains() async -> [String: VIALiveTrain] {
+        let rawData: Data?
+        if useLocalSnapshot {
+            rawData = loadLocalSnapshot()
+        } else {
+            do {
+                rawData = try await fetchLiveFeed()
+            } catch {
+                print("[VIALiveDataService] Live fetch failed for active trains: \(error.localizedDescription). Falling back to local snapshot.")
+                rawData = loadLocalSnapshot()
+            }
+        }
+        guard let data = rawData else { return [:] }
+        
+        do {
+            let decoder = JSONDecoder()
+            return try decoder.decode([String: VIALiveTrain].self, from: data)
+        } catch {
+            print("[VIALiveDataService] Parse failed during getActiveTrains: \(error)")
+        }
+        return [:]
+    }
+
     // MARK: - Schedule Lookup
 
     func lookupTrainSchedule(trainNumber: String, departureDate: Date) async -> VIALiveTrain? {
