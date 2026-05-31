@@ -26,7 +26,7 @@
 		A1000012 /* TripDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000012 /* TripDetailView.swift */; };
 		A1000013 /* LiveMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000013 /* LiveMapView.swift */; };
 		A1000014 /* StationTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000014 /* StationTimelineView.swift */; };
-		A1000015 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000015 /* StatsView.swift */; };
+		A1000015 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000015 /* ProfileView.swift */; };
 		A1000016 /* SocialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000016 /* SocialView.swift */; };
 		A1000017 /* AddTripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000017 /* AddTripView.swift */; };
 		A1000018 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000018 /* OnboardingView.swift */; };
@@ -130,7 +130,7 @@
 		B1000012 /* TripDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailView.swift; sourceTree = "<group>"; };
 		B1000013 /* LiveMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveMapView.swift; sourceTree = "<group>"; };
 		B1000014 /* StationTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationTimelineView.swift; sourceTree = "<group>"; };
-		B1000015 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
+		B1000015 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		B1000016 /* SocialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialView.swift; sourceTree = "<group>"; };
 		B1000017 /* AddTripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTripView.swift; sourceTree = "<group>"; };
 		B1000018 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -273,7 +273,7 @@
 			children = (
 				E1000005 /* Home */,
 				E1000006 /* TripDetail */,
-				E1000007 /* Stats */,
+				E1000007 /* Profile */,
 				E1000008 /* Social */,
 				E1000010 /* Onboarding */,
 				E1000011 /* Components */,
@@ -303,12 +303,12 @@
 			path = TripDetail;
 			sourceTree = "<group>";
 		};
-		E1000007 /* Stats */ = {
+		E1000007 /* Profile */ = {
 			isa = PBXGroup;
 			children = (
-				B1000015 /* StatsView.swift */,
+				B1000015 /* ProfileView.swift */,
 			);
-			path = Stats;
+			path = Profile;
 			sourceTree = "<group>";
 		};
 		E1000008 /* Social */ = {
@@ -517,7 +517,7 @@
 				A1000012 /* TripDetailView.swift in Sources */,
 				A1000013 /* LiveMapView.swift in Sources */,
 				A1000014 /* StationTimelineView.swift in Sources */,
-				A1000015 /* StatsView.swift in Sources */,
+				A1000015 /* ProfileView.swift in Sources */,
 				A1000016 /* SocialView.swift in Sources */,
 				A1000017 /* AddTripView.swift in Sources */,
 				A1000018 /* OnboardingView.swift in Sources */,

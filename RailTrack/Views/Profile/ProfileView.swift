@@ -8,7 +8,7 @@ struct StationStamp: Identifiable {
     let date: Date
 }
 
-struct StatsView: View {
+struct ProfileView: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject var appState: AppState
     @Query(sort: \TripRecord.scheduledDeparture, order: .forward) private var records: [TripRecord]
@@ -39,7 +39,7 @@ struct StatsView: View {
                 ColorTheme.background.ignoresSafeArea()
 
                 if records.isEmpty {
-                    EmptyStatsView(showAddTrip: $showAddTrip)
+                    EmptyProfileView(showAddTrip: $showAddTrip)
                 } else {
                     ScrollView {
                         VStack(spacing: 20) {
@@ -532,7 +532,7 @@ private struct OnTimeCard: View {
 
 // MARK: - Empty Stats View
 
-private struct EmptyStatsView: View {
+private struct EmptyProfileView: View {
     @Binding var showAddTrip: Bool
 
     var body: some View {
@@ -569,7 +569,7 @@ private struct EmptyStatsView: View {
 }
 
 #Preview {
-    StatsView()
+    ProfileView()
         .environmentObject(AppState())
         .modelContainer(for: TripRecord.self, inMemory: true)
 }

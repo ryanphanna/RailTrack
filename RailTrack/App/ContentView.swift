@@ -47,7 +47,7 @@ struct MainTabView: View {
     @State private var selectedTab: Tab = .home
 
     enum Tab {
-        case home, explore, stats, social
+        case home, explore, profile, social
     }
 
     var body: some View {
@@ -64,11 +64,11 @@ struct MainTabView: View {
                 }
                 .tag(Tab.explore)
 
-            StatsView()
+            ProfileView()
                 .tabItem {
                     Label("Profile", systemImage: "person.crop.circle.fill")
                 }
-                .tag(Tab.stats)
+                .tag(Tab.profile)
 
             SocialView()
                 .tabItem {

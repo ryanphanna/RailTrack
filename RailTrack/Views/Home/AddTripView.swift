@@ -195,11 +195,19 @@ struct AddTripView: View {
                     .buttonStyle(.plain)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Add") { saveTrip() }
-                        .font(.rtSubhead.bold())
-                        .foregroundStyle(isFormValid ? ColorTheme.accent : ColorTheme.textTertiary)
-                        .buttonStyle(.plain)
-                        .disabled(!isFormValid || isSaving)
+                    Button {
+                        saveTrip()
+                    } label: {
+                        Text("Add")
+                            .font(.rtSubhead.bold())
+                            .foregroundStyle(isFormValid ? .white : ColorTheme.textTertiary)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(isFormValid ? ColorTheme.accent : ColorTheme.surfaceHigh, in: Capsule())
+                            .overlay(Capsule().stroke(ColorTheme.textTertiary.opacity(0.1), lineWidth: 1))
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(!isFormValid || isSaving)
                 }
             }
         }
@@ -277,19 +285,21 @@ struct AddTripView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             
-            // Router dot line
-            VStack(spacing: 4) {
-                Image(systemName: "tram.fill")
-                    .font(.system(size: 15))
-                    .foregroundStyle(ColorTheme.operatorColor(for: selectedOperator))
+            // Connection line and train icon
+            ZStack {
+                DashedLine()
+                    .stroke(style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
+                    .foregroundStyle(ColorTheme.textTertiary.opacity(0.3))
+                    .frame(height: 1)
                 
-                HStack(spacing: 3) {
-                    ForEach(0..<4) { _ in
-                        Circle().fill(ColorTheme.textTertiary.opacity(0.3)).frame(width: 4, height: 4)
-                    }
-                }
+                Image(systemName: "tram.fill")
+                    .font(.system(size: 12))
+                    .foregroundStyle(ColorTheme.operatorColor(for: selectedOperator))
+                    .padding(6)
+                    .background(ColorTheme.surface, in: Circle())
+                    .overlay(Circle().stroke(ColorTheme.textTertiary.opacity(0.12), lineWidth: 1))
             }
-            .frame(width: 32)
+            .frame(width: 50)
             
             // Destination
             VStack(alignment: .leading, spacing: 4) {
@@ -337,13 +347,13 @@ struct AddTripView: View {
 
     @ViewBuilder
     private var trainSection: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("TRAIN NUMBER")
-                    .font(.system(size: 9, weight: .bold))
-                    .foregroundStyle(ColorTheme.textTertiary)
-                    .tracking(1)
-                
+        VStack(alignment: .leading, spacing: 6) {
+            Text("TRAIN NUMBER")
+                .font(.system(size: 9, weight: .bold))
+                .foregroundStyle(ColorTheme.textTertiary)
+                .tracking(1)
+            
+            HStack(spacing: 12) {
                 TextField("e.g. 60", text: $trainNumber, prompt: Text("e.g. 60").foregroundColor(ColorTheme.textTertiary.opacity(0.5)))
                     .font(.system(size: 16, weight: .bold, design: .rounded))
                     .foregroundStyle(ColorTheme.textPrimary)
@@ -353,48 +363,54 @@ struct AddTripView: View {
                     .onSubmit {
                         trainNumber = cleanTrainNumber(trainNumber)
                     }
-            }
-            
-            Spacer()
-            
-            // Smart operator switcher badge
-            Menu {
-                ForEach(operators, id: \.self) { op in
-                    Button(operatorDisplayName(op)) {
-                        selectedOperator = op
+                
+                Spacer()
+                
+                // Smart operator switcher badge
+                Menu {
+                    ForEach(operators, id: \.self) { op in
+                        Button(operatorDisplayName(op)) {
+                            selectedOperator = op
+                        }
                     }
-                }
-            } label: {
-                HStack(spacing: 4) {
-                    Text(operatorDisplayName(selectedOperator))
-                        .font(.system(size: 11, weight: .bold, design: .rounded))
-                    Image(systemName: "chevron.down")
-                        .font(.system(size: 8, weight: .bold))
-                }
-                .foregroundStyle(.white)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
-                .background(ColorTheme.operatorColor(for: selectedOperator), in: Capsule())
-            }
-            
-            // Schedule lookup button
-            if (selectedOperator == "VIA" || selectedOperator == "Amtrak" || selectedOperator == "GO") && !trainNumber.isEmpty {
-                Button {
-                    lookupSchedule()
                 } label: {
-                    if isLookingUp {
-                        ProgressView().tint(ColorTheme.accent)
-                    } else {
-                        Text("Lookup")
+                    HStack(spacing: 4) {
+                        Text(operatorDisplayName(selectedOperator))
                             .font(.system(size: 11, weight: .bold, design: .rounded))
-                            .foregroundStyle(ColorTheme.accent)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 6)
-                            .background(ColorTheme.accent.opacity(0.12), in: Capsule())
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 8, weight: .bold))
                     }
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(ColorTheme.operatorColor(for: selectedOperator), in: Capsule())
                 }
-                .buttonStyle(.plain)
-                .disabled(isLookingUp)
+                
+                // Schedule lookup button
+                if (selectedOperator == "VIA" || selectedOperator == "Amtrak" || selectedOperator == "GO") && !trainNumber.isEmpty {
+                    Button {
+                        lookupSchedule()
+                    } label: {
+                        if isLookingUp {
+                            ProgressView().tint(.white)
+                                .scaleEffect(0.8)
+                                .frame(width: 44, height: 25)
+                        } else {
+                            HStack(spacing: 4) {
+                                Image(systemName: "magnifyingglass")
+                                    .font(.system(size: 10, weight: .bold))
+                                Text("Find")
+                                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                            }
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(ColorTheme.operatorColor(for: selectedOperator), in: Capsule())
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(isLookingUp)
+                }
             }
         }
         .padding(.top, 26)
@@ -509,52 +525,42 @@ struct AddTripView: View {
 
     @ViewBuilder
     private var scheduleCard: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Image(systemName: "arrow.up.right.circle.fill")
-                    .font(.system(size: 18))
-                    .foregroundStyle(ColorTheme.operatorColor(for: selectedOperator))
-                    .frame(width: 24)
-                
-                VStack(alignment: .leading, spacing: 2) {
+        HStack(spacing: 20) {
+            // Departs
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 6) {
+                    Image(systemName: "arrow.up.right.circle.fill")
+                        .font(.system(size: 12))
+                        .foregroundStyle(ColorTheme.operatorColor(for: selectedOperator))
                     Text("DEPARTS")
                         .font(.system(size: 9, weight: .bold))
                         .foregroundStyle(ColorTheme.textTertiary)
                         .tracking(1)
-                    Text(departureDate.formatted(.dateTime.day().month().hour().minute()))
-                        .font(.rtBody.bold())
-                        .foregroundStyle(ColorTheme.textPrimary)
                 }
-                
-                Spacer()
                 
                 DatePicker("", selection: $departureDate, displayedComponents: [.date, .hourAndMinute])
                     .labelsHidden()
                     .colorScheme(.dark)
                     .tint(ColorTheme.operatorColor(for: selectedOperator))
             }
-            .padding(.vertical, 14)
-            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, alignment: .leading)
             
-            Divider().opacity(0.08).padding(.leading, 56)
+            // Vertical Divider
+            Rectangle()
+                .fill(ColorTheme.textTertiary.opacity(0.08))
+                .frame(width: 1, height: 44)
             
-            HStack {
-                Image(systemName: "arrow.down.left.circle.fill")
-                    .font(.system(size: 18))
-                    .foregroundStyle(ColorTheme.operatorColor(for: selectedOperator))
-                    .frame(width: 24)
-                
-                VStack(alignment: .leading, spacing: 2) {
+            // Arrives
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 6) {
+                    Image(systemName: "arrow.down.left.circle.fill")
+                        .font(.system(size: 12))
+                        .foregroundStyle(ColorTheme.operatorColor(for: selectedOperator))
                     Text("ARRIVES")
                         .font(.system(size: 9, weight: .bold))
                         .foregroundStyle(ColorTheme.textTertiary)
                         .tracking(1)
-                    Text(arrivalDate.formatted(.dateTime.day().month().hour().minute()))
-                        .font(.rtBody.bold())
-                        .foregroundStyle(ColorTheme.textPrimary)
                 }
-                
-                Spacer()
                 
                 DatePicker("", selection: $arrivalDate,
                            in: departureDate...,
@@ -563,9 +569,10 @@ struct AddTripView: View {
                     .colorScheme(.dark)
                     .tint(ColorTheme.operatorColor(for: selectedOperator))
             }
-            .padding(.vertical, 14)
-            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .padding(.vertical, 16)
+        .padding(.horizontal, 18)
         .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16)
