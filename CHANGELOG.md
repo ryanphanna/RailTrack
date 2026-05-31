@@ -9,7 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Redesigned `StatsView` with a premium App in the Air-inspired boarding pass profile card and freeform scattered/overlapping passport stamps layout.
+- Renamed the "Stats" tab and all associated view/source references to "Profile" (including `ProfileView.swift`), using a `person.crop.circle.fill` tab icon and navigation title.
 - Redesigned `AddTripView` with a premium Train Ticket aesthetic, removing the top operator picker block and enabling automatic operator detection via selected stations or train prefix, with an interactive capsule menu to override manually.
+- Redesigned `AddTripView` with a premium boarding pass connection line showing the train icon along a horizontal dashed track.
+- Reorganized `AddTripView` date and time pickers side-by-side in a 2-column layout, removing redundant text labels.
+- Structured the toolbar "Add" button into a well-padded capsule/pill to prevent collapsing into a squished circle.
+- Cohesized the train number search and operator lookup into a unified input group with operator-themed find buttons.
 - Redesigned `HomeView` with a full-screen interactive Map background showing all active/upcoming trip routes and a sliding bottom drawer panel peeking out for journey lists, mimicking premium travel apps.
 - Made `StationMarker` and `TrainPositionMarker` internal to reuse them directly on the new Home screen background map.
 - Added Route-to-Train suggestions card in `AddTripView` to present train recommendations when origin and destination stations are selected.
