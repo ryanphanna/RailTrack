@@ -5,7 +5,24 @@ All notable changes to RailTrack will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- Redesigned **Explore** tab with a full-screen interactive map background and a sliding bottom drawer panel, matching the `HomeView` UX pattern.
+- Added floating **Settings** and **Locate** buttons to `ExploreView` in the same top-right layout as `HomeView`.
+- Shared map camera position (`sharedCameraPosition`) via `AppState` so the map viewport is seamlessly preserved when switching between the **Trips** and **Explore** tabs.
+- Added `hasInitializedCameraPosition` flag to `AppState` to ensure the initial trip-fit zoom only fires once at app startup, not on every tab return.
+
+### Changed
+- Removed redundant **Map** and **Active Trains** tab buttons from the Explore drawer; the live map always shows active trains and the drawer now focuses on Station Board search and Nearby Departures.
+- `ExploreView` now reads and writes to `AppState.sharedCameraPosition` instead of a local `@State` variable.
+- `HomeView` now reads and writes to `AppState.sharedCameraPosition` instead of a local `@State` variable.
+
+### Fixed
+- Fixed a horizontal clipping bug in `AddTripView` where long station names pushed departure/arrival columns off-screen; resolved by applying `.frame(maxWidth: .infinity, alignment: .leading)` to the inner `ZStack`/`VStack` elements.
+
 ## [1.1.0] - 2026-05-31
+
 
 ### Added
 - Redesigned `StatsView` with a premium App in the Air-inspired boarding pass profile card and freeform scattered/overlapping passport stamps layout.
