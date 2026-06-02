@@ -155,6 +155,10 @@
 		B1000046 /* PassportStampCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassportStampCard.swift; sourceTree = "<group>"; };
 		B1000047 /* OnTimeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnTimeCard.swift; sourceTree = "<group>"; };
 		B1000048 /* EmptyProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyProfileView.swift; sourceTree = "<group>"; };
+		B1000049 /* TicketCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketCardView.swift; sourceTree = "<group>"; };
+		B1000050 /* StationSearchResultsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationSearchResultsCard.swift; sourceTree = "<group>"; };
+		B1000051 /* RouteSuggestionsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteSuggestionsCard.swift; sourceTree = "<group>"; };
+		B1000052 /* ScheduleCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleCard.swift; sourceTree = "<group>"; };
 		B1000099 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C1000001 /* RailTrack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RailTrack.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E004A3DEE11848BB77BD0AE5 /* RailTrackWidget.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = RailTrackWidget.swift; path = ../../RailTrackWidget/RailTrackWidget.swift; sourceTree = "<group>"; };
@@ -299,6 +303,10 @@
 			children = (
 				B1000042 /* HomeMapView.swift */,
 				B1000043 /* HomeSmartSearchView.swift */,
+				B1000049 /* TicketCardView.swift */,
+				B1000050 /* StationSearchResultsCard.swift */,
+				B1000051 /* RouteSuggestionsCard.swift */,
+				B1000052 /* ScheduleCard.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -571,6 +579,10 @@
 				A1000046 /* PassportStampCard.swift in Sources */,
 				A1000047 /* OnTimeCard.swift in Sources */,
 				A1000048 /* EmptyProfileView.swift in Sources */,
+				A1000049 /* TicketCardView.swift in Sources */,
+				A1000050 /* StationSearchResultsCard.swift in Sources */,
+				A1000051 /* RouteSuggestionsCard.swift in Sources */,
+				A1000052 /* ScheduleCard.swift in Sources */,
 				C497D0363A19B2B57A212AE4 /* TripActivityAttributes.swift in Sources */,
 				FA57E72627401C0D14B14EAF /* LiveActivityManager.swift in Sources */,
 				C215459A37E7B9F8CD4480B2 /* VIALiveDataService.swift in Sources */,

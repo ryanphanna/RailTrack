@@ -84,11 +84,54 @@ struct AddTripView: View {
 
                 ScrollView {
                     VStack(spacing: 20) {
-                        ticketCard
+                        TicketCardView(
+                            originQuery: $originQuery,
+                            selectedOrigin: $selectedOrigin,
+                            destinationQuery: $destinationQuery,
+                            selectedDestination: $selectedDestination,
+                            trainNumber: $trainNumber,
+                            selectedOperator: $selectedOperator,
+                            isLookingUp: $isLookingUp,
+                            originCode: originCode,
+                            originName: originName,
+                            destinationCode: destinationCode,
+                            destinationName: destinationName,
+                            operators: operators,
+                            isOriginFocused: $isOriginFocused,
+                            isDestinationFocused: $isDestinationFocused,
+                            isTrainFocused: $isTrainFocused,
+                            onLookup: lookupSchedule,
+                            onOriginChange: { new in
+                                originResults = StationDatabase.shared.search(new)
+                            },
+                            onTrainSubmit: {
+                                trainNumber = cleanTrainNumber(trainNumber)
+                            }
+                        )
+                        .onChange(of: destinationQuery) { _, new in
+                            destinationResults = StationDatabase.shared.search(new)
+                        }
                         
-                        searchResultsCard
+                        StationSearchResultsCard(
+                            selectedOrigin: $selectedOrigin,
+                            originQuery: $originQuery,
+                            originResults: $originResults,
+                            isOriginFocused: $isOriginFocused,
+                            selectedDestination: $selectedDestination,
+                            destinationQuery: $destinationQuery,
+                            destinationResults: $destinationResults,
+                            isDestinationFocused: $isDestinationFocused,
+                            selectedOperator: $selectedOperator
+                        )
                         
-                        suggestionsCard
+                        RouteSuggestionsCard(
+                            isFetchingSuggestions: isFetchingSuggestions,
+                            routeTrains: $routeTrains,
+                            trainNumber: $trainNumber,
+                            selectedOperator: $selectedOperator,
+                            departureDate: $departureDate,
+                            arrivalDate: $arrivalDate
+                        )
                         
                         if let error = lookupError {
                             Text(error)
@@ -98,7 +141,11 @@ struct AddTripView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
 
-                        scheduleCard
+                        ScheduleCard(
+                            departureDate: $departureDate,
+                            arrivalDate: $arrivalDate,
+                            selectedOperator: selectedOperator
+                        )
 
                         Color.clear.frame(height: 20)
                     }
@@ -162,377 +209,6 @@ struct AddTripView: View {
         }
     }
 
-    // MARK: - Subviews
-
-    @ViewBuilder
-    private var ticketCard: some View {
-        VStack(spacing: 0) {
-            routeSection
-            
-            // Ticket dashed separator
-            GeometryReader { geo in
-                let notchY = geo.size.height / 2
-                DashedLine()
-                    .stroke(style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
-                    .foregroundStyle(ColorTheme.textTertiary.opacity(0.25))
-                    .frame(height: 1)
-                    .position(x: geo.size.width / 2, y: notchY)
-            }
-            .frame(height: 1)
-            
-            trainSection
-        }
-        .background(
-            TicketShape()
-                .fill(ColorTheme.surface)
-        )
-        .overlay(
-            TicketShape()
-                .stroke(ColorTheme.operatorColor(for: selectedOperator).opacity(0.12), lineWidth: 1.5)
-        )
-    }
-
-    @ViewBuilder
-    private var routeSection: some View {
-        HStack(alignment: .center, spacing: 12) {
-            // Origin
-            VStack(alignment: .leading, spacing: 4) {
-                Text("FROM")
-                    .font(.system(size: 9, weight: .bold))
-                    .foregroundStyle(ColorTheme.textTertiary)
-                    .tracking(1)
-                
-                ZStack(alignment: .leading) {
-                    TextField("Search…", text: $originQuery, prompt: Text("Search…").foregroundColor(ColorTheme.textTertiary.opacity(0.5)))
-                        .font(.rtBody.bold())
-                        .foregroundStyle(ColorTheme.textPrimary)
-                        .focused($isOriginFocused)
-                        .autocorrectionDisabled()
-                        .opacity(isOriginFocused || (selectedOrigin == nil && originQuery.isEmpty) ? 1 : 0)
-                        .onChange(of: originQuery) { _, new in
-                            originResults = StationDatabase.shared.search(new)
-                        }
-                    
-                    if !isOriginFocused && (selectedOrigin != nil || !originQuery.isEmpty) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(originCode)
-                                .font(.system(size: 32, weight: .black, design: .rounded))
-                                .foregroundStyle(selectedOrigin != nil ? ColorTheme.textPrimary : ColorTheme.textTertiary.opacity(0.6))
-                            Text(originName)
-                                .font(.system(size: 11, weight: .semibold))
-                                .foregroundStyle(ColorTheme.textSecondary)
-                                .lineLimit(1)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            selectedOrigin = nil
-                            originQuery = ""
-                            isOriginFocused = true
-                        }
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            
-            // Connection line and train icon
-            ZStack {
-                DashedLine()
-                    .stroke(style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
-                    .foregroundStyle(ColorTheme.textTertiary.opacity(0.3))
-                    .frame(height: 1)
-                
-                Image(systemName: "tram.fill")
-                    .font(.system(size: 12))
-                    .foregroundStyle(ColorTheme.operatorColor(for: selectedOperator))
-                    .padding(6)
-                    .background(ColorTheme.surface, in: Circle())
-                    .overlay(Circle().stroke(ColorTheme.textTertiary.opacity(0.12), lineWidth: 1))
-            }
-            .frame(width: 50)
-            
-            // Destination
-            VStack(alignment: .leading, spacing: 4) {
-                Text("TO")
-                    .font(.system(size: 9, weight: .bold))
-                    .foregroundStyle(ColorTheme.textTertiary)
-                    .tracking(1)
-                
-                ZStack(alignment: .leading) {
-                    TextField("Search…", text: $destinationQuery, prompt: Text("Search…").foregroundColor(ColorTheme.textTertiary.opacity(0.5)))
-                        .font(.rtBody.bold())
-                        .foregroundStyle(ColorTheme.textPrimary)
-                        .focused($isDestinationFocused)
-                        .autocorrectionDisabled()
-                        .opacity(isDestinationFocused || (selectedDestination == nil && destinationQuery.isEmpty) ? 1 : 0)
-                        .onChange(of: destinationQuery) { _, new in
-                            destinationResults = StationDatabase.shared.search(new)
-                        }
-                    
-                    if !isDestinationFocused && (selectedDestination != nil || !destinationQuery.isEmpty) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(destinationCode)
-                                .font(.system(size: 32, weight: .black, design: .rounded))
-                                .foregroundStyle(selectedDestination != nil ? ColorTheme.textPrimary : ColorTheme.textTertiary.opacity(0.6))
-                            Text(destinationName)
-                                .font(.system(size: 11, weight: .semibold))
-                                .foregroundStyle(ColorTheme.textSecondary)
-                                .lineLimit(1)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            selectedDestination = nil
-                            destinationQuery = ""
-                            isDestinationFocused = true
-                        }
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .padding(.top, 22)
-        .padding(.bottom, 28)
-        .padding(.horizontal, 20)
-    }
-
-    @ViewBuilder
-    private var trainSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("TRAIN NUMBER")
-                .font(.system(size: 9, weight: .bold))
-                .foregroundStyle(ColorTheme.textTertiary)
-                .tracking(1)
-            
-            HStack(spacing: 12) {
-                TextField("e.g. 60", text: $trainNumber, prompt: Text("e.g. 60").foregroundColor(ColorTheme.textTertiary.opacity(0.5)))
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
-                    .foregroundStyle(ColorTheme.textPrimary)
-                    .focused($isTrainFocused)
-                    .autocorrectionDisabled()
-                    .textInputAutocapitalization(.characters)
-                    .onSubmit {
-                        trainNumber = cleanTrainNumber(trainNumber)
-                    }
-                
-                Spacer()
-                
-                // Smart operator switcher badge
-                Menu {
-                    ForEach(operators, id: \.self) { op in
-                        Button(operatorDisplayName(op)) {
-                            selectedOperator = op
-                        }
-                    }
-                } label: {
-                    HStack(spacing: 4) {
-                        Text(operatorDisplayName(selectedOperator))
-                            .font(.system(size: 11, weight: .bold, design: .rounded))
-                        Image(systemName: "chevron.down")
-                            .font(.system(size: 8, weight: .bold))
-                    }
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(ColorTheme.operatorColor(for: selectedOperator), in: Capsule())
-                }
-                
-                // Schedule lookup button
-                if (selectedOperator == "VIA" || selectedOperator == "Amtrak" || selectedOperator == "GO") && !trainNumber.isEmpty {
-                    Button {
-                        lookupSchedule()
-                    } label: {
-                        if isLookingUp {
-                            ProgressView().tint(.white)
-                                .scaleEffect(0.8)
-                                .frame(width: 44, height: 25)
-                        } else {
-                            HStack(spacing: 4) {
-                                Image(systemName: "magnifyingglass")
-                                    .font(.system(size: 10, weight: .bold))
-                                Text("Find")
-                                    .font(.system(size: 11, weight: .bold, design: .rounded))
-                            }
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(ColorTheme.operatorColor(for: selectedOperator), in: Capsule())
-                        }
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(isLookingUp)
-                }
-            }
-        }
-        .padding(.top, 26)
-        .padding(.bottom, 22)
-        .padding(.horizontal, 20)
-    }
-
-    @ViewBuilder
-    private var searchResultsCard: some View {
-        if isOriginFocused && !originResults.isEmpty {
-            VStack(alignment: .leading, spacing: 0) {
-                Text("MATCHING ORIGIN STATIONS")
-                    .font(.system(size: 9, weight: .bold))
-                    .foregroundStyle(ColorTheme.textTertiary)
-                    .tracking(1)
-                    .padding(.horizontal, 16)
-                    .padding(.top, 12)
-                    .padding(.bottom, 6)
-                
-                ForEach(originResults.prefix(4)) { station in
-                    Button {
-                        selectedOrigin = station
-                        originQuery = station.name
-                        originResults = []
-                        isOriginFocused = false
-                        if let op = station.railOperator {
-                            selectedOperator = op
-                        }
-                    } label: {
-                        HStack(spacing: 12) {
-                            Text(station.code)
-                                .font(.rtMono)
-                                .foregroundStyle(ColorTheme.operatorColor(for: station.railOperator ?? ""))
-                                .frame(width: 36)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(station.name)
-                                    .font(.rtBody)
-                                    .foregroundStyle(ColorTheme.textPrimary)
-                                Text(station.city)
-                                    .font(.rtCaption)
-                                    .foregroundStyle(ColorTheme.textTertiary)
-                            }
-                            Spacer()
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
-                    }
-                    .buttonStyle(.plain)
-                    
-                    if station.id != originResults.prefix(4).last?.id {
-                        Divider().padding(.leading, 64).opacity(0.08)
-                    }
-                }
-            }
-            .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(ColorTheme.operatorColor(for: selectedOperator).opacity(0.15), lineWidth: 1)
-            )
-        } else if isDestinationFocused && !destinationResults.isEmpty {
-            VStack(alignment: .leading, spacing: 0) {
-                Text("MATCHING DESTINATION STATIONS")
-                    .font(.system(size: 9, weight: .bold))
-                    .foregroundStyle(ColorTheme.textTertiary)
-                    .tracking(1)
-                    .padding(.horizontal, 16)
-                    .padding(.top, 12)
-                    .padding(.bottom, 6)
-                
-                ForEach(destinationResults.prefix(4)) { station in
-                    Button {
-                        selectedDestination = station
-                        destinationQuery = station.name
-                        destinationResults = []
-                        isDestinationFocused = false
-                        if let op = station.railOperator {
-                            selectedOperator = op
-                        }
-                    } label: {
-                        HStack(spacing: 12) {
-                            Text(station.code)
-                                .font(.rtMono)
-                                .foregroundStyle(ColorTheme.operatorColor(for: station.railOperator ?? ""))
-                                .frame(width: 36)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(station.name)
-                                    .font(.rtBody)
-                                    .foregroundStyle(ColorTheme.textPrimary)
-                                Text(station.city)
-                                    .font(.rtCaption)
-                                    .foregroundStyle(ColorTheme.textTertiary)
-                            }
-                            Spacer()
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
-                    }
-                    .buttonStyle(.plain)
-                    
-                    if station.id != destinationResults.prefix(4).last?.id {
-                        Divider().padding(.leading, 64).opacity(0.08)
-                    }
-                }
-            }
-            .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(ColorTheme.operatorColor(for: selectedOperator).opacity(0.15), lineWidth: 1)
-            )
-        }
-    }
-
-    @ViewBuilder
-    private var scheduleCard: some View {
-        HStack(spacing: 20) {
-            // Departs
-            VStack(alignment: .leading, spacing: 6) {
-                HStack(spacing: 6) {
-                    Image(systemName: "arrow.up.right.circle.fill")
-                        .font(.system(size: 12))
-                        .foregroundStyle(ColorTheme.operatorColor(for: selectedOperator))
-                    Text("DEPARTS")
-                        .font(.system(size: 9, weight: .bold))
-                        .foregroundStyle(ColorTheme.textTertiary)
-                        .tracking(1)
-                }
-                
-                DatePicker("", selection: $departureDate, displayedComponents: [.date, .hourAndMinute])
-                    .labelsHidden()
-                    .colorScheme(.dark)
-                    .tint(ColorTheme.operatorColor(for: selectedOperator))
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            
-            // Vertical Divider
-            Rectangle()
-                .fill(ColorTheme.textTertiary.opacity(0.08))
-                .frame(width: 1, height: 44)
-            
-            // Arrives
-            VStack(alignment: .leading, spacing: 6) {
-                HStack(spacing: 6) {
-                    Image(systemName: "arrow.down.left.circle.fill")
-                        .font(.system(size: 12))
-                        .foregroundStyle(ColorTheme.operatorColor(for: selectedOperator))
-                    Text("ARRIVES")
-                        .font(.system(size: 9, weight: .bold))
-                        .foregroundStyle(ColorTheme.textTertiary)
-                        .tracking(1)
-                }
-                
-                DatePicker("", selection: $arrivalDate,
-                           in: departureDate...,
-                           displayedComponents: [.date, .hourAndMinute])
-                    .labelsHidden()
-                    .colorScheme(.dark)
-                    .tint(ColorTheme.operatorColor(for: selectedOperator))
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .padding(.vertical, 16)
-        .padding(.horizontal, 18)
-        .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(ColorTheme.operatorColor(for: selectedOperator).opacity(0.08), lineWidth: 1)
-        )
-    }
-
     // MARK: - Validation
 
     private var isFormValid: Bool {
@@ -571,86 +247,6 @@ struct AddTripView: View {
         modelContext.insert(record)
         NotificationService.shared.scheduleDepartureReminder(for: record.toTrip(), minutesBefore: 30)
         dismiss()
-    }
-    
-    // MARK: - Suggestions UI
-    
-    @ViewBuilder
-    private var suggestionsCard: some View {
-        if isFetchingSuggestions {
-            HStack(spacing: 8) {
-                ProgressView().tint(ColorTheme.accent)
-                Text("Finding trains on this route...")
-                    .font(.rtCaption)
-                    .foregroundStyle(ColorTheme.textSecondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .center)
-            .padding(.vertical, 10)
-        } else if !routeTrains.isEmpty && trainNumber.isEmpty {
-            VStack(alignment: .leading, spacing: 10) {
-                Text("RECOMMENDED TRAINS ON THIS ROUTE")
-                    .font(.system(size: 9, weight: .bold))
-                    .foregroundStyle(ColorTheme.textTertiary)
-                    .tracking(1)
-                    .padding(.horizontal, 4)
-                
-                VStack(spacing: 0) {
-                    ForEach(routeTrains) { suggestion in
-                        Button {
-                            trainNumber = suggestion.trainNumber
-                            selectedOperator = suggestion.operatorName
-                            if let dep = suggestion.scheduledDeparture {
-                                departureDate = dep
-                            }
-                            if let arr = suggestion.scheduledArrival {
-                                arrivalDate = arr
-                            }
-                            routeTrains = []
-                        } label: {
-                            HStack(spacing: 12) {
-                                Image(systemName: "tram.fill")
-                                    .font(.system(size: 14))
-                                    .foregroundStyle(ColorTheme.operatorColor(for: suggestion.operatorName))
-                                
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("\(suggestion.operatorName) Train \(suggestion.trainNumber)")
-                                        .font(.rtBody.bold())
-                                        .foregroundStyle(ColorTheme.textPrimary)
-                                    
-                                    if let dep = suggestion.scheduledDeparture {
-                                        Text("Departs \(dep.formatted(.dateTime.hour().minute()))")
-                                            .font(.rtCaption)
-                                            .foregroundStyle(ColorTheme.textSecondary)
-                                    }
-                                }
-                                
-                                Spacer()
-                                
-                                Text("Select")
-                                    .font(.system(size: 11, weight: .bold, design: .rounded))
-                                    .foregroundStyle(ColorTheme.operatorColor(for: suggestion.operatorName))
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 4)
-                                    .background(ColorTheme.operatorColor(for: suggestion.operatorName).opacity(0.12), in: Capsule())
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-                            .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                        
-                        if suggestion.id != routeTrains.last?.id {
-                            Divider().padding(.leading, 42).opacity(0.08)
-                        }
-                    }
-                }
-                .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(ColorTheme.accent.opacity(0.12), lineWidth: 1)
-                )
-            }
-        }
     }
     
     // MARK: - Route Suggestion Matching
