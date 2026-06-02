@@ -9,6 +9,7 @@ struct TripDetailView: View {
 
     @State private var showEdit = false
     @State private var showDeleteConfirm = false
+    @State private var isMapExpanded = false
     
     @ObservedObject private var viaLiveDataService = VIALiveDataService.shared
     @ObservedObject private var amtrakLiveDataService = AmtrakLiveDataService.shared
@@ -73,6 +74,18 @@ struct TripDetailView: View {
                     LiveMapView(trip: trip)
                         .frame(height: 260)
                         .clipShape(RoundedRectangle(cornerRadius: 0))
+                        .overlay(alignment: .bottomTrailing) {
+                            Button {
+                                isMapExpanded = true
+                            } label: {
+                                Image(systemName: "arrow.up.left.and.arrow.down.right")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundStyle(.white)
+                                    .padding(10)
+                                    .background(.ultraThinMaterial, in: Circle())
+                                    .padding(12)
+                            }
+                        }
 
                     VStack(alignment: .leading, spacing: 20) {
 
@@ -196,6 +209,21 @@ struct TripDetailView: View {
                 }
             }
             .ignoresSafeArea(edges: .top)
+            .fullScreenCover(isPresented: $isMapExpanded) {
+                NavigationStack {
+                    LiveMapView(trip: trip)
+                        .ignoresSafeArea(edges: .all)
+                        .toolbar {
+                            ToolbarItem(placement: .topBarTrailing) {
+                                Button("Done") {
+                                    isMapExpanded = false
+                                }
+                                .font(.rtSubhead.bold())
+                                .foregroundStyle(ColorTheme.accent)
+                            }
+                        }
+                }
+            }
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
