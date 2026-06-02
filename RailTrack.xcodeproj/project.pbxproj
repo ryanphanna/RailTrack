@@ -48,6 +48,10 @@
 		A1000035 /* ActiveTrainsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000035 /* ActiveTrainsListView.swift */; };
 		A1000036 /* SelectedTrainDrawerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000036 /* SelectedTrainDrawerView.swift */; };
 		A1000037 /* NearbyDepartureCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000037 /* NearbyDepartureCard.swift */; };
+		A1000038 /* MapMarkers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000038 /* MapMarkers.swift */; };
+		A1000039 /* TicketComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000039 /* TicketComponents.swift */; };
+		A1000040 /* RouteTrainSuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000040 /* RouteTrainSuggestion.swift */; };
+		A1000041 /* PrepopulatedTrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000041 /* PrepopulatedTrip.swift */; };
 		A1000099 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000099 /* Assets.xcassets */; };
 		A10000B1 /* go_snapshot.json in Resources */ = {isa = PBXBuildFile; fileRef = A10000B2 /* go_snapshot.json */; };
 		A10000C1 /* GOLiveDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000C2 /* GOLiveDataService.swift */; };
@@ -133,6 +137,10 @@
 		B1000035 /* ActiveTrainsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveTrainsListView.swift; sourceTree = "<group>"; };
 		B1000036 /* SelectedTrainDrawerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedTrainDrawerView.swift; sourceTree = "<group>"; };
 		B1000037 /* NearbyDepartureCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyDepartureCard.swift; sourceTree = "<group>"; };
+		B1000038 /* MapMarkers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapMarkers.swift; sourceTree = "<group>"; };
+		B1000039 /* TicketComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketComponents.swift; sourceTree = "<group>"; };
+		B1000040 /* RouteTrainSuggestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteTrainSuggestion.swift; sourceTree = "<group>"; };
+		B1000041 /* PrepopulatedTrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrepopulatedTrip.swift; sourceTree = "<group>"; };
 		B1000099 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C1000001 /* RailTrack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RailTrack.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E004A3DEE11848BB77BD0AE5 /* RailTrackWidget.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = RailTrackWidget.swift; path = ../../RailTrackWidget/RailTrackWidget.swift; sourceTree = "<group>"; };
@@ -214,19 +222,22 @@
 			path = App;
 			sourceTree = "<group>";
 		};
-		E1000002 /* Models */ = {
+		E1000003 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				B1000003 /* Trip.swift */,
-				B1000004 /* Station.swift */,
-				B1000005 /* TrainService.swift */,
-				B1000006 /* Alert.swift */,
 				B1000024 /* TripRecord.swift */,
+				B1000003 /* Trip.swift */,
+				B1000005 /* TrainService.swift */,
+				B1000004 /* Station.swift */,
+				B1000006 /* Alert.swift */,
 				9DA42F4F403819047BBEE155 /* TripActivityAttributes.swift */,
+				B1000040 /* RouteTrainSuggestion.swift */,
+				B1000041 /* PrepopulatedTrip.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
 		};
+
 		E1000003 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -316,14 +327,17 @@
 		E1000011 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				B1000019 /* StatusBadge.swift */,
-				B1000020 /* DelayBanner.swift */,
-				B1000027 /* FormComponents.swift */,
-				B1000029 /* ICloudBannerView.swift */,
+				A1000019 /* StatusBadge.swift */,
+				A1000020 /* DelayBanner.swift */,
+				A1000027 /* FormComponents.swift */,
+				A1000029 /* ICloudBannerView.swift */,
+				B1000038 /* MapMarkers.swift */,
+				B1000039 /* TicketComponents.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
 		};
+
 		E1000012 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -508,6 +522,10 @@
 				A1000035 /* ActiveTrainsListView.swift in Sources */,
 				A1000036 /* SelectedTrainDrawerView.swift in Sources */,
 				A1000037 /* NearbyDepartureCard.swift in Sources */,
+				A1000038 /* MapMarkers.swift in Sources */,
+				A1000039 /* TicketComponents.swift in Sources */,
+				A1000040 /* RouteTrainSuggestion.swift in Sources */,
+				A1000041 /* PrepopulatedTrip.swift in Sources */,
 				C497D0363A19B2B57A212AE4 /* TripActivityAttributes.swift in Sources */,
 				FA57E72627401C0D14B14EAF /* LiveActivityManager.swift in Sources */,
 				C215459A37E7B9F8CD4480B2 /* VIALiveDataService.swift in Sources */,

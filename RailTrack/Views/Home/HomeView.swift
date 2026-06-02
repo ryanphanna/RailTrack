@@ -2,14 +2,6 @@ import SwiftUI
 import SwiftData
 import MapKit
 
-struct PrepopulatedTrip: Identifiable {
-    var id: String { "\(trainNumber)-\(operatorName)-\(origin?.id ?? "")-\(destination?.id ?? "")" }
-    let origin: Station?
-    let destination: Station?
-    let trainNumber: String
-    let operatorName: String
-}
-
 struct HomeView: View {
     @EnvironmentObject var appState: AppState
     @Environment(\.modelContext) private var modelContext
