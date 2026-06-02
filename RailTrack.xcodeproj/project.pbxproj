@@ -52,6 +52,13 @@
 		A1000039 /* TicketComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000039 /* TicketComponents.swift */; };
 		A1000040 /* RouteTrainSuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000040 /* RouteTrainSuggestion.swift */; };
 		A1000041 /* PrepopulatedTrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000041 /* PrepopulatedTrip.swift */; };
+		A1000042 /* HomeMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000042 /* HomeMapView.swift */; };
+		A1000043 /* HomeSmartSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000043 /* HomeSmartSearchView.swift */; };
+		A1000044 /* EmptyTripsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000044 /* EmptyTripsView.swift */; };
+		A1000045 /* BoardingPassProfileCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000045 /* BoardingPassProfileCard.swift */; };
+		A1000046 /* PassportStampCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000046 /* PassportStampCard.swift */; };
+		A1000047 /* OnTimeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000047 /* OnTimeCard.swift */; };
+		A1000048 /* EmptyProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000048 /* EmptyProfileView.swift */; };
 		A1000099 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000099 /* Assets.xcassets */; };
 		A10000B1 /* go_snapshot.json in Resources */ = {isa = PBXBuildFile; fileRef = A10000B2 /* go_snapshot.json */; };
 		A10000C1 /* GOLiveDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000C2 /* GOLiveDataService.swift */; };
@@ -141,6 +148,13 @@
 		B1000039 /* TicketComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketComponents.swift; sourceTree = "<group>"; };
 		B1000040 /* RouteTrainSuggestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteTrainSuggestion.swift; sourceTree = "<group>"; };
 		B1000041 /* PrepopulatedTrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrepopulatedTrip.swift; sourceTree = "<group>"; };
+		B1000042 /* HomeMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMapView.swift; sourceTree = "<group>"; };
+		B1000043 /* HomeSmartSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSmartSearchView.swift; sourceTree = "<group>"; };
+		B1000044 /* EmptyTripsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyTripsView.swift; sourceTree = "<group>"; };
+		B1000045 /* BoardingPassProfileCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardingPassProfileCard.swift; sourceTree = "<group>"; };
+		B1000046 /* PassportStampCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassportStampCard.swift; sourceTree = "<group>"; };
+		B1000047 /* OnTimeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnTimeCard.swift; sourceTree = "<group>"; };
+		B1000048 /* EmptyProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyProfileView.swift; sourceTree = "<group>"; };
 		B1000099 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C1000001 /* RailTrack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RailTrack.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E004A3DEE11848BB77BD0AE5 /* RailTrackWidget.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = RailTrackWidget.swift; path = ../../RailTrackWidget/RailTrackWidget.swift; sourceTree = "<group>"; };
@@ -273,12 +287,23 @@
 			isa = PBXGroup;
 			children = (
 				B1000010 /* HomeView.swift */,
-				B1000011 /* TripCardView.swift */,
-				B1000017 /* AddTripView.swift */,
+				A1000011 /* TripCardView.swift */,
+				A1000017 /* AddTripView.swift */,
+				E1000015 /* Components */,
 			);
 			path = Home;
 			sourceTree = "<group>";
 		};
+		E1000015 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				B1000042 /* HomeMapView.swift */,
+				B1000043 /* HomeSmartSearchView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+
 		E1000006 /* TripDetail */ = {
 			isa = PBXGroup;
 			children = (
@@ -294,8 +319,20 @@
 			isa = PBXGroup;
 			children = (
 				B1000015 /* ProfileView.swift */,
+				E1000016 /* Components */,
 			);
 			path = Profile;
+			sourceTree = "<group>";
+		};
+		E1000016 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				B1000045 /* BoardingPassProfileCard.swift */,
+				B1000046 /* PassportStampCard.swift */,
+				B1000047 /* OnTimeCard.swift */,
+				B1000048 /* EmptyProfileView.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 		E1000008 /* Social */ = {
@@ -333,6 +370,7 @@
 				A1000029 /* ICloudBannerView.swift */,
 				B1000038 /* MapMarkers.swift */,
 				B1000039 /* TicketComponents.swift */,
+				B1000044 /* EmptyTripsView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -526,6 +564,13 @@
 				A1000039 /* TicketComponents.swift in Sources */,
 				A1000040 /* RouteTrainSuggestion.swift in Sources */,
 				A1000041 /* PrepopulatedTrip.swift in Sources */,
+				A1000042 /* HomeMapView.swift in Sources */,
+				A1000043 /* HomeSmartSearchView.swift in Sources */,
+				A1000044 /* EmptyTripsView.swift in Sources */,
+				A1000045 /* BoardingPassProfileCard.swift in Sources */,
+				A1000046 /* PassportStampCard.swift in Sources */,
+				A1000047 /* OnTimeCard.swift in Sources */,
+				A1000048 /* EmptyProfileView.swift in Sources */,
 				C497D0363A19B2B57A212AE4 /* TripActivityAttributes.swift in Sources */,
 				FA57E72627401C0D14B14EAF /* LiveActivityManager.swift in Sources */,
 				C215459A37E7B9F8CD4480B2 /* VIALiveDataService.swift in Sources */,

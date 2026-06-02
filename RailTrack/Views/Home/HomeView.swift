@@ -38,7 +38,7 @@ struct HomeView: View {
     }
 
     // MARK: - Parser helpers
-    private struct ParsedRoute {
+    struct ParsedRoute {
         let origin: Station
         let destination: Station
     }
@@ -97,31 +97,11 @@ struct HomeView: View {
                 
                 ZStack(alignment: .bottom) {
                     // 1. Background Interactive Map
-                    Map(position: $appState.sharedCameraPosition) {
-                        ForEach(records.map { $0.toTrip() }.filter { $0.isActive || $0.isUpcoming }) { trip in
-                            Annotation(trip.origin.shortName, coordinate: trip.origin.clCoordinate) {
-                                StationMarker(code: trip.origin.code, isOrigin: true)
-                            }
-                            
-                            Annotation(trip.destination.shortName, coordinate: trip.destination.clCoordinate) {
-                                StationMarker(code: trip.destination.code, isOrigin: false)
-                            }
-                            
-                            MapPolyline(coordinates: [trip.origin.clCoordinate, trip.destination.clCoordinate])
-                                .stroke(ColorTheme.operatorColor(for: trip.trainOperator), lineWidth: 3)
-                            
-                            if trip.isActive, let trainCoord = getInterpolatedCoordinate(for: trip) {
-                                Annotation("Train \(trip.trainNumber)", coordinate: trainCoord) {
-                                    TrainPositionMarker(operatorColor: ColorTheme.operatorColor(for: trip.trainOperator))
-                                }
-                            }
-                        }
-                    }
-                    .mapStyle(.standard(elevation: .realistic))
-                    .mapControls {
-                        MapCompass()
-                        MapScaleView()
-                    }
+                    HomeMapView(
+                        records: records,
+                        position: $appState.sharedCameraPosition,
+                        getInterpolatedCoordinate: getInterpolatedCoordinate
+                    )
                     .ignoresSafeArea(edges: .all)
                     
                     // Floating Settings & Locate Buttons in Top Right
@@ -290,7 +270,6 @@ struct HomeView: View {
                                             ForEach(pastRecords) { rec in
                                                 NavigationLink(destination: TripDetailView(record: rec)) {
                                                     TripCardView(trip: rec.toTrip())
-                                                        .opacity(0.65)
                                                 }
                                                 .buttonStyle(.plain)
                                                 .contextMenu {
@@ -315,210 +294,17 @@ struct HomeView: View {
                                 .padding(.top, 4)
                             } else {
                                 // Smart Search Results
-                                VStack(spacing: 20) {
-                                    let parsedTrain = parseTrainQuery(searchQuery)
-                                    let parsedRoute = parseRouteQuery(searchQuery)
-                                    let stationResults = StationDatabase.shared.search(searchQuery)
-                                    
-                                    // 1. Train lookup result
-                                    if let train = parsedTrain {
-                                        VStack(alignment: .leading, spacing: 8) {
-                                            Text("SCHEDULE LOOKUP")
-                                                .font(.system(size: 9, weight: .bold))
-                                                .foregroundStyle(ColorTheme.textTertiary)
-                                                .tracking(1)
-                                                .padding(.horizontal, 4)
-                                            
-                                            Button {
-                                                isSearchFocused = false
-                                                activePrepopulatedTrip = PrepopulatedTrip(
-                                                    origin: nil,
-                                                    destination: nil,
-                                                    trainNumber: train.number,
-                                                    operatorName: train.op
-                                                )
-                                            } label: {
-                                                HStack(spacing: 14) {
-                                                    Image(systemName: "magnifyingglass.circle.fill")
-                                                        .font(.system(size: 26))
-                                                        .foregroundStyle(ColorTheme.operatorColor(for: train.op))
-                                                    
-                                                    VStack(alignment: .leading, spacing: 3) {
-                                                        Text("Look up Schedule for Train \(train.number)")
-                                                            .font(.rtBody.bold())
-                                                            .foregroundStyle(ColorTheme.textPrimary)
-                                                        Text("Queries \(train.op) database for live departure/arrival times")
-                                                            .font(.rtCaption)
-                                                            .foregroundStyle(ColorTheme.textTertiary)
-                                                    }
-                                                    Spacer()
-                                                    Image(systemName: "chevron.right")
-                                                        .font(.system(size: 12, weight: .semibold))
-                                                        .foregroundStyle(ColorTheme.textTertiary)
-                                                }
-                                                .padding(16)
-                                                .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-                                                .overlay(
-                                                    RoundedRectangle(cornerRadius: 16)
-                                                        .stroke(ColorTheme.operatorColor(for: train.op).opacity(0.15), lineWidth: 1)
-                                                )
-                                            }
-                                            .buttonStyle(.plain)
-                                        }
-                                    }
-                                    
-                                    // 2. Route parsed result
-                                    if let route = parsedRoute {
-                                        VStack(alignment: .leading, spacing: 8) {
-                                            Text("ROUTE MATCH")
-                                                .font(.system(size: 9, weight: .bold))
-                                                .foregroundStyle(ColorTheme.textTertiary)
-                                                .tracking(1)
-                                                .padding(.horizontal, 4)
-                                            
-                                            Button {
-                                                isSearchFocused = false
-                                                activePrepopulatedTrip = PrepopulatedTrip(
-                                                    origin: route.origin,
-                                                    destination: route.destination,
-                                                    trainNumber: "",
-                                                    operatorName: route.origin.railOperator ?? "VIA"
-                                                )
-                                            } label: {
-                                                HStack(spacing: 14) {
-                                                    Image(systemName: "arrow.up.right.and.arrow.down.left.rectangle.fill")
-                                                        .font(.system(size: 26))
-                                                        .foregroundStyle(ColorTheme.accent)
-                                                    
-                                                    VStack(alignment: .leading, spacing: 3) {
-                                                        Text("Add Trip: \(route.origin.shortName) ➔ \(route.destination.shortName)")
-                                                            .font(.rtBody.bold())
-                                                            .foregroundStyle(ColorTheme.textPrimary)
-                                                        Text("Pre-populates origin and destination stations")
-                                                            .font(.rtCaption)
-                                                            .foregroundStyle(ColorTheme.textTertiary)
-                                                    }
-                                                    Spacer()
-                                                    Image(systemName: "plus")
-                                                        .font(.system(size: 14, weight: .bold))
-                                                        .foregroundStyle(ColorTheme.accent)
-                                                        .padding(8)
-                                                        .background(ColorTheme.accent.opacity(0.12), in: Circle())
-                                                }
-                                                .padding(16)
-                                                .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-                                                .overlay(
-                                                    RoundedRectangle(cornerRadius: 16)
-                                                        .stroke(ColorTheme.accent.opacity(0.15), lineWidth: 1)
-                                                )
-                                            }
-                                            .buttonStyle(.plain)
-                                        }
-                                    }
-                                    
-                                    // 3. Station search results
-                                    if !stationResults.isEmpty {
-                                        VStack(alignment: .leading, spacing: 8) {
-                                            Text("STATIONS")
-                                                .font(.system(size: 9, weight: .bold))
-                                                .foregroundStyle(ColorTheme.textTertiary)
-                                                .tracking(1)
-                                                .padding(.horizontal, 4)
-                                            
-                                            VStack(spacing: 0) {
-                                                ForEach(stationResults.prefix(4)) { station in
-                                                    Menu {
-                                                        Button {
-                                                            isSearchFocused = false
-                                                            activePrepopulatedTrip = PrepopulatedTrip(
-                                                                origin: station,
-                                                                destination: nil,
-                                                                trainNumber: "",
-                                                                operatorName: station.railOperator ?? "VIA"
-                                                            )
-                                                        } label: {
-                                                            Label("Set as Departure", systemImage: "arrow.up.right.circle")
-                                                        }
-                                                        
-                                                        Button {
-                                                            isSearchFocused = false
-                                                            activePrepopulatedTrip = PrepopulatedTrip(
-                                                                origin: nil,
-                                                                destination: station,
-                                                                trainNumber: "",
-                                                                operatorName: station.railOperator ?? "VIA"
-                                                            )
-                                                        } label: {
-                                                            Label("Set as Arrival", systemImage: "arrow.down.left.circle")
-                                                        }
-                                                    } label: {
-                                                        HStack(spacing: 12) {
-                                                            Text(station.code)
-                                                                .font(.rtMono)
-                                                                .foregroundStyle(ColorTheme.operatorColor(for: station.railOperator ?? ""))
-                                                                .frame(width: 36)
-                                                            VStack(alignment: .leading, spacing: 2) {
-                                                                Text(station.name)
-                                                                    .font(.rtBody.bold())
-                                                                    .foregroundStyle(ColorTheme.textPrimary)
-                                                                Text("\(station.city) • \(station.railOperator ?? "Other")")
-                                                                    .font(.rtCaption)
-                                                                    .foregroundStyle(ColorTheme.textTertiary)
-                                                            }
-                                                            Spacer()
-                                                            Image(systemName: "plus.circle.fill")
-                                                                    .font(.system(size: 16))
-                                                                    .foregroundStyle(ColorTheme.textTertiary.opacity(0.7))
-                                                        }
-                                                        .padding(.horizontal, 16)
-                                                        .padding(.vertical, 12)
-                                                        .contentShape(Rectangle())
-                                                    }
-                                                    .buttonStyle(.plain)
-                                                    
-                                                    if station.id != stationResults.prefix(4).last?.id {
-                                                        Divider().padding(.leading, 64).opacity(0.08)
-                                                    }
-                                                }
-                                            }
-                                            .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 16)
-                                                    .stroke(ColorTheme.textTertiary.opacity(0.12), lineWidth: 1)
-                                            )
-                                        }
-                                    }
-                                    
-                                    // 4. Manual Add fallback
-                                    Button {
-                                        isSearchFocused = false
-                                        activePrepopulatedTrip = PrepopulatedTrip(
-                                            origin: nil,
-                                            destination: nil,
-                                            trainNumber: "",
-                                            operatorName: "VIA"
-                                        )
-                                    } label: {
-                                        Text("Add Trip Manually")
-                                            .font(.rtSubhead.bold())
-                                            .foregroundStyle(.white)
-                                            .frame(maxWidth: .infinity)
-                                            .padding(.vertical, 14)
-                                            .background(ColorTheme.surfaceHigh, in: RoundedRectangle(cornerRadius: 14))
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 14)
-                                                    .stroke(ColorTheme.textTertiary.opacity(0.15), lineWidth: 1)
-                                            )
-                                    }
-                                    .buttonStyle(.plain)
-                                    .padding(.top, 10)
-                                    
-                                    Color.clear.frame(height: 100)
-                                }
+                                HomeSmartSearchView(
+                                    searchQuery: searchQuery,
+                                    isSearchFocused: $isSearchFocused,
+                                    activePrepopulatedTrip: $activePrepopulatedTrip,
+                                    parseTrainQuery: parseTrainQuery,
+                                    parseRouteQuery: parseRouteQuery
+                                )
                                 .padding(.horizontal, 20)
+                                .padding(.top, 4)
                             }
                         }
-                        .scrollDisabled(drawerState == .peek)
                     }
                     .frame(height: currentHeight)
                     .frame(maxWidth: .infinity)
@@ -548,7 +334,6 @@ struct HomeView: View {
                 }
             }
             .ignoresSafeArea(edges: .bottom)
-            .toolbar(.hidden, for: .navigationBar)
             .sheet(item: $activePrepopulatedTrip) { trip in
                 AddTripView(
                     initialOrigin: trip.origin,
@@ -560,75 +345,64 @@ struct HomeView: View {
             .sheet(isPresented: $showSettings) {
                 SettingsView()
             }
+            .onReceive(liveActivityTimer) { _ in
+                // Periodically update UI/Map if an activity is live
+            }
+            .onChange(of: records) { _, newValue in
+                if !appState.hasInitializedCameraPosition {
+                    withAnimation(.spring()) {
+                        updateMapPosition()
+                    }
+                    appState.hasInitializedCameraPosition = true
+                }
+            }
             .onAppear {
                 if !appState.hasInitializedCameraPosition {
                     updateMapPosition()
                     appState.hasInitializedCameraPosition = true
                 }
-                LiveActivityManager.shared.syncActiveTrip(activeRecord?.toTrip())
-            }
-            .onChange(of: isSearchFocused) { _, isFocused in
-                if isFocused {
-                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-                        drawerState = .expanded
-                    }
-                }
-            }
-            .onReceive(liveActivityTimer) { _ in
-                LiveActivityManager.shared.syncActiveTrip(activeRecord?.toTrip())
-            }
-            .onChange(of: records) { _, newValue in
-                updateMapPosition()
-                let activeTrip = newValue.first(where: { $0.toTrip().isActive })?.toTrip()
-                LiveActivityManager.shared.syncActiveTrip(activeTrip)
             }
         }
     }
-
-    // MARK: - Helper Methods
-
+    
+    // MARK: - Actions & Logic
+    
     private func deleteTrip(id: UUID) {
         if let record = records.first(where: { $0.id == id }) {
-            NotificationService.shared.cancelNotifications(for: record.toTrip())
             modelContext.delete(record)
+            try? modelContext.save()
         }
     }
     
     private func getInterpolatedCoordinate(for trip: Trip) -> CLLocationCoordinate2D? {
         guard trip.isActive else { return nil }
         
-        if let liveLat = trip.liveLatitude,
-           let liveLng = trip.liveLongitude,
-           let liveUpd = trip.liveUpdated,
-           Date().timeIntervalSince(liveUpd) < 300 {
-            return CLLocationCoordinate2D(latitude: liveLat, longitude: liveLng)
-        }
-        
         let now = Date()
-        let dep = trip.scheduledDeparture
-        let arr = trip.scheduledArrival
+        let total = trip.scheduledArrival.timeIntervalSince(trip.scheduledDeparture)
+        let elapsed = now.timeIntervalSince(trip.scheduledDeparture)
         
-        let total = arr.timeIntervalSince(dep)
-        guard total > 0 else { return nil }
-        
-        let elapsed = now.timeIntervalSince(dep)
         let fraction = max(0, min(1, elapsed / total))
         
+        guard total > 0 else { return nil }
+        
+        let from = trip.origin.clCoordinate
+        let to = trip.destination.clCoordinate
+        
         return CLLocationCoordinate2D(
-            latitude: trip.origin.clCoordinate.latitude + (trip.destination.clCoordinate.latitude - trip.origin.clCoordinate.latitude) * fraction,
-            longitude: trip.origin.clCoordinate.longitude + (trip.destination.clCoordinate.longitude - trip.origin.clCoordinate.longitude) * fraction
+            latitude: from.latitude + (to.latitude - from.latitude) * fraction,
+            longitude: from.longitude + (to.longitude - from.longitude) * fraction
         )
     }
-    
+
     private func updateMapPosition() {
         let activeOrUpcoming = records.map { $0.toTrip() }.filter { $0.isActive || $0.isUpcoming }
-        
-        if activeOrUpcoming.isEmpty {
-            let region = MKCoordinateRegion(
-                center: CLLocationCoordinate2D(latitude: 42.8, longitude: -77.2),
-                span: MKCoordinateSpan(latitudeDelta: 7.0, longitudeDelta: 8.0)
-            )
-            appState.sharedCameraPosition = .region(region)
+        guard !activeOrUpcoming.isEmpty else {
+            // Default to whole of North America if no trips
+            appState.sharedCameraPosition = .region(MKCoordinateRegion(
+                center: CLLocationCoordinate2D(latitude: 45.0, longitude: -80.0),
+                latitudinalMeters: 2_000_000,
+                longitudinalMeters: 2_000_000
+            ))
             return
         }
         
@@ -643,56 +417,10 @@ struct HomeView: View {
         let minLon = coords.map { $0.longitude }.min() ?? -79.3806
         let maxLon = coords.map { $0.longitude }.max() ?? -79.3806
         
-        let centerLat = (minLat + maxLat) / 2
-        let centerLon = (minLon + maxLon) / 2
+        let center = CLLocationCoordinate2D(latitude: (minLat + maxLat) / 2, longitude: (minLon + maxLon) / 2)
+        let span = MKCoordinateSpan(latitudeDelta: (maxLat - minLat) * 1.5 + 0.5, longitudeDelta: (maxLon - minLon) * 1.5 + 0.5)
         
-        let latDelta = max(1.2, (maxLat - minLat) * 1.4)
-        let lonDelta = max(1.2, (maxLon - minLon) * 1.4)
-        
-        let region = MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: centerLat, longitude: centerLon),
-            span: MKCoordinateSpan(latitudeDelta: latDelta, longitudeDelta: lonDelta)
-        )
-        appState.sharedCameraPosition = .region(region)
-    }
-}
-
-// MARK: - Corner Radius Helpers
-
-extension View {
-    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
-        clipShape(RoundedCorner(shapeCornerRadius: radius, corners: corners))
-    }
-}
-
-struct RoundedCorner: Shape {
-    var shapeCornerRadius: CGFloat = .infinity
-    var corners: UIRectCorner = .allCorners
-
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: shapeCornerRadius, height: shapeCornerRadius))
-        return Path(path.cgPath)
-    }
-}
-
-// MARK: - Empty State
-
-private struct EmptyTripsView: View {
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "tram")
-                .font(.system(size: 52))
-                .foregroundStyle(ColorTheme.textTertiary)
-            Text("No trips yet")
-                .font(.rtHeadline)
-                .foregroundStyle(ColorTheme.textPrimary)
-            Text("Use the search bar above to look up schedules or add a station route.")
-                .font(.rtBody)
-                .foregroundStyle(ColorTheme.textSecondary)
-                .multilineTextAlignment(.center)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(40)
+        appState.sharedCameraPosition = .region(MKCoordinateRegion(center: center, span: span))
     }
 }
 
