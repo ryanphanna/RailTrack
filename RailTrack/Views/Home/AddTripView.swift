@@ -274,6 +274,7 @@ struct AddTripView: View {
                                 .foregroundStyle(ColorTheme.textSecondary)
                                 .lineLimit(1)
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .contentShape(Rectangle())
                         .onTapGesture {
                             selectedOrigin = nil
@@ -282,6 +283,7 @@ struct AddTripView: View {
                         }
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             
@@ -329,6 +331,7 @@ struct AddTripView: View {
                                 .foregroundStyle(ColorTheme.textSecondary)
                                 .lineLimit(1)
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .contentShape(Rectangle())
                         .onTapGesture {
                             selectedDestination = nil
@@ -337,6 +340,7 @@ struct AddTripView: View {
                         }
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }

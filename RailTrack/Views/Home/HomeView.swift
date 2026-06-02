@@ -11,6 +11,7 @@ struct PrepopulatedTrip: Identifiable {
 }
 
 struct HomeView: View {
+    @EnvironmentObject var appState: AppState
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \TripRecord.scheduledDeparture, order: .forward) private var records: [TripRecord]
     
@@ -20,9 +21,6 @@ struct HomeView: View {
     // Smart Search Query
     @State private var searchQuery = ""
     @FocusState private var isSearchFocused: Bool
-    
-    // Map camera position
-    @State private var cameraPosition: MapCameraPosition = .automatic
     
     // Bottom drawer state
     enum DrawerState {
@@ -107,7 +105,7 @@ struct HomeView: View {
                 
                 ZStack(alignment: .bottom) {
                     // 1. Background Interactive Map
-                    Map(position: $cameraPosition) {
+                    Map(position: $appState.sharedCameraPosition) {
                         ForEach(records.map { $0.toTrip() }.filter { $0.isActive || $0.isUpcoming }) { trip in
                             Annotation(trip.origin.shortName, coordinate: trip.origin.clCoordinate) {
                                 StationMarker(code: trip.origin.code, isOrigin: true)
@@ -571,7 +569,10 @@ struct HomeView: View {
                 SettingsView()
             }
             .onAppear {
-                updateMapPosition()
+                if !appState.hasInitializedCameraPosition {
+                    updateMapPosition()
+                    appState.hasInitializedCameraPosition = true
+                }
                 LiveActivityManager.shared.syncActiveTrip(activeRecord?.toTrip())
             }
             .onChange(of: isSearchFocused) { _, isFocused in
@@ -635,7 +636,7 @@ struct HomeView: View {
                 center: CLLocationCoordinate2D(latitude: 42.8, longitude: -77.2),
                 span: MKCoordinateSpan(latitudeDelta: 7.0, longitudeDelta: 8.0)
             )
-            cameraPosition = .region(region)
+            appState.sharedCameraPosition = .region(region)
             return
         }
         
@@ -660,7 +661,7 @@ struct HomeView: View {
             center: CLLocationCoordinate2D(latitude: centerLat, longitude: centerLon),
             span: MKCoordinateSpan(latitudeDelta: latDelta, longitudeDelta: lonDelta)
         )
-        cameraPosition = .region(region)
+        appState.sharedCameraPosition = .region(region)
     }
 }
 

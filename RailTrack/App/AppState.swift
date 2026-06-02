@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import MapKit
 
 /// Central app state — auth, active user, onboarding flag.
 @MainActor
@@ -7,6 +8,13 @@ final class AppState: ObservableObject {
     @Published var isOnboarded: Bool
     @Published var currentUser: UserProfile?
     @Published var isLoading: Bool = false
+    @Published var sharedCameraPosition: MapCameraPosition = .region(
+        MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 43.8, longitude: -77.5),
+            span: MKCoordinateSpan(latitudeDelta: 6.0, longitudeDelta: 7.0)
+        )
+    )
+    @Published var hasInitializedCameraPosition: Bool = false
 
     init() {
         self.isOnboarded = UserDefaults.standard.bool(forKey: "isOnboarded")
