@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Created `RailTrackTests` directory with unit tests for `StationDatabase`, `AmtrakLiveDataService`, `VIALiveDataService`, and `GOLiveDataService`.
 - Created `Views/Explore` directory to house all explore-related components.
 - Extracted `SelectedTrainDrawerView` and `SelectedTrainInfo` to support the new integrated detail view.
 - Added `Utilities/LocationManager.swift` to share location tracking logic across views.
