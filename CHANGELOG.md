@@ -12,11 +12,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Created `Views/Explore` directory to house all explore-related components.
 - Extracted `SelectedTrainDrawerView` and `SelectedTrainInfo` to support the new integrated detail view.
 - Added `Utilities/LocationManager.swift` to share location tracking logic across views.
+- Created `Views/Home/Components` and `Views/Profile/Components` to improve project organization.
+- Extracted `TicketCardView`, `StationSearchResultsCard`, `RouteSuggestionsCard`, and `ScheduleCard` from `AddTripView`.
+- Extracted `BoardingPassProfileCard`, `PassportStampCard`, `OnTimeCard`, and `EmptyProfileView` from `ProfileView`.
+- Extracted `HomeMapView` and `HomeSmartSearchView` from `HomeView`.
+- Consolidated shared UI elements into `Views/Components/MapMarkers.swift`, `TicketComponents.swift`, and `EmptyTripsView.swift`.
+- Added **Interactive Trip Maps**: The map in the Trip Detail view can now be expanded to a full-screen interactive view.
 
 ### Changed
 - **Integrated Train Details**: Moved the "Selected Train" floating card from a map overlay directly into the "Explore" bottom drawer for a more cohesive and cleaner UI.
 - **Dynamic Drawer Content**: The bottom drawer now automatically updates its header and content to show train details when a train is selected on the map.
-- **Codebase Refactoring**: Split the large `ContentView.swift` (1700+ lines) into modular files, moving `ExploreView`, `LiveExploreMapView`, `StationBoardView`, and `LocationManager` to their own dedicated files.
+- **Codebase Refactoring**: Major modularization of large view files. Split `ContentView.swift`, `AddTripView.swift`, `HomeView.swift`, and `ProfileView.swift` into focused, reusable components.
 - Redesigned **Explore** tab with a full-screen interactive map background and a sliding bottom drawer panel, matching the `HomeView` UX pattern.
 - Added floating **Settings** and **Locate** buttons to `ExploreView` in the same top-right layout as `HomeView`.
 - Shared map camera position (`sharedCameraPosition`) via `AppState` so the map viewport is seamlessly preserved when switching between the **Trips** and **Explore** tabs.
