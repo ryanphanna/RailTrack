@@ -97,12 +97,35 @@ final class GOLiveDataService: ObservableObject {
     }
     
     private func fetchLiveFeed() async throws -> Data {
-        // Fallback to local snapshot since real-time Metrolinx API requires key registration.
-        // This acts as a robust GTFS-RT / Open Data API stub.
-        if let data = loadLocalSnapshot() {
-            return data
+        // Attempt to load Metrolinx API Key from Info.plist
+        let apiKey = Bundle.main.object(forInfoDictionaryKey: "MetrolinxAPIKey") as? String ?? ""
+        guard !apiKey.isEmpty else {
+            print("[GOLiveDataService] No MetrolinxAPIKey found in Info.plist. Falling back to local snapshot.")
+            if let data = loadLocalSnapshot() {
+                return data
+            }
+            throw URLError(.fileDoesNotExist)
         }
-        throw URLError(.fileDoesNotExist)
+        
+        let urlString = "https://api.openmetrolinx.com/OpenDataAPI/api/V1/ServiceataGlance/Trains?key=\(apiKey)"
+        guard let url = URL(string: urlString) else {
+            throw URLError(.badURL)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 15.0
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            print("[GOLiveDataService] Metrolinx API returned error response. Falling back to local snapshot.")
+            if let data = loadLocalSnapshot() {
+                return data
+            }
+            throw URLError(.badServerResponse)
+        }
+        
+        return data
     }
     
     // MARK: - Helpers & Matching Logic

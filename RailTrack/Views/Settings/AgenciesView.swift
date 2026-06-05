@@ -55,7 +55,6 @@ struct AgenciesView: View {
                         ]
                     )
                     
-                    // GO Transit Card
                     AgencyCard(
                         name: "GO Transit (Ontario)",
                         opCode: "GO",
@@ -63,7 +62,7 @@ struct AgenciesView: View {
                         status: "Live Tracking Active",
                         statusColor: ColorTheme.accentGreen,
                         features: [
-                            AgencyFeature(name: "Simulated GTFS-RT Live Tracking", supported: true),
+                            AgencyFeature(name: "Live GTFS-RT Train Tracking", supported: true),
                             AgencyFeature(name: "Real-Time Delay Metrics", supported: true),
                             AgencyFeature(name: "Lakeshore Corridor Timetable Auto-Lookup", supported: true),
                             AgencyFeature(name: "Dynamic Island & Lock Screen Live Activities", supported: true)

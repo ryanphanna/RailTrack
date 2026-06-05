@@ -55,7 +55,7 @@ A high-level view of upcoming items for RailTrack. Items are roughly ordered by 
 ## 🔜 Expansion
 
 - [ ] Crowdsourced tracking (phone as sensor when GTFS-RT unavailable)
-- [ ] GO Transit GTFS-RT integration
+- [x] GO Transit GTFS-RT integration
 - [ ] VIA Rail Corridor stations map
 - [ ] Multi-modal connections (train → subway → bus handoff)
 - [ ] Android / cross-platform (future consideration)
