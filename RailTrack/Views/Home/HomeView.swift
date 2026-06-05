@@ -92,245 +92,13 @@ struct HomeView: View {
                 let screenHeight = geo.size.height
                 let peekHeight: CGFloat = 260
                 let expandedHeight: CGFloat = screenHeight - 60
-                
                 let currentHeight = max(peekHeight, (drawerState == .expanded ? expandedHeight : peekHeight) - dragOffset)
-                
+
                 ZStack(alignment: .bottom) {
-                    // 1. Background Interactive Map
-                    HomeMapView(
-                        records: records,
-                        position: $appState.sharedCameraPosition,
-                        getInterpolatedCoordinate: getInterpolatedCoordinate
-                    )
-                    .ignoresSafeArea(edges: .all)
-                    
-                    // Floating Settings & Locate Buttons in Top Right
-                    VStack {
-                        HStack {
-                            Spacer()
-                            VStack(spacing: 12) {
-                                Button {
-                                    showSettings = true
-                                } label: {
-                                    Image(systemName: "gearshape.fill")
-                                        .font(.system(size: 16, weight: .bold))
-                                        .foregroundStyle(ColorTheme.textSecondary)
-                                        .padding(12)
-                                        .background(ColorTheme.surface, in: Circle())
-                                        .overlay(Circle().stroke(ColorTheme.textTertiary.opacity(0.15), lineWidth: 1))
-                                        .shadow(color: Color.black.opacity(0.15), radius: 6, x: 0, y: 3)
-                                }
-                                .buttonStyle(.plain)
-                                
-                                Button {
-                                    withAnimation(.spring()) {
-                                        updateMapPosition()
-                                    }
-                                } label: {
-                                    Image(systemName: "location.fill")
-                                        .font(.system(size: 16, weight: .bold))
-                                        .foregroundStyle(ColorTheme.textSecondary)
-                                        .padding(12)
-                                        .background(ColorTheme.surface, in: Circle())
-                                        .overlay(Circle().stroke(ColorTheme.textTertiary.opacity(0.15), lineWidth: 1))
-                                        .shadow(color: Color.black.opacity(0.15), radius: 6, x: 0, y: 3)
-                                }
-                                .buttonStyle(.plain)
-                            }
-                            .padding(.top, 60)
-                            .padding(.trailing, 20)
-                        }
-                        Spacer()
-                    }
-                    .ignoresSafeArea()
-                    
-                    // Scrim overlay
-                    if drawerState == .expanded {
-                        Color.black
-                            .opacity(max(0, min(0.4, (currentHeight - peekHeight) / (expandedHeight - peekHeight) * 0.4)))
-                            .ignoresSafeArea()
-                            .onTapGesture {
-                                isSearchFocused = false
-                                withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-                                    drawerState = .peek
-                                }
-                            }
-                    }
-                    
-                    // 2. Sliding Drawer Panel
-                    VStack(spacing: 0) {
-                        // Drag handle
-                        Capsule()
-                            .fill(ColorTheme.textTertiary.opacity(0.35))
-                            .frame(width: 38, height: 5)
-                            .padding(.top, 10)
-                            .padding(.bottom, 12)
-                        
-                        // Header Search Bar
-                        HStack(spacing: 8) {
-                            Image(systemName: "magnifyingglass")
-                                .font(.system(size: 15, weight: .bold))
-                                .foregroundStyle(ColorTheme.textTertiary)
-                            
-                            TextField("Search train, station, or route…", text: $searchQuery, prompt: Text("Search train, station, or route…").foregroundColor(ColorTheme.textTertiary.opacity(0.6)))
-                                .font(.rtBody.bold())
-                                .foregroundStyle(ColorTheme.textPrimary)
-                                .focused($isSearchFocused)
-                                .autocorrectionDisabled()
-                            
-                            if !searchQuery.isEmpty {
-                                Button {
-                                    searchQuery = ""
-                                } label: {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .foregroundStyle(ColorTheme.textTertiary)
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 10)
-                        .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 14))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 14)
-                                .stroke(ColorTheme.textTertiary.opacity(0.15), lineWidth: 1)
-                        )
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 16)
-                        
-                        // Scrollable Content: Lists or Smart Results
-                        ScrollView {
-                            if searchQuery.isEmpty {
-                                // Default Journeys lists
-                                VStack(spacing: 20) {
-                                    ICloudBannerView()
-                                    
-                                    if let rec = activeRecord {
-                                        VStack(alignment: .leading, spacing: 8) {
-                                            HStack(spacing: 6) {
-                                                Image(systemName: "tram.fill")
-                                                    .font(.system(size: 11, weight: .bold))
-                                                    .foregroundStyle(ColorTheme.accentGreen)
-                                                Text("NOW BOARDING")
-                                                    .font(.rtCaption.bold())
-                                                    .foregroundStyle(ColorTheme.textSecondary)
-                                                    .tracking(0.6)
-                                            }
-                                            .padding(.horizontal, 4)
-                                            
-                                            NavigationLink(destination: TripDetailView(record: rec)) {
-                                                TripCardView(trip: rec.toTrip())
-                                            }
-                                            .buttonStyle(.plain)
-                                        }
-                                    }
-                                    
-                                    if !upcomingRecords.isEmpty {
-                                        VStack(alignment: .leading, spacing: 8) {
-                                            HStack(spacing: 6) {
-                                                Image(systemName: "calendar")
-                                                    .font(.system(size: 11, weight: .bold))
-                                                    .foregroundStyle(ColorTheme.accent)
-                                                Text("UPCOMING")
-                                                    .font(.rtCaption.bold())
-                                                    .foregroundStyle(ColorTheme.textSecondary)
-                                                    .tracking(0.6)
-                                            }
-                                            .padding(.horizontal, 4)
-                                            
-                                            ForEach(upcomingRecords) { rec in
-                                                NavigationLink(destination: TripDetailView(record: rec)) {
-                                                    TripCardView(trip: rec.toTrip())
-                                                }
-                                                .buttonStyle(.plain)
-                                                .contextMenu {
-                                                    Button(role: .destructive) {
-                                                        deleteTrip(id: rec.id)
-                                                    } label: {
-                                                        Label("Delete", systemImage: "trash")
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    
-                                    if !pastRecords.isEmpty {
-                                        VStack(alignment: .leading, spacing: 8) {
-                                            HStack(spacing: 6) {
-                                                Image(systemName: "clock.fill")
-                                                    .font(.system(size: 11, weight: .bold))
-                                                    .foregroundStyle(ColorTheme.textTertiary)
-                                                Text("PAST JOURNEYS")
-                                                    .font(.rtCaption.bold())
-                                                    .foregroundStyle(ColorTheme.textSecondary)
-                                                    .tracking(0.6)
-                                            }
-                                            .padding(.horizontal, 4)
-                                            
-                                            ForEach(pastRecords) { rec in
-                                                NavigationLink(destination: TripDetailView(record: rec)) {
-                                                    TripCardView(trip: rec.toTrip())
-                                                }
-                                                .buttonStyle(.plain)
-                                                .contextMenu {
-                                                    Button(role: .destructive) {
-                                                        deleteTrip(id: rec.id)
-                                                    } label: {
-                                                        Label("Delete", systemImage: "trash")
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    
-                                    if records.isEmpty {
-                                        EmptyTripsView()
-                                            .padding(.top, 16)
-                                    }
-                                    
-                                    Color.clear.frame(height: 100)
-                                }
-                                .padding(.horizontal, 20)
-                                .padding(.top, 4)
-                            } else {
-                                // Smart Search Results
-                                HomeSmartSearchView(
-                                    searchQuery: searchQuery,
-                                    isSearchFocused: $isSearchFocused,
-                                    activePrepopulatedTrip: $activePrepopulatedTrip,
-                                    parseTrainQuery: parseTrainQuery,
-                                    parseRouteQuery: parseRouteQuery
-                                )
-                                .padding(.horizontal, 20)
-                                .padding(.top, 4)
-                            }
-                        }
-                    }
-                    .frame(height: currentHeight)
-                    .frame(maxWidth: .infinity)
-                    .background(
-                        ColorTheme.background
-                            .shadow(color: Color.black.opacity(0.35), radius: 12, y: -4)
-                    )
-                    .cornerRadius(24, corners: [.topLeft, .topRight])
-                    .ignoresSafeArea(edges: .bottom)
-                    .gesture(
-                        DragGesture()
-                            .onChanged { value in
-                                dragOffset = value.translation.height
-                            }
-                            .onEnded { value in
-                                let threshold: CGFloat = 60
-                                withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-                                    if value.translation.height < -threshold {
-                                        drawerState = .expanded
-                                    } else if value.translation.height > threshold {
-                                        drawerState = .peek
-                                    }
-                                    dragOffset = 0
-                                }
-                            }
-                    )
+                    homeMap
+                    floatingControls
+                    scrim(currentHeight: currentHeight, peekHeight: peekHeight, expandedHeight: expandedHeight)
+                    drawer(currentHeight: currentHeight)
                 }
             }
             .ignoresSafeArea(edges: .bottom)
@@ -363,6 +131,238 @@ struct HomeView: View {
                 }
             }
         }
+    }
+
+    private var homeMap: some View {
+        HomeMapView(
+            records: records,
+            position: $appState.sharedCameraPosition,
+            getInterpolatedCoordinate: getInterpolatedCoordinate
+        )
+        .ignoresSafeArea(edges: .all)
+    }
+
+    private var floatingControls: some View {
+        VStack {
+            HStack {
+                Spacer()
+                VStack(spacing: 12) {
+                    circleButton(systemName: "gearshape.fill") {
+                        showSettings = true
+                    }
+
+                    circleButton(systemName: "location.fill") {
+                        withAnimation(.spring()) {
+                            updateMapPosition()
+                        }
+                    }
+                }
+                .padding(.top, 60)
+                .padding(.trailing, 20)
+            }
+            Spacer()
+        }
+        .ignoresSafeArea()
+    }
+
+    private func circleButton(systemName: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: systemName)
+                .font(.system(size: 16, weight: .bold))
+                .foregroundStyle(ColorTheme.textSecondary)
+                .padding(12)
+                .background(ColorTheme.surface, in: Circle())
+                .overlay(Circle().stroke(ColorTheme.textTertiary.opacity(0.15), lineWidth: 1))
+                .shadow(color: Color.black.opacity(0.15), radius: 6, x: 0, y: 3)
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private func scrim(currentHeight: CGFloat, peekHeight: CGFloat, expandedHeight: CGFloat) -> some View {
+        if drawerState == .expanded {
+            Color.black
+                .opacity(max(0, min(0.4, (currentHeight - peekHeight) / (expandedHeight - peekHeight) * 0.4)))
+                .ignoresSafeArea()
+                .onTapGesture {
+                    isSearchFocused = false
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                        drawerState = .peek
+                    }
+                }
+        }
+    }
+
+    private func drawer(currentHeight: CGFloat) -> some View {
+        VStack(spacing: 0) {
+            Capsule()
+                .fill(ColorTheme.textTertiary.opacity(0.35))
+                .frame(width: 38, height: 5)
+                .padding(.top, 10)
+                .padding(.bottom, 12)
+
+            searchBar
+            drawerScrollContent
+        }
+        .frame(height: currentHeight)
+        .frame(maxWidth: .infinity)
+        .background(
+            ColorTheme.background
+                .shadow(color: Color.black.opacity(0.35), radius: 12, y: -4)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .ignoresSafeArea(edges: .bottom)
+        .gesture(drawerDragGesture)
+    }
+
+    private var searchBar: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 15, weight: .bold))
+                .foregroundStyle(ColorTheme.textTertiary)
+
+            TextField("Search train, station, or route...", text: $searchQuery, prompt: Text("Search train, station, or route...").foregroundColor(ColorTheme.textTertiary.opacity(0.6)))
+                .font(.rtBody.bold())
+                .foregroundStyle(ColorTheme.textPrimary)
+                .focused($isSearchFocused)
+                .autocorrectionDisabled()
+
+            if !searchQuery.isEmpty {
+                Button {
+                    searchQuery = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(ColorTheme.textTertiary)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 14))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(ColorTheme.textTertiary.opacity(0.15), lineWidth: 1)
+        )
+        .padding(.horizontal, 20)
+        .padding(.bottom, 16)
+    }
+
+    private var drawerScrollContent: some View {
+        ScrollView {
+            if searchQuery.isEmpty {
+                defaultJourneyList
+                    .padding(.horizontal, 20)
+                    .padding(.top, 4)
+            } else {
+                HomeSmartSearchView(
+                    searchQuery: searchQuery,
+                    isSearchFocused: $isSearchFocused,
+                    activePrepopulatedTrip: $activePrepopulatedTrip,
+                    parseTrainQuery: parseTrainQuery,
+                    parseRouteQuery: parseRouteQuery
+                )
+                .padding(.horizontal, 20)
+                .padding(.top, 4)
+            }
+        }
+    }
+
+    private var defaultJourneyList: some View {
+        VStack(spacing: 20) {
+            ICloudBannerView()
+            activeJourneySection
+            upcomingJourneySection
+            pastJourneySection
+
+            if records.isEmpty {
+                EmptyTripsView()
+                    .padding(.top, 16)
+            }
+
+            Color.clear.frame(height: 100)
+        }
+    }
+
+    @ViewBuilder
+    private var activeJourneySection: some View {
+        if let rec = activeRecord {
+            VStack(alignment: .leading, spacing: 8) {
+                sectionHeader(systemName: "tram.fill", title: "NOW BOARDING", color: ColorTheme.accentGreen)
+
+                NavigationLink(destination: TripDetailView(record: rec)) {
+                    TripCardView(trip: rec.toTrip())
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var upcomingJourneySection: some View {
+        if !upcomingRecords.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                sectionHeader(systemName: "calendar", title: "UPCOMING", color: ColorTheme.accent)
+                recordLinks(upcomingRecords)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var pastJourneySection: some View {
+        if !pastRecords.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                sectionHeader(systemName: "clock.fill", title: "PAST JOURNEYS", color: ColorTheme.textTertiary)
+                recordLinks(pastRecords)
+            }
+        }
+    }
+
+    private func sectionHeader(systemName: String, title: String, color: Color) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: systemName)
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(color)
+            Text(title)
+                .font(.rtCaption.bold())
+                .foregroundStyle(ColorTheme.textSecondary)
+                .tracking(0.6)
+        }
+        .padding(.horizontal, 4)
+    }
+
+    private func recordLinks(_ records: [TripRecord]) -> some View {
+        ForEach(records) { rec in
+            NavigationLink(destination: TripDetailView(record: rec)) {
+                TripCardView(trip: rec.toTrip())
+            }
+            .buttonStyle(.plain)
+            .contextMenu {
+                Button(role: .destructive) {
+                    deleteTrip(id: rec.id)
+                } label: {
+                    Label("Delete", systemImage: "trash")
+                }
+            }
+        }
+    }
+
+    private var drawerDragGesture: some Gesture {
+        DragGesture()
+            .onChanged { value in
+                dragOffset = value.translation.height
+            }
+            .onEnded { value in
+                let threshold: CGFloat = 60
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                    if value.translation.height < -threshold {
+                        drawerState = .expanded
+                    } else if value.translation.height > threshold {
+                        drawerState = .peek
+                    }
+                    dragOffset = 0
+                }
+            }
     }
     
     // MARK: - Actions & Logic

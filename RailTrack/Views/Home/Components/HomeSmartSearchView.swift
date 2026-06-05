@@ -2,7 +2,7 @@ import SwiftUI
 
 struct HomeSmartSearchView: View {
     let searchQuery: String
-    @Binding var isSearchFocused: Bool
+    @FocusState.Binding var isSearchFocused: Bool
     @Binding var activePrepopulatedTrip: PrepopulatedTrip?
     
     let parseTrainQuery: (String) -> (number: String, op: String)?

@@ -28,12 +28,12 @@ final class SupabaseService: ObservableObject {
 
     func signIn(email: String, password: String) async throws {
         // TODO: supabase.auth.signIn(email: email, password: password)
-        print("[Supabase] signIn: \(email)")
+        print("[Supabase] signIn")
     }
 
     func signUp(email: String, password: String, username: String) async throws {
         // TODO: supabase.auth.signUp(email: email, password: password)
-        print("[Supabase] signUp: \(email)")
+        print("[Supabase] signUp")
     }
 
     func signOut() async throws {

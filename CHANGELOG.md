@@ -5,6 +5,18 @@ All notable changes to RailTrack will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- Fixed Release build failures that blocked deployment by restoring missing Xcode source build entries for the extracted Home components.
+- Added the missing safe collection subscript used by Explore station/departure lookups.
+- Split large `HomeView` and `ExploreView` SwiftUI bodies into smaller view helpers to avoid Release compiler type-check timeouts.
+- Fixed focus binding and drawer clipping API mismatches surfaced by the Release build.
+- **Security**: Resolved CodeQL "Cleartext logging of sensitive information" alerts by removing user email from `SupabaseService` debug logs.
+
+### Changed
+- Migrated CodeQL workflow to a manual build configuration to resolve `autobuild.sh` failures on GitHub Actions.
+
 ## [1.3.0] - 2026-06-05
 
 ### Added
@@ -135,5 +147,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Overlapping navigation/tab elements by relocating the Home screen `+` (Add Trip) button to the navigation bar trailing and the Settings button to leading
 - Form card layouts by adding standard 16pt padding to `FormCard` wrappers
 - Text field placeholder legibility by applying custom colored prompts on dark form inputs
-
 

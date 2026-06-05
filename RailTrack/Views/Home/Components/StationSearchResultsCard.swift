@@ -4,11 +4,11 @@ struct StationSearchResultsCard: View {
     @Binding var selectedOrigin: Station?
     @Binding var originQuery: String
     @Binding var originResults: [Station]
-    @Binding var isOriginFocused: Bool
+    @FocusState.Binding var isOriginFocused: Bool
     @Binding var selectedDestination: Station?
     @Binding var destinationQuery: String
     @Binding var destinationResults: [Station]
-    @Binding var isDestinationFocused: Bool
+    @FocusState.Binding var isDestinationFocused: Bool
     @Binding var selectedOperator: String
     
     var body: some View {

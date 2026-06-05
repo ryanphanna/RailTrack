@@ -59,6 +59,10 @@
 		A1000046 /* PassportStampCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000046 /* PassportStampCard.swift */; };
 		A1000047 /* OnTimeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000047 /* OnTimeCard.swift */; };
 		A1000048 /* EmptyProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000048 /* EmptyProfileView.swift */; };
+		A1000049 /* TicketCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000049 /* TicketCardView.swift */; };
+		A1000050 /* StationSearchResultsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000050 /* StationSearchResultsCard.swift */; };
+		A1000051 /* RouteSuggestionsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000051 /* RouteSuggestionsCard.swift */; };
+		A1000052 /* ScheduleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000052 /* ScheduleCard.swift */; };
 		A1000099 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000099 /* Assets.xcassets */; };
 		A10000B1 /* go_snapshot.json in Resources */ = {isa = PBXBuildFile; fileRef = A10000B2 /* go_snapshot.json */; };
 		A10000C1 /* GOLiveDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000C2 /* GOLiveDataService.swift */; };
