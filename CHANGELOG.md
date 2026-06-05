@@ -5,7 +5,7 @@ All notable changes to RailTrack will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.3.1] - 2026-06-05
 
 ### Fixed
 - Fixed Release build failures that blocked deployment by restoring missing Xcode source build entries for the extracted Home components.
