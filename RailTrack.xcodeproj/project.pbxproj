@@ -219,8 +219,8 @@
 			children = (
 				943FB91B2FCE817D0005D729 /* RailTrackTests */,
 				E1000001 /* App */,
-				E1000002 /* Models */,
-				E1000003 /* Services */,
+				E1000003 /* Models */,
+				E1000017 /* Services */,
 				E1000004 /* Views */,
 				E1000009 /* Utilities */,
 				E1000012 /* Resources */,
@@ -256,7 +256,7 @@
 			sourceTree = "<group>";
 		};
 
-		E1000003 /* Services */ = {
+		E1000017 /* Services */ = {
 			isa = PBXGroup;
 			children = (
 				B1000007 /* SupabaseService.swift */,
@@ -291,8 +291,8 @@
 			isa = PBXGroup;
 			children = (
 				B1000010 /* HomeView.swift */,
-				A1000011 /* TripCardView.swift */,
-				A1000017 /* AddTripView.swift */,
+				B1000011 /* TripCardView.swift */,
+				B1000017 /* AddTripView.swift */,
 				E1000015 /* Components */,
 			);
 			path = Home;
@@ -372,10 +372,10 @@
 		E1000011 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				A1000019 /* StatusBadge.swift */,
-				A1000020 /* DelayBanner.swift */,
-				A1000027 /* FormComponents.swift */,
-				A1000029 /* ICloudBannerView.swift */,
+				B1000019 /* StatusBadge.swift */,
+				B1000020 /* DelayBanner.swift */,
+				B1000027 /* FormComponents.swift */,
+				B1000029 /* ICloudBannerView.swift */,
 				B1000038 /* MapMarkers.swift */,
 				B1000039 /* TicketComponents.swift */,
 				B1000044 /* EmptyTripsView.swift */,

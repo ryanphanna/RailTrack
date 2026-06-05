@@ -5,7 +5,7 @@ All notable changes to RailTrack will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.3.0] - 2026-06-05
 
 ### Added
 - **GO Transit Live GTFS-RT Integration**: Replaced simulated schedule tracking for GO Transit with real HTTP networking querying the Metrolinx Open Data API (`api.openmetrolinx.com/OpenDataAPI/api/v1/ServiceataGlance/Trains`), complete with optional config API key (`MetrolinxAPIKey`) inside `Info.plist` and automatic graceful local snapshot fallback.
