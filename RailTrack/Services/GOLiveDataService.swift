@@ -98,8 +98,8 @@ final class GOLiveDataService: ObservableObject {
     
     private func fetchLiveFeed() async throws -> Data {
         // Attempt to load Metrolinx API Key from Info.plist
-        let apiKey = Bundle.main.object(forInfoDictionaryKey: "MetrolinxAPIKey") as? String ?? ""
-        guard !apiKey.isEmpty else {
+        let token = Bundle.main.object(forInfoDictionaryKey: "MetrolinxAPIKey") as? String ?? ""
+        guard !token.isEmpty else {
             print("[GOLiveDataService] No MetrolinxAPIKey found in Info.plist. Falling back to local snapshot.")
             if let data = loadLocalSnapshot() {
                 return data
@@ -107,8 +107,12 @@ final class GOLiveDataService: ObservableObject {
             throw URLError(.fileDoesNotExist)
         }
         
-        let urlString = "https://api.openmetrolinx.com/OpenDataAPI/api/V1/ServiceataGlance/Trains?key=\(apiKey)"
-        guard let url = URL(string: urlString) else {
+        var components = URLComponents(string: "https://api.openmetrolinx.com/OpenDataAPI/api/V1/ServiceataGlance/Trains")
+        components?.queryItems = [
+            URLQueryItem(name: "key", value: token)
+        ]
+        
+        guard let url = components?.url else {
             throw URLError(.badURL)
         }
         

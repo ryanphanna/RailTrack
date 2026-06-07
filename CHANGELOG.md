@@ -5,6 +5,12 @@ All notable changes to RailTrack will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- Fixed CodeQL cleartext transmission security warning in `GOLiveDataService` by constructing the Metrolinx API URL with `URLComponents` and renaming the local `apiKey` variable to `token`.
+- Removed the broken `License` link from `README.md`.
+
 ## [1.3.1] - 2026-06-05
 
 ### Fixed
