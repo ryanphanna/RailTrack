@@ -21,6 +21,9 @@ final class AppState: ObservableObject {
         self.isOnboarded = UserDefaults.standard.bool(forKey: "isOnboarded")
         self.isGPSTrackingEnabled = UserDefaults.standard.bool(forKey: "isGPSTrackingEnabled")
         
+        // Sync setting to manager
+        LocationManager.shared.isTrackingEnabled = self.isGPSTrackingEnabled
+        
         if let data = UserDefaults.standard.data(forKey: "currentUser"),
            let profile = try? JSONDecoder().decode(UserProfile.self, from: data) {
             self.currentUser = profile
@@ -32,6 +35,8 @@ final class AppState: ObservableObject {
     func setGPSTrackingEnabled(_ enabled: Bool) {
         self.isGPSTrackingEnabled = enabled
         UserDefaults.standard.set(enabled, forKey: "isGPSTrackingEnabled")
+        
+        LocationManager.shared.isTrackingEnabled = enabled
         
         // Update LocationManager configuration
         if enabled {

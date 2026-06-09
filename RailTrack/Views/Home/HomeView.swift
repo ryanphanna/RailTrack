@@ -24,6 +24,8 @@ struct HomeView: View {
     
     private let liveActivityTimer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
 
+    @StateObject private var proximityManager = StationProximityManager.shared
+    
     // MARK: - Filtered sections
     private var activeRecord: TripRecord? {
         records.first(where: { $0.toTrip().isActive })
@@ -287,13 +289,34 @@ struct HomeView: View {
     @ViewBuilder
     private var activeJourneySection: some View {
         if let rec = activeRecord {
+            let trip = rec.toTrip()
             VStack(alignment: .leading, spacing: 8) {
-                sectionHeader(systemName: "tram.fill", title: "NOW BOARDING", color: ColorTheme.accentGreen)
+                HStack {
+                    sectionHeader(systemName: "tram.fill", title: "NOW BOARDING", color: ColorTheme.accentGreen)
+                    Spacer()
+                    if proximityManager.isAtDestination {
+                        Text("ARRIVED AT \(trip.destination.code)")
+                            .font(.system(size: 8, weight: .black))
+                            .foregroundStyle(ColorTheme.accentGreen)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(ColorTheme.accentGreen.opacity(0.1), in: Capsule())
+                    }
+                }
 
                 NavigationLink(destination: TripDetailView(record: rec)) {
-                    TripCardView(trip: rec.toTrip())
+                    TripCardView(trip: trip)
                 }
                 .buttonStyle(.plain)
+            }
+            .onAppear {
+                if let loc = LocationManager.shared.location {
+                    proximityManager.updateProximity(for: trip, at: loc)
+                }
+                proximityManager.activeTrip = trip
+            }
+            .onDisappear {
+                proximityManager.activeTrip = nil
             }
         }
     }
