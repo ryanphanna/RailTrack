@@ -50,8 +50,24 @@ struct SettingsView: View {
 
                         // Cloud Sync Section
                         VStack(alignment: .leading, spacing: 8) {
-                            FieldLabel(text: "Backup & Sync", icon: "icloud")
+                            FieldLabel(text: "Journey Tracking", icon: "location.fill")
                             FormCard {
+                                Toggle(isOn: Binding(
+                                    get: { appState.isGPSTrackingEnabled },
+                                    set: { appState.setGPSTrackingEnabled($0) }
+                                )) {
+                                    FormRow(label: "GPS Journey Tracking", icon: "map.fill") {
+                                        Text(appState.isGPSTrackingEnabled ? "Recording path during trips" : "Tracking Disabled")
+                                            .font(.rtCaption)
+                                            .foregroundStyle(ColorTheme.textSecondary)
+                                    }
+                                }
+                                .toggleStyle(SwitchToggleStyle(tint: ColorTheme.accent))
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 14)
+
+                                Divider().opacity(0.08).padding(.leading, 52)
+                                
                                 Toggle(isOn: $isSyncEnabled) {
                                     FormRow(label: "iCloud Synchronization", icon: "icloud.fill") {
                                         Text(ckService.isSyncEnabled ? "Syncing Automatically" : "Sync Disabled")

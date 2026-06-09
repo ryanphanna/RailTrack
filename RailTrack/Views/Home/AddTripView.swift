@@ -84,30 +84,39 @@ struct AddTripView: View {
 
                 ScrollView {
                     VStack(spacing: 20) {
-                        TicketCardView(
-                            originQuery: $originQuery,
-                            selectedOrigin: $selectedOrigin,
-                            destinationQuery: $destinationQuery,
-                            selectedDestination: $selectedDestination,
-                            trainNumber: $trainNumber,
-                            selectedOperator: $selectedOperator,
-                            isLookingUp: $isLookingUp,
-                            originCode: originCode,
-                            originName: originName,
-                            destinationCode: destinationCode,
-                            destinationName: destinationName,
-                            operators: operators,
-                            isOriginFocused: $isOriginFocused,
-                            isDestinationFocused: $isDestinationFocused,
-                            isTrainFocused: $isTrainFocused,
-                            onLookup: lookupSchedule,
-                            onOriginChange: { new in
-                                originResults = StationDatabase.shared.search(new)
-                            },
-                            onTrainSubmit: {
-                                trainNumber = cleanTrainNumber(trainNumber)
-                            }
-                        )
+                        VStack(spacing: 0) {
+                            TicketCardView(
+                                originQuery: $originQuery,
+                                selectedOrigin: $selectedOrigin,
+                                destinationQuery: $destinationQuery,
+                                selectedDestination: $selectedDestination,
+                                trainNumber: $trainNumber,
+                                selectedOperator: $selectedOperator,
+                                isLookingUp: $isLookingUp,
+                                originCode: originCode,
+                                originName: originName,
+                                destinationCode: destinationCode,
+                                destinationName: destinationName,
+                                operators: operators,
+                                isOriginFocused: $isOriginFocused,
+                                isDestinationFocused: $isDestinationFocused,
+                                isTrainFocused: $isTrainFocused,
+                                onLookup: lookupSchedule,
+                                onOriginChange: { new in
+                                    originResults = StationDatabase.shared.search(new)
+                                },
+                                onTrainSubmit: {
+                                    trainNumber = cleanTrainNumber(trainNumber)
+                                    lookupSchedule()
+                                }
+                            )
+
+                            ScheduleCard(
+                                departureDate: $departureDate,
+                                arrivalDate: $arrivalDate,
+                                selectedOperator: selectedOperator
+                            )
+                        }
                         .onChange(of: destinationQuery) { _, new in
                             destinationResults = StationDatabase.shared.search(new)
                         }
@@ -141,12 +150,6 @@ struct AddTripView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
 
-                        ScheduleCard(
-                            departureDate: $departureDate,
-                            arrivalDate: $arrivalDate,
-                            selectedOperator: selectedOperator
-                        )
-
                         Color.clear.frame(height: 20)
                     }
                     .padding(20)
@@ -159,6 +162,14 @@ struct AddTripView: View {
                         selectedOperator = "Amtrak"
                     } else if lower.hasPrefix("go") {
                         selectedOperator = "GO"
+                    }
+                    
+                    // Auto-lookup after a short pause
+                    Task {
+                        try? await Task.sleep(nanoseconds: 800_000_000) // 0.8s debounce
+                        if newValue == trainNumber {
+                            lookupSchedule()
+                        }
                     }
                 }
                 .onChange(of: selectedOrigin) { _, _ in

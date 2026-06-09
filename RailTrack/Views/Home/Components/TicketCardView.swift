@@ -8,46 +8,39 @@ struct TicketCardView: View {
     @Binding var trainNumber: String
     @Binding var selectedOperator: String
     @Binding var isLookingUp: Bool
-    
     let originCode: String
     let originName: String
     let destinationCode: String
     let destinationName: String
     let operators: [String]
-    
+
     @FocusState.Binding var isOriginFocused: Bool
     @FocusState.Binding var isDestinationFocused: Bool
     @FocusState.Binding var isTrainFocused: Bool
-    
+
     let onLookup: () -> Void
     let onOriginChange: (String) -> Void
     let onTrainSubmit: () -> Void
-    
+
     var body: some View {
         VStack(spacing: 0) {
             routeSection
-            
-            // Ticket dashed separator
-            GeometryReader { geo in
-                let notchY = geo.size.height / 2
-                DashedLine()
-                    .stroke(style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
-                    .foregroundStyle(ColorTheme.textTertiary.opacity(0.25))
-                    .frame(height: 1)
-                    .position(x: geo.size.width / 2, y: notchY)
-            }
-            .frame(height: 1)
-            
+            dashedSeparator
             trainSection
         }
-        .background(
-            TicketShape()
-                .fill(ColorTheme.surface)
-        )
-        .overlay(
-            TicketShape()
-                .stroke(ColorTheme.operatorColor(for: selectedOperator).opacity(0.12), lineWidth: 1.5)
-        )
+        .background(TicketShape().fill(ColorTheme.surface))
+        .overlay(TicketShape().stroke(ColorTheme.operatorColor(for: selectedOperator).opacity(0.12), lineWidth: 1.5))
+    }
+
+    private var dashedSeparator: some View {
+        GeometryReader { geo in
+            DashedLine()
+                .stroke(style: StrokeStyle(lineWidth: 1.5, dash: [5, 4]))
+                .foregroundStyle(ColorTheme.textTertiary.opacity(0.25))
+                .frame(height: 1)
+                .position(x: geo.size.width / 2, y: geo.size.height / 2)
+        }
+        .frame(height: 1)
     }
     
     private var routeSection: some View {

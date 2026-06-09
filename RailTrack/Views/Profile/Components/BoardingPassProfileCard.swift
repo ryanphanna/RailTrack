@@ -50,13 +50,24 @@ struct BoardingPassProfileCard: View {
                         Text("Statistics")
                             .font(.system(size: 11, weight: .semibold))
                             .foregroundStyle(ColorTheme.textTertiary)
-                        HStack(alignment: .firstTextBaseline, spacing: 16) {
-                            Text("\(Int(totalKm)) km")
-                                .font(.system(size: 22, weight: .bold, design: .rounded))
-                                .foregroundStyle(ColorTheme.textPrimary)
-                            Text("\(totalHours) hrs")
-                                .font(.system(size: 22, weight: .bold, design: .rounded))
-                                .foregroundStyle(ColorTheme.textPrimary)
+                        HStack(alignment: .firstTextBaseline, spacing: 20) {
+                            VStack(alignment: .leading, spacing: 0) {
+                                Text("\(Int(totalKm))")
+                                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                                    .foregroundStyle(ColorTheme.textPrimary)
+                                Text("KM")
+                                    .font(.system(size: 10, weight: .black))
+                                    .foregroundStyle(ColorTheme.textTertiary)
+                            }
+                            
+                            VStack(alignment: .leading, spacing: 0) {
+                                Text("\(totalHours)")
+                                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                                    .foregroundStyle(ColorTheme.textPrimary)
+                                Text("HRS")
+                                    .font(.system(size: 10, weight: .black))
+                                    .foregroundStyle(ColorTheme.textTertiary)
+                            }
                         }
                     }
                     Spacer()
@@ -72,26 +83,32 @@ struct BoardingPassProfileCard: View {
                 .fill(ColorTheme.textTertiary.opacity(0.08))
                 .frame(height: 1)
 
-            // Compact icon-stat grid (App in the Air bottom row)
+            // Compact icon-stat grid
             HStack(spacing: 0) {
-                IconStatCell(icon: "tram.fill", value: totalTrips, label: nil)
-                Divider().frame(height: 28).opacity(0.15)
-                IconStatCell(icon: "building.2.fill", value: uniqueStations, label: nil)
-                Divider().frame(height: 28).opacity(0.15)
-                IconStatCell(icon: "flag.fill", value: uniqueCountries, label: nil)
-                Divider().frame(height: 28).opacity(0.15)
-                IconStatCell(icon: "checkmark.seal.fill", value: onTimeCount, label: nil)
-                Divider().frame(height: 28).opacity(0.15)
-                IconStatCell(icon: "flame.fill", value: currentStreak, label: nil)
+                IconStatCell(icon: "tram.fill", value: totalTrips, label: "Trips")
+                divider
+                IconStatCell(icon: "building.2.fill", value: uniqueStations, label: "Stations")
+                divider
+                IconStatCell(icon: "flag.fill", value: uniqueCountries, label: "Regions")
+                divider
+                IconStatCell(icon: "checkmark.seal.fill", value: onTimeCount, label: "On-Time")
+                divider
+                IconStatCell(icon: "flame.fill", value: currentStreak, label: "Streak")
             }
-            .padding(.vertical, 14)
-            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
+            .padding(.horizontal, 12)
         }
         .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 24))
         .overlay(
             RoundedRectangle(cornerRadius: 24)
                 .stroke(ColorTheme.textTertiary.opacity(0.12), lineWidth: 1)
         )
+    }
+
+    private var divider: some View {
+        Rectangle()
+            .fill(ColorTheme.textTertiary.opacity(0.15))
+            .frame(width: 1, height: 24)
     }
 
     private func getInitials(_ name: String) -> String {
@@ -111,15 +128,16 @@ struct IconStatCell: View {
     var body: some View {
         VStack(spacing: 4) {
             Image(systemName: icon)
-                .font(.system(size: 13))
+                .font(.system(size: 12))
                 .foregroundStyle(ColorTheme.accent)
             Text("\(value)")
-                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .font(.system(size: 16, weight: .bold, design: .rounded))
                 .foregroundStyle(ColorTheme.textPrimary)
             if let label = label {
-                Text(label)
-                    .font(.system(size: 9, weight: .semibold))
+                Text(label.uppercased())
+                    .font(.system(size: 8, weight: .bold))
                     .foregroundStyle(ColorTheme.textTertiary)
+                    .tracking(0.5)
             }
         }
         .frame(maxWidth: .infinity)

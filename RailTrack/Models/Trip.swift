@@ -81,7 +81,12 @@ struct Trip: Identifiable, Codable {
     var isActive: Bool {
         let now = Date()
         guard status != .completed, status != .cancelled else { return false }
-        return scheduledDeparture <= now && actualArrival == nil
+        
+        // A trip is active if we are between scheduled departure and a reasonable window after scheduled arrival.
+        // We allow 2 hours after scheduled arrival before it's considered "stale" and moves to past journeys.
+        let arrivalCutoff = scheduledArrival.addingTimeInterval(3600 * 2)
+        
+        return scheduledDeparture <= now && now <= arrivalCutoff && actualArrival == nil
     }
 
     var isUpcoming: Bool {

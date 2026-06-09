@@ -220,11 +220,17 @@ final class AmtrakLiveDataService: ObservableObject {
             }
         }
         guard let data = rawData else { return [] }
-        
+
         do {
             let decoder = JSONDecoder()
             let feed = try decoder.decode([String: [AmtrakTrain]].self, from: data)
-            return feed.values.flatMap { $0 }
+            // Filter out VIA Rail trains and virtual/test data. 
+            // The Amtraker API includes VIA Rail trains with a "v" prefix in either trainNum or trainID.
+            return feed.values.flatMap { $0 }.filter { train in
+                let num = train.trainNum.lowercased()
+                let id = train.trainID.lowercased()
+                return !num.hasPrefix("v") && !id.hasPrefix("v") && !num.contains("test")
+            }
         } catch {
             print("[AmtrakLiveDataService] Parse failed during getActiveTrains: \(error)")
         }
@@ -303,6 +309,11 @@ final class AmtrakLiveDataService: ObservableObject {
             
             for (_, trainList) in feed {
                 for train in trainList {
+                    // Filter out VIA Rail and test data
+                    let num = train.trainNum.lowercased()
+                    let id = train.trainID.lowercased()
+                    guard !num.hasPrefix("v") && !id.hasPrefix("v") && !num.contains("test") else { continue }
+
                     if let firstStation = train.stations.first,
                        let schDepStr = firstStation.schDep {
                         let schDepDateStr = String(schDepStr.prefix(10))

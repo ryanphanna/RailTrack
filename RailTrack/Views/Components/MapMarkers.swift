@@ -25,26 +25,43 @@ struct StationMarker: View {
 
 struct TrainPositionMarker: View {
     let operatorColor: Color
+    let trainNumber: String?
     @State private var pulse = false
 
-    var body: some View {
-        ZStack {
-            Circle()
-                .fill(operatorColor.opacity(0.25))
-                .frame(width: 40, height: 40)
-                .scaleEffect(pulse ? 1.4 : 1.0)
-                .opacity(pulse ? 0 : 1)
-                .animation(.easeOut(duration: 1.5).repeatForever(autoreverses: false), value: pulse)
+    init(operatorColor: Color, trainNumber: String? = nil) {
+        self.operatorColor = operatorColor
+        self.trainNumber = trainNumber
+    }
 
-            Circle()
-                .fill(operatorColor)
-                .frame(width: 22, height: 22)
-                .overlay(
-                    Image(systemName: "tram.fill")
-                        .font(.system(size: 11, weight: .bold))
-                        .foregroundStyle(.white)
-                )
-                .shadow(color: operatorColor.opacity(0.6), radius: 6)
+    var body: some View {
+        VStack(spacing: 2) {
+            ZStack {
+                Circle()
+                    .fill(operatorColor.opacity(0.15))
+                    .frame(width: 32, height: 32)
+                    .scaleEffect(pulse ? 1.5 : 1.0)
+                    .opacity(pulse ? 0 : 1)
+                    .animation(.easeOut(duration: 2.0).repeatForever(autoreverses: false), value: pulse)
+
+                Circle()
+                    .fill(operatorColor)
+                    .frame(width: 18, height: 18)
+                    .overlay(
+                        Image(systemName: "tram.fill")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(.white)
+                    )
+                    .shadow(color: operatorColor.opacity(0.4), radius: 4)
+            }
+            
+            if let num = trainNumber {
+                Text(num)
+                    .font(.system(size: 8, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 2)
+                    .background(Color.black.opacity(0.6), in: Capsule())
+            }
         }
         .onAppear { pulse = true }
     }

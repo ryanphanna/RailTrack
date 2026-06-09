@@ -71,7 +71,7 @@ struct TripDetailView: View {
                 VStack(alignment: .leading, spacing: 0) {
 
                     // Map
-                    LiveMapView(trip: trip)
+                    LiveMapView(trip: trip, stops: displayedStops)
                         .frame(height: 260)
                         .clipShape(RoundedRectangle(cornerRadius: 0))
                         .overlay(alignment: .bottomTrailing) {
@@ -87,33 +87,41 @@ struct TripDetailView: View {
                             }
                         }
 
-                    VStack(alignment: .leading, spacing: 20) {
+                    VStack(alignment: .leading, spacing: 24) {
 
-                        // Train header
-                        HStack(alignment: .top) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack(spacing: 8) {
-                                    Text(trip.trainOperator)
-                                        .font(.rtCaption)
-                                        .fontWeight(.bold)
-                                        .foregroundStyle(.white)
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 4)
-                                        .background(operatorColor, in: RoundedRectangle(cornerRadius: 6))
+                        // Header: Operator + Route
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack(spacing: 8) {
+                                Text(trip.trainOperator)
+                                    .font(.system(size: 10, weight: .black))
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(operatorColor, in: RoundedRectangle(cornerRadius: 4))
 
-                                    Text("Train \(trip.trainNumber)")
-                                        .font(.rtSubhead)
-                                        .foregroundStyle(ColorTheme.textSecondary)
-                                }
-
-                                Text("\(trip.origin.shortName) → \(trip.destination.shortName)")
-                                    .font(.rtTitle)
-                                    .foregroundStyle(ColorTheme.textPrimary)
+                                Text("TRAIN \(trip.trainNumber)")
+                                    .font(.system(size: 10, weight: .bold))
+                                    .foregroundStyle(ColorTheme.textTertiary)
+                                    .tracking(1.0)
+                                
+                                Spacer()
+                                
+                                StatusBadge(status: trip.status)
                             }
 
-                            Spacer()
-
-                            StatusBadge(status: trip.status)
+                            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                                Text(trip.origin.shortName)
+                                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                                    .foregroundStyle(ColorTheme.textPrimary)
+                                
+                                Image(systemName: "arrow.right")
+                                    .font(.system(size: 18, weight: .bold))
+                                    .foregroundStyle(ColorTheme.textTertiary.opacity(0.5))
+                                
+                                Text(trip.destination.shortName)
+                                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                                    .foregroundStyle(ColorTheme.textPrimary)
+                            }
                         }
 
                         // Delay banner
@@ -159,50 +167,50 @@ struct TripDetailView: View {
 
                         Divider().opacity(0.12)
 
-                        // Mark as Completed — shown for active or upcoming trips only
-                        if trip.isActive || trip.isUpcoming {
-                            if trip.status != .cancelled {
-                                Button { markCompleted() } label: {
-                                    Label(
-                                        trip.isActive ? "Mark Arrived" : "Mark Completed",
-                                        systemImage: "flag.checkered"
-                                    )
-                                    .font(.rtSubhead)
-                                    .foregroundStyle(ColorTheme.accentGreen)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 14)
-                                    .background(ColorTheme.accentGreen.opacity(0.1), in: RoundedRectangle(cornerRadius: 14))
-                                }
-                            }
-                        }
-
                         // Notes
                         if let notes = record.notes, !notes.isEmpty {
                             VStack(alignment: .leading, spacing: 6) {
-                                Label("Notes", systemImage: "note.text")
-                                    .font(.rtCaption)
+                                Text("NOTES")
+                                    .font(.system(size: 10, weight: .bold))
                                     .foregroundStyle(ColorTheme.textTertiary)
+                                    .tracking(0.5)
                                 Text(notes)
                                     .font(.rtBody)
                                     .foregroundStyle(ColorTheme.textSecondary)
                             }
-                            .padding(16)
+                            .padding(20)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 14))
+                            .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 18))
+                            .overlay(RoundedRectangle(cornerRadius: 18).stroke(ColorTheme.textTertiary.opacity(0.1), lineWidth: 1))
                         }
 
-                        // Share button
-                        ShareLink(
-                            item: shareText,
-                            subject: Text("My Train Trip"),
-                            message: Text(shareText)
-                        ) {
-                            Label("Share Trip", systemImage: "square.and.arrow.up")
-                                .font(.rtSubhead)
-                                .foregroundStyle(ColorTheme.accent)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 14)
-                                .background(ColorTheme.accent.opacity(0.1), in: RoundedRectangle(cornerRadius: 14))
+                        // Actions Section
+                        VStack(spacing: 12) {
+                            ShareLink(
+                                item: shareText,
+                                subject: Text("My Train Trip"),
+                                message: Text(shareText)
+                            ) {
+                                Label("Share Journey", systemImage: "square.and.arrow.up")
+                                    .font(.system(size: 15, weight: .bold))
+                                    .foregroundStyle(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 16)
+                                    .background(ColorTheme.accent, in: RoundedRectangle(cornerRadius: 16))
+                                    .shadow(color: ColorTheme.accent.opacity(0.3), radius: 8, y: 4)
+                            }
+
+                            if trip.isActive || trip.isUpcoming {
+                                if trip.status != .cancelled {
+                                    Button { markCompleted() } label: {
+                                        Text(trip.isActive ? "Mark as Arrived" : "Mark as Completed")
+                                            .font(.system(size: 14, weight: .semibold))
+                                            .foregroundStyle(ColorTheme.textSecondary)
+                                            .frame(maxWidth: .infinity)
+                                            .padding(.vertical, 12)
+                                    }
+                                }
+                            }
                         }
                     }
                     .padding(20)
@@ -211,7 +219,7 @@ struct TripDetailView: View {
             .ignoresSafeArea(edges: .top)
             .fullScreenCover(isPresented: $isMapExpanded) {
                 NavigationStack {
-                    LiveMapView(trip: trip)
+                    LiveMapView(trip: trip, stops: displayedStops)
                         .ignoresSafeArea(edges: .all)
                         .toolbar {
                             ToolbarItem(placement: .topBarTrailing) {
@@ -278,45 +286,59 @@ private struct TimeSummaryRow: View {
     let trip: Trip
 
     var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Departs")
-                    .font(.rtCaption)
+        HStack(alignment: .center, spacing: 0) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("DEPARTS")
+                    .font(.system(size: 9, weight: .black))
                     .foregroundStyle(ColorTheme.textTertiary)
+                    .tracking(0.5)
+                
                 Text(trip.scheduledDeparture.timeString)
-                    .font(.rtMono)
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
                     .foregroundStyle(ColorTheme.textPrimary)
-                Text(trip.scheduledDeparture.relativeDayString)
-                    .font(.rtCaption)
+                
+                Text(trip.scheduledDeparture.relativeDayString.uppercased())
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundStyle(ColorTheme.textSecondary)
             }
 
             Spacer()
 
-            VStack(spacing: 2) {
-                Image(systemName: "arrow.right")
-                    .foregroundStyle(ColorTheme.textTertiary)
+            VStack(spacing: 4) {
+                Image(systemName: "tram.fill")
+                    .font(.system(size: 12))
+                    .foregroundStyle(ColorTheme.textTertiary.opacity(0.4))
+                
+                Rectangle()
+                    .fill(ColorTheme.textTertiary.opacity(0.2))
+                    .frame(width: 40, height: 1.5)
+                
                 Text(trip.scheduledDurationMinutes.durationString)
-                    .font(.rtCaption)
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundStyle(ColorTheme.textTertiary)
             }
 
             Spacer()
 
-            VStack(alignment: .trailing, spacing: 2) {
-                Text("Arrives")
-                    .font(.rtCaption)
+            VStack(alignment: .trailing, spacing: 4) {
+                Text("ARRIVES")
+                    .font(.system(size: 9, weight: .black))
                     .foregroundStyle(ColorTheme.textTertiary)
+                    .tracking(0.5)
+                
                 Text(trip.scheduledArrival.timeString)
-                    .font(.rtMono)
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
                     .foregroundStyle(ColorTheme.textPrimary)
-                Text(trip.scheduledArrival.relativeDayString)
-                    .font(.rtCaption)
+                
+                Text(trip.scheduledArrival.relativeDayString.uppercased())
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundStyle(ColorTheme.textSecondary)
             }
         }
-        .padding(16)
-        .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 14))
+        .padding(.horizontal, 24)
+        .padding(.vertical, 20)
+        .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 20))
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(ColorTheme.textTertiary.opacity(0.1), lineWidth: 1))
     }
 }
 

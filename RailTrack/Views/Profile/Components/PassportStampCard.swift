@@ -45,28 +45,53 @@ struct StationStampView: View {
     let stamp: StationStamp
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 10) {
             ZStack {
+                // Outer circle (dashed)
                 Circle()
-                    .stroke(style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
-                    .foregroundStyle(ColorTheme.operatorColor(for: stamp.station.railOperator ?? "VIA").opacity(0.4))
-                    .frame(width: 72, height: 72)
+                    .stroke(style: StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                    .foregroundStyle(ColorTheme.textTertiary.opacity(0.3))
+                    .frame(width: 84, height: 84)
 
-                VStack(spacing: 2) {
+                // Inner stamp circle
+                Circle()
+                    .stroke(lineWidth: 2.5)
+                    .foregroundStyle(ColorTheme.operatorColor(for: stamp.station.railOperator ?? "VIA").opacity(0.6))
+                    .frame(width: 70, height: 70)
+                    .overlay(
+                        Circle()
+                            .stroke(lineWidth: 0.5)
+                            .foregroundStyle(ColorTheme.operatorColor(for: stamp.station.railOperator ?? "VIA").opacity(0.3))
+                            .padding(4)
+                    )
+
+                VStack(spacing: 0) {
                     Text(stamp.station.code)
-                        .font(.system(size: 18, weight: .black, design: .monospaced))
+                        .font(.system(size: 20, weight: .black, design: .monospaced))
                         .foregroundStyle(ColorTheme.textPrimary)
+                    
+                    Rectangle()
+                        .fill(ColorTheme.textTertiary.opacity(0.3))
+                        .frame(width: 40, height: 1)
+                        .padding(.vertical, 2)
+
                     Text(stamp.date.formatted(.dateTime.year()))
-                        .font(.system(size: 8, weight: .bold))
-                        .foregroundStyle(ColorTheme.textTertiary)
+                        .font(.system(size: 9, weight: .black))
+                        .foregroundStyle(ColorTheme.textSecondary)
                 }
             }
+            .rotationEffect(.degrees(-10)) // Slight tilt for authenticity
 
-            Text(stamp.station.shortName)
-                .font(.system(size: 10, weight: .bold))
-                .foregroundStyle(ColorTheme.textSecondary)
-                .lineLimit(1)
+            VStack(spacing: 2) {
+                Text(stamp.station.shortName)
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(ColorTheme.textPrimary)
+                Text(stamp.station.city)
+                    .font(.system(size: 9, weight: .medium))
+                    .foregroundStyle(ColorTheme.textTertiary)
+            }
+            .lineLimit(1)
         }
-        .frame(width: 80)
+        .frame(width: 90)
     }
 }

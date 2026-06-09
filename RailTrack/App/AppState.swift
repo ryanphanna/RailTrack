@@ -7,6 +7,7 @@ import MapKit
 final class AppState: ObservableObject {
     @Published var isOnboarded: Bool
     @Published var currentUser: UserProfile?
+    @Published var isGPSTrackingEnabled: Bool
     @Published var isLoading: Bool = false
     @Published var sharedCameraPosition: MapCameraPosition = .region(
         MKCoordinateRegion(
@@ -18,11 +19,23 @@ final class AppState: ObservableObject {
 
     init() {
         self.isOnboarded = UserDefaults.standard.bool(forKey: "isOnboarded")
+        self.isGPSTrackingEnabled = UserDefaults.standard.bool(forKey: "isGPSTrackingEnabled")
+        
         if let data = UserDefaults.standard.data(forKey: "currentUser"),
            let profile = try? JSONDecoder().decode(UserProfile.self, from: data) {
             self.currentUser = profile
         } else {
             self.currentUser = nil
+        }
+    }
+
+    func setGPSTrackingEnabled(_ enabled: Bool) {
+        self.isGPSTrackingEnabled = enabled
+        UserDefaults.standard.set(enabled, forKey: "isGPSTrackingEnabled")
+        
+        // Update LocationManager configuration
+        if enabled {
+            LocationManager.shared.requestPermission()
         }
     }
 

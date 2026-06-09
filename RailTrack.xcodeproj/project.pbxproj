@@ -66,7 +66,6 @@
 		A1000099 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000099 /* Assets.xcassets */; };
 		A10000B1 /* go_snapshot.json in Resources */ = {isa = PBXBuildFile; fileRef = A10000B2 /* go_snapshot.json */; };
 		A10000C1 /* GOLiveDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000C2 /* GOLiveDataService.swift */; };
-		B3228424130219A625B46714 /* RailTrackWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 7548D56EA1BFD40EFC9A3AE0 /* RailTrackWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B7E1C2FCF8FFEEA313EF55E4 /* AgenciesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FDF2C84ADE94ABCCD03003C /* AgenciesView.swift */; };
 		C215459A37E7B9F8CD4480B2 /* VIALiveDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5575FFA96CE25666A6C92EA9 /* VIALiveDataService.swift */; };
 		C497D0363A19B2B57A212AE4 /* TripActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA42F4F403819047BBEE155 /* TripActivityAttributes.swift */; };
@@ -93,7 +92,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				B3228424130219A625B46714 /* RailTrackWidget.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -609,6 +607,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentBlue;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DPFWRZF73W;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = RailTrackWidget/Info.plist;
 				INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
@@ -629,6 +628,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentBlue;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DPFWRZF73W;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = RailTrackWidget/Info.plist;
 				INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";

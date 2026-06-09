@@ -54,9 +54,9 @@ struct ScheduleCard: View {
         }
         .padding(.vertical, 16)
         .padding(.horizontal, 18)
-        .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+        .background(ColorTheme.surface, in: UnevenRoundedRectangle(topLeadingRadius: 0, bottomLeadingRadius: 16, bottomTrailingRadius: 16, topTrailingRadius: 0))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            UnevenRoundedRectangle(topLeadingRadius: 0, bottomLeadingRadius: 16, bottomTrailingRadius: 16, topTrailingRadius: 0)
                 .stroke(ColorTheme.operatorColor(for: selectedOperator).opacity(0.08), lineWidth: 1)
         )
     }

@@ -83,33 +83,31 @@ struct SelectedTrainDrawerView: View {
                 }
                 
                 Spacer()
-                
-                Button(action: onAdd) {
-                    VStack(spacing: 4) {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.system(size: 26))
-                            .foregroundStyle(ColorTheme.accent)
-                        Text("Add")
-                            .font(.rtCaption.bold())
-                            .foregroundStyle(ColorTheme.accent)
+
+                VStack(spacing: 10) {
+                    Button(action: onClose) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundStyle(ColorTheme.textSecondary)
+                            .padding(10)
+                            .background(ColorTheme.surface, in: Circle())
+                            .overlay(Circle().stroke(ColorTheme.textTertiary.opacity(0.15), lineWidth: 1))
+                            .shadow(color: Color.black.opacity(0.15), radius: 6, x: 0, y: 3)
                     }
+                    .buttonStyle(.plain)
+
+                    Button(action: onAdd) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundStyle(.white)
+                            .padding(10)
+                            .background(ColorTheme.accent, in: Circle())
+                            .shadow(color: ColorTheme.accent.opacity(0.4), radius: 6, x: 0, y: 3)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
             .padding(.horizontal, 20)
-            
-            Button(action: onClose) {
-                Text("Close")
-                    .font(.rtSubhead.bold())
-                    .foregroundStyle(ColorTheme.textSecondary)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .background(ColorTheme.surfaceHigh, in: RoundedRectangle(cornerRadius: 14))
-                    .overlay(RoundedRectangle(cornerRadius: 14).stroke(ColorTheme.textTertiary.opacity(0.15), lineWidth: 1))
-            }
-            .buttonStyle(.plain)
-            .padding(.horizontal, 20)
-            .padding(.top, 16)
             .padding(.bottom, 16)
         }
     }

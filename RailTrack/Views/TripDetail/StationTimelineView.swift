@@ -54,35 +54,35 @@ private struct StopRow: View {
             }
 
             // Stop details
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 HStack {
                     Text(stop.station.name)
-                        .font(.rtBody)
+                        .font(.system(size: 15, weight: isDeparted ? .bold : .semibold, design: .rounded))
                         .foregroundStyle(isDeparted ? ColorTheme.textPrimary : ColorTheme.textSecondary)
 
                     Spacer()
 
                     if let platform = stop.platform {
-                        Text("Pl. \(platform)")
-                            .font(.rtCaption)
-                            .foregroundStyle(ColorTheme.accent)
-                            .padding(.horizontal, 8)
+                        Text("PLATFORM \(platform)")
+                            .font(.system(size: 8, weight: .black))
+                            .foregroundStyle(operatorColor)
+                            .padding(.horizontal, 6)
                             .padding(.vertical, 3)
-                            .background(ColorTheme.accent.opacity(0.1), in: Capsule())
+                            .background(operatorColor.opacity(0.1), in: RoundedRectangle(cornerRadius: 4))
                     }
                 }
 
                 // Times
-                HStack(spacing: 12) {
+                HStack(spacing: 16) {
                     if let arr = stop.scheduledArrival {
-                        TimeEntry(label: "Arr", scheduled: arr, actual: stop.actualArrival)
+                        TimeEntry(label: "ARR", scheduled: arr, actual: stop.actualArrival)
                     }
                     if let dep = stop.scheduledDeparture {
-                        TimeEntry(label: "Dep", scheduled: dep, actual: stop.actualDeparture)
+                        TimeEntry(label: "DEP", scheduled: dep, actual: stop.actualDeparture)
                     }
                 }
             }
-            .padding(.bottom, isLast ? 0 : 20)
+            .padding(.bottom, isLast ? 0 : 28)
         }
     }
 }
@@ -99,16 +99,16 @@ private struct TimeEntry: View {
     }
 
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 6) {
             Text(label)
-                .font(.rtCaption)
+                .font(.system(size: 8, weight: .black))
                 .foregroundStyle(ColorTheme.textTertiary)
             Text(scheduled.timeString)
-                .font(.rtCaption.monospacedDigit())
+                .font(.system(size: 12, weight: .bold, design: .monospaced))
                 .foregroundStyle(ColorTheme.textSecondary)
             if let d = delay {
                 Text("+\(d)m")
-                    .font(.rtCaption)
+                    .font(.system(size: 10, weight: .bold))
                     .foregroundStyle(ColorTheme.accentAmber)
             }
         }

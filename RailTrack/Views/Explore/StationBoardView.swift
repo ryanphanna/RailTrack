@@ -1,16 +1,34 @@
 import SwiftUI
+import CoreLocation
 
 struct StationBoardView: View {
     let amtrakTrains: [AmtrakLiveDataService.AmtrakTrain]
     let viaTrains: [String: VIALiveDataService.VIALiveTrain]
     let goTrains: [String: GOLiveDataService.GOLiveTrain]
-    
+    let userLocation: CLLocation?
+
+    @Binding var selectedStation: Station?
     @Binding var selectedPrepopulatedTrip: PrepopulatedTrip?
-    
+
     @State private var searchText = ""
-    @State private var selectedStation: Station? = nil
     @State private var showDepartures = true
-    
+
+    private func distanceLabel(_ station: Station) -> String? {
+        guard let loc = userLocation else { return nil }
+        let stLoc = CLLocation(latitude: station.coordinate.latitude, longitude: station.coordinate.longitude)
+        let km = stLoc.distance(from: loc) / 1000
+        return km < 1 ? "<1 km" : "\(Int(km)) km"
+    }
+
+    private var sortedStations: [Station] {
+        guard let loc = userLocation else { return StationDatabase.shared.stations }
+        return StationDatabase.shared.stations.sorted {
+            let a = CLLocation(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude)
+            let b = CLLocation(latitude: $1.coordinate.latitude, longitude: $1.coordinate.longitude)
+            return a.distance(from: loc) < b.distance(from: loc)
+        }
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             if selectedStation == nil {
@@ -28,84 +46,69 @@ struct StationBoardView: View {
                     .overlay(RoundedRectangle(cornerRadius: 12).stroke(ColorTheme.textTertiary.opacity(0.15), lineWidth: 1))
                     .padding(.horizontal, 20)
                     .padding(.bottom, 12)
-                    
-                    let filteredStations = StationDatabase.shared.stations.filter {
+
+                    let filteredStations = sortedStations.filter {
                         searchText.isEmpty ||
                         $0.name.localizedCaseInsensitiveContains(searchText) ||
                         $0.code.localizedCaseInsensitiveContains(searchText) ||
                         $0.city.localizedCaseInsensitiveContains(searchText)
                     }
-                    
-                    List(filteredStations) { station in
-                        Button {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                selectedStation = station
-                            }
-                        } label: {
-                            HStack {
-                                Text(station.code)
-                                    .font(.rtMono.bold())
-                                    .foregroundStyle(ColorTheme.operatorColor(for: station.railOperator ?? ""))
-                                    .frame(width: 50, alignment: .leading)
-                                
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(station.name)
-                                        .font(.rtBody.bold())
-                                        .foregroundStyle(ColorTheme.textPrimary)
-                                    Text("\(station.city), \(station.country)")
-                                        .font(.rtCaption)
-                                        .foregroundStyle(ColorTheme.textTertiary)
+
+                    ScrollView {
+                        LazyVStack(spacing: 0) {
+                            ForEach(filteredStations) { station in
+                                Button {
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        selectedStation = station
+                                    }
+                                } label: {
+                                    HStack(spacing: 12) {
+                                        Text(station.code)
+                                            .font(.system(size: 13, weight: .bold, design: .monospaced))
+                                            .foregroundStyle(.white)
+                                            .padding(.horizontal, 8)
+                                            .padding(.vertical, 5)
+                                            .background(ColorTheme.operatorColor(for: station.railOperator ?? "").opacity(0.85), in: RoundedRectangle(cornerRadius: 6))
+                                            .frame(width: 62, alignment: .center)
+
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(station.name)
+                                                .font(.rtBody.bold())
+                                                .foregroundStyle(ColorTheme.textPrimary)
+                                            Text(station.city)
+                                                .font(.rtCaption)
+                                                .foregroundStyle(ColorTheme.textTertiary)
+                                        }
+
+                                        Spacer()
+
+                                        if let dist = distanceLabel(station) {
+                                            Text(dist)
+                                                .font(.system(size: 11, weight: .medium))
+                                                .foregroundStyle(ColorTheme.textTertiary)
+                                        }
+
+                                        Image(systemName: "chevron.right")
+                                            .font(.system(size: 11, weight: .semibold))
+                                            .foregroundStyle(ColorTheme.textTertiary.opacity(0.5))
+                                    }
+                                    .padding(.horizontal, 20)
+                                    .padding(.vertical, 13)
+                                    .contentShape(Rectangle())
                                 }
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 12))
-                                    .foregroundStyle(ColorTheme.textTertiary)
+                                .buttonStyle(.plain)
+
+                                if station.id != filteredStations.last?.id {
+                                    Divider()
+                                        .opacity(0.06)
+                                        .padding(.leading, 20 + 62 + 12)
+                                }
                             }
-                            .padding(.vertical, 4)
                         }
-                        .listRowBackground(Color.clear)
-                        .listRowSeparatorTint(ColorTheme.textTertiary.opacity(0.1))
                     }
-                    .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
                 }
             } else if let station = selectedStation {
                 VStack(spacing: 0) {
-                    HStack {
-                        Button {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                selectedStation = nil
-                            }
-                        } label: {
-                            HStack(spacing: 4) {
-                                Image(systemName: "chevron.left")
-                                    .font(.system(size: 14, weight: .bold))
-                                Text("Back")
-                                    .font(.rtBody.bold())
-                            }
-                            .foregroundStyle(ColorTheme.accent)
-                        }
-                        .buttonStyle(.plain)
-                        
-                        Spacer()
-                        
-                        Text(station.name)
-                            .font(.rtHeadline)
-                            .foregroundStyle(ColorTheme.textPrimary)
-                            .lineLimit(1)
-                        
-                        Spacer()
-                        
-                        Text(station.code)
-                            .font(.rtMono.bold())
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(ColorTheme.operatorColor(for: station.railOperator ?? ""), in: RoundedRectangle(cornerRadius: 4))
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 12)
-                    
                     HStack(spacing: 12) {
                         Button {
                             withAnimation(.easeInOut(duration: 0.2)) {
@@ -143,20 +146,25 @@ struct StationBoardView: View {
                     let items = getBoardItems(for: station)
                     
                     if items.isEmpty {
-                        VStack(spacing: 12) {
-                            Spacer()
-                            Image(systemName: "clock.badge.exclamationmark")
-                                .font(.system(size: 40))
-                                .foregroundStyle(ColorTheme.textTertiary)
-                            Text(showDepartures ? "No departures today" : "No arrivals today")
-                                .font(.rtHeadline)
+                        VStack(spacing: 10) {
+                            Image(systemName: "tram")
+                                .font(.system(size: 36, weight: .light))
+                                .foregroundStyle(ColorTheme.textTertiary.opacity(0.4))
+                                .padding(.bottom, 4)
+
+                            Text("No \(showDepartures ? "departures" : "arrivals") in the next 12 hours")
+                                .font(.rtSubhead.bold())
                                 .foregroundStyle(ColorTheme.textSecondary)
-                            Text("Check back later or try another station.")
+                                .multilineTextAlignment(.center)
+
+                            Text("Service at this station may have ended for the night.")
                                 .font(.rtCaption)
                                 .foregroundStyle(ColorTheme.textTertiary)
-                            Spacer()
+                                .multilineTextAlignment(.center)
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding(.horizontal, 32)
+                        .padding(.top, 48)
+                        .frame(maxWidth: .infinity)
                     } else {
                         ScrollView {
                             VStack(spacing: 8) {
@@ -196,135 +204,104 @@ struct StationBoardView: View {
     
     private func getBoardItems(for station: Station) -> [BoardItem] {
         var items: [BoardItem] = []
-        
+        let now = Date()
+        let cutoffPast = now.addingTimeInterval(-30 * 60)
+        let cutoffFuture = now.addingTimeInterval(12 * 60 * 60)
+
+        func inWindow(_ date: Date) -> Bool {
+            date >= cutoffPast && date <= cutoffFuture
+        }
+
         // 1. Amtrak
         for train in amtrakTrains {
             if let stopIndex = train.stations.firstIndex(where: { $0.code == station.code }),
                let stop = train.stations[safe: stopIndex] {
                 if showDepartures {
-                    if stopIndex < train.stations.count - 1, let timeStr = stop.schDep ?? stop.schArr,
-                       let timeDate = AmtrakLiveDataService.shared.parseISO8601Date(timeStr) {
+                    if stopIndex < train.stations.count - 1,
+                       let timeStr = stop.schDep ?? stop.schArr,
+                       let timeDate = AmtrakLiveDataService.shared.parseISO8601Date(timeStr),
+                       inWindow(timeDate) {
                         let destCode = train.stations.last?.code ?? ""
                         let destName = StationDatabase.shared.stations.first(where: { $0.code == destCode })?.shortName ?? train.stations.last?.name ?? "Dest"
-                        
                         var delay = 0
                         if let estDepStr = stop.dep ?? stop.arr,
                            let estDate = AmtrakLiveDataService.shared.parseISO8601Date(estDepStr) {
                             delay = max(0, Int(estDate.timeIntervalSince(timeDate) / 60))
                         }
-                        
-                        items.append(BoardItem(
-                            trainNumber: train.trainNum,
-                            operatorName: "Amtrak",
-                            time: timeDate,
-                            secondaryStation: destName,
-                            delayMinutes: delay,
-                            platform: stop.platform
-                        ))
+                        items.append(BoardItem(trainNumber: train.trainNum, operatorName: "Amtrak", time: timeDate, secondaryStation: destName, delayMinutes: delay, platform: stop.platform))
                     }
                 } else {
-                    if stopIndex > 0, let timeStr = stop.schArr ?? stop.schDep,
-                       let timeDate = AmtrakLiveDataService.shared.parseISO8601Date(timeStr) {
+                    if stopIndex > 0,
+                       let timeStr = stop.schArr ?? stop.schDep,
+                       let timeDate = AmtrakLiveDataService.shared.parseISO8601Date(timeStr),
+                       inWindow(timeDate) {
                         let originCode = train.stations.first?.code ?? ""
                         let originName = StationDatabase.shared.stations.first(where: { $0.code == originCode })?.shortName ?? train.stations.first?.name ?? "Origin"
-                        
                         var delay = 0
                         if let estArrStr = stop.arr ?? stop.dep,
                            let estDate = AmtrakLiveDataService.shared.parseISO8601Date(estArrStr) {
                             delay = max(0, Int(estDate.timeIntervalSince(timeDate) / 60))
                         }
-                        
-                        items.append(BoardItem(
-                            trainNumber: train.trainNum,
-                            operatorName: "Amtrak",
-                            time: timeDate,
-                            secondaryStation: originName,
-                            delayMinutes: delay,
-                            platform: stop.platform
-                        ))
+                        items.append(BoardItem(trainNumber: train.trainNum, operatorName: "Amtrak", time: timeDate, secondaryStation: originName, delayMinutes: delay, platform: stop.platform))
                     }
                 }
             }
         }
-        
+
         // 2. VIA Rail
         for (key, train) in viaTrains {
             let trainNum = key.split(separator: " ").first.map(String.init) ?? key
             if let stopIndex = train.times.firstIndex(where: { $0.code == station.code }),
                let stop = train.times[safe: stopIndex] {
                 if showDepartures {
-                    if stopIndex < train.times.count - 1, let timeStr = stop.departure?.scheduled ?? stop.scheduled,
-                       let timeDate = VIALiveDataService.shared.parseISO8601Date(timeStr) {
+                    if stopIndex < train.times.count - 1,
+                       let timeStr = stop.departure?.scheduled ?? stop.scheduled,
+                       let timeDate = VIALiveDataService.shared.parseISO8601Date(timeStr),
+                       inWindow(timeDate) {
                         let destCode = train.times.last?.code ?? ""
                         let destName = StationDatabase.shared.stations.first(where: { $0.code == destCode })?.shortName ?? train.times.last?.station ?? "Dest"
-                        
-                        items.append(BoardItem(
-                            trainNumber: trainNum,
-                            operatorName: "VIA",
-                            time: timeDate,
-                            secondaryStation: destName,
-                            delayMinutes: max(0, stop.diffMin ?? 0),
-                            platform: nil
-                        ))
+                        items.append(BoardItem(trainNumber: trainNum, operatorName: "VIA", time: timeDate, secondaryStation: destName, delayMinutes: max(0, stop.diffMin ?? 0), platform: nil))
                     }
                 } else {
-                    if stopIndex > 0, let timeStr = stop.arrival?.scheduled ?? stop.scheduled,
-                       let timeDate = VIALiveDataService.shared.parseISO8601Date(timeStr) {
+                    if stopIndex > 0,
+                       let timeStr = stop.arrival?.scheduled ?? stop.scheduled,
+                       let timeDate = VIALiveDataService.shared.parseISO8601Date(timeStr),
+                       inWindow(timeDate) {
                         let originCode = train.times.first?.code ?? ""
                         let originName = StationDatabase.shared.stations.first(where: { $0.code == originCode })?.shortName ?? train.times.first?.station ?? "Origin"
-                        
-                        items.append(BoardItem(
-                            trainNumber: trainNum,
-                            operatorName: "VIA",
-                            time: timeDate,
-                            secondaryStation: originName,
-                            delayMinutes: max(0, stop.diffMin ?? 0),
-                            platform: nil
-                        ))
+                        items.append(BoardItem(trainNumber: trainNum, operatorName: "VIA", time: timeDate, secondaryStation: originName, delayMinutes: max(0, stop.diffMin ?? 0), platform: nil))
                     }
                 }
             }
         }
-        
+
         // 3. GO Transit
         for (key, train) in goTrains {
             let trainNum = key.split(separator: " ").first.map(String.init) ?? key
             if let stopIndex = train.times.firstIndex(where: { $0.code == station.code }),
                let stop = train.times[safe: stopIndex] {
                 if showDepartures {
-                    if stopIndex < train.times.count - 1, let timeStr = stop.departure?.scheduled ?? stop.scheduled,
-                       let timeDate = GOLiveDataService.shared.parseISO8601Date(timeStr) {
+                    if stopIndex < train.times.count - 1,
+                       let timeStr = stop.departure?.scheduled ?? stop.scheduled,
+                       let timeDate = GOLiveDataService.shared.parseISO8601Date(timeStr),
+                       inWindow(timeDate) {
                         let destCode = train.times.last?.code ?? ""
                         let destName = StationDatabase.shared.stations.first(where: { $0.code == destCode })?.shortName ?? train.times.last?.station ?? "Dest"
-                        
-                        items.append(BoardItem(
-                            trainNumber: trainNum,
-                            operatorName: "GO",
-                            time: timeDate,
-                            secondaryStation: destName,
-                            delayMinutes: max(0, stop.diffMin ?? 0),
-                            platform: nil
-                        ))
+                        items.append(BoardItem(trainNumber: trainNum, operatorName: "GO", time: timeDate, secondaryStation: destName, delayMinutes: max(0, stop.diffMin ?? 0), platform: nil))
                     }
                 } else {
-                    if stopIndex > 0, let timeStr = stop.arrival?.scheduled ?? stop.scheduled,
-                       let timeDate = GOLiveDataService.shared.parseISO8601Date(timeStr) {
+                    if stopIndex > 0,
+                       let timeStr = stop.arrival?.scheduled ?? stop.scheduled,
+                       let timeDate = GOLiveDataService.shared.parseISO8601Date(timeStr),
+                       inWindow(timeDate) {
                         let originCode = train.times.first?.code ?? ""
-                        let originName = StationDatabase.shared.stations.first(where: { $0.code == originCode })?.shortName ?? train.times.last?.station ?? "Origin"
-                        
-                        items.append(BoardItem(
-                            trainNumber: trainNum,
-                            operatorName: "GO",
-                            time: timeDate,
-                            secondaryStation: originName,
-                            delayMinutes: max(0, stop.diffMin ?? 0),
-                            platform: nil
-                        ))
+                        let originName = StationDatabase.shared.stations.first(where: { $0.code == originCode })?.shortName ?? train.times.first?.station ?? "Origin"
+                        items.append(BoardItem(trainNumber: trainNum, operatorName: "GO", time: timeDate, secondaryStation: originName, delayMinutes: max(0, stop.diffMin ?? 0), platform: nil))
                     }
                 }
             }
         }
-        
+
         return items.sorted(by: { $0.time < $1.time })
     }
 }

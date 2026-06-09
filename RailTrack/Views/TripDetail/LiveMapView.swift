@@ -3,13 +3,16 @@ import MapKit
 
 struct LiveMapView: View {
     let trip: Trip
+    let stops: [Stop]
 
     @State private var position: MapCameraPosition
     @State private var trainCoordinate: CLLocationCoordinate2D? = nil
     private let timer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
 
-    init(trip: Trip) {
+    init(trip: Trip, stops: [Stop] = []) {
         self.trip = trip
+        self.stops = stops
+        
         let midLat = (trip.origin.coordinate.latitude + trip.destination.coordinate.latitude) / 2
         let midLon = (trip.origin.coordinate.longitude + trip.destination.coordinate.longitude) / 2
 
@@ -39,8 +42,9 @@ struct LiveMapView: View {
                 StationMarker(code: trip.destination.code, isOrigin: false)
             }
 
-            // Route polyline (straight line for now; replace with GTFS shape)
-            MapPolyline(coordinates: [trip.origin.clCoordinate, trip.destination.clCoordinate])
+            // Route polyline (Intermediate fix: connect all scheduled stops)
+            let routeCoords = !stops.isEmpty ? stops.map { $0.station.clCoordinate } : [trip.origin.clCoordinate, trip.destination.clCoordinate]
+            MapPolyline(coordinates: routeCoords)
                 .stroke(ColorTheme.operatorColor(for: trip.trainOperator), lineWidth: 3)
 
             // Train position
@@ -69,7 +73,7 @@ struct LiveMapView: View {
             return
         }
 
-        // Use live coordinates if available and fresh (updated within 5 minutes)
+        // 1. Use live coordinates if available and fresh (updated within 5 minutes)
         if let liveLat = trip.liveLatitude,
            let liveLng = trip.liveLongitude,
            let liveUpd = trip.liveUpdated,
@@ -78,7 +82,34 @@ struct LiveMapView: View {
             return
         }
 
+        // 2. Interpolate based on schedule if no live data
         let now = Date()
+        
+        // Find the segment the train is currently in based on stops
+        if !stops.isEmpty {
+            for i in 0..<stops.count - 1 {
+                let currentStop = stops[i]
+                let nextStop = stops[i+1]
+                
+                let depTime = currentStop.actualDeparture ?? currentStop.scheduledDeparture ?? .distantPast
+                let arrTime = nextStop.actualArrival ?? nextStop.scheduledArrival ?? .distantFuture
+                
+                if depTime <= now && now <= arrTime {
+                    let total = arrTime.timeIntervalSince(depTime)
+                    let elapsed = now.timeIntervalSince(depTime)
+                    let fraction = max(0, min(1, elapsed / total))
+                    
+                    self.trainCoordinate = interpolate(
+                        from: currentStop.station.clCoordinate,
+                        to: nextStop.station.clCoordinate,
+                        fraction: fraction
+                    )
+                    return
+                }
+            }
+        }
+
+        // Fallback: Origin -> Destination interpolation
         let dep = trip.scheduledDeparture
         let arr = trip.scheduledArrival
 

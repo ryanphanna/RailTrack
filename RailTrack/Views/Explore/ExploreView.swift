@@ -5,7 +5,7 @@ import Combine
 
 struct ExploreView: View {
     @EnvironmentObject var appState: AppState
-    @StateObject private var locationManager = LocationManager()
+    @ObservedObject private var locationManager = LocationManager.shared
     
     @State private var amtrakTrains: [AmtrakLiveDataService.AmtrakTrain] = []
     @State private var viaTrains: [String: VIALiveDataService.VIALiveTrain] = [:]
@@ -28,6 +28,7 @@ struct ExploreView: View {
     @State private var dragOffset: CGFloat = 0
     
     @State private var showSettings = false
+    @State private var selectedBoardStation: Station? = nil
     
     var body: some View {
         NavigationStack {
@@ -49,6 +50,12 @@ struct ExploreView: View {
                 await refreshFeeds()
                 locationManager.requestPermission()
                 locationManager.startUpdating()
+                
+                // Background auto-refresh loop
+                while !Task.isCancelled {
+                    try? await Task.sleep(nanoseconds: 60_000_000_000) // 60 seconds
+                    await refreshFeeds(isSilent: true)
+                }
             }
             .onDisappear {
                 locationManager.stopUpdating()
@@ -105,8 +112,8 @@ struct ExploreView: View {
                             withAnimation(.spring()) {
                                 appState.sharedCameraPosition = .region(MKCoordinateRegion(
                                     center: userLoc.coordinate,
-                                    latitudinalMeters: 50000,
-                                    longitudinalMeters: 50000
+                                    latitudinalMeters: 5000,
+                                    longitudinalMeters: 5000
                                 ))
                             }
                         }
@@ -170,30 +177,64 @@ struct ExploreView: View {
     }
 
     private var drawerHeader: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(selectedTrain != nil ? "Selected Train" : "Explore")
-                    .font(.rtTitle)
-                    .foregroundStyle(ColorTheme.textPrimary)
+        HStack(alignment: .center) {
+            if let station = selectedBoardStation {
+                Button {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        selectedBoardStation = nil
+                    }
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(ColorTheme.accent)
+                }
+                .buttonStyle(.plain)
+                .padding(.trailing, 8)
 
-                drawerSubtitle
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(station.name)
+                        .font(.rtTitle)
+                        .foregroundStyle(ColorTheme.textPrimary)
+                        .lineLimit(1)
+                    Text(station.city)
+                        .font(.rtCaption)
+                        .foregroundStyle(ColorTheme.textTertiary)
+                }
+
+                Spacer()
+
+                Text(station.code)
+                    .font(.system(size: 13, weight: .bold, design: .monospaced))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(ColorTheme.operatorColor(for: station.railOperator ?? "").opacity(0.85), in: RoundedRectangle(cornerRadius: 6))
+            } else {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(selectedTrain.map { "\($0.operatorName) \($0.trainNumber)" } ?? "Explore")
+                        .font(.rtTitle)
+                        .foregroundStyle(ColorTheme.textPrimary)
+
+                    drawerSubtitle
+                }
+
+                Spacer()
+                refreshButton
             }
-
-            Spacer()
-            refreshButton
         }
         .padding(.horizontal, 20)
-        .padding(.bottom, 14)
+        .padding(.top, 4)
+        .padding(.bottom, 16)
     }
 
     @ViewBuilder
     private var drawerSubtitle: some View {
-        if selectedTrain != nil {
-            Text("Details and real-time status")
+        if let train = selectedTrain {
+            Text("\(train.originName) → \(train.destName)")
                 .font(.rtCaption)
                 .foregroundStyle(ColorTheme.textTertiary)
         } else if !closestStationName.isEmpty {
-            HStack(spacing: 4) {
+            HStack(spacing: 6) {
                 Image(systemName: "location.fill")
                     .font(.system(size: 10))
                     .foregroundStyle(ColorTheme.accent)
@@ -269,6 +310,8 @@ struct ExploreView: View {
                 amtrakTrains: amtrakTrains,
                 viaTrains: viaTrains,
                 goTrains: goTrains,
+                userLocation: locationManager.location,
+                selectedStation: $selectedBoardStation,
                 selectedPrepopulatedTrip: $selectedPrepopulatedTrip
             )
             .frame(maxHeight: .infinity)
@@ -366,9 +409,9 @@ struct ExploreView: View {
     
     // MARK: - Actions & Logic
     
-    private func refreshFeeds() async {
+    private func refreshFeeds(isSilent: Bool = false) async {
         guard !isLoading else { return }
-        isLoading = true
+        if !isSilent { isLoading = true }
         
         async let amtrakTask = AmtrakLiveDataService.shared.getActiveTrains()
         async let viaTask = VIALiveDataService.shared.getActiveTrains()
@@ -380,7 +423,7 @@ struct ExploreView: View {
         self.viaTrains = via
         self.goTrains = go
         
-        self.isLoading = false
+        if !isSilent { self.isLoading = false }
         
         if let location = locationManager.location {
             updateNearbyDepartures(for: location)

@@ -15,11 +15,11 @@ struct LiveExploreMapView: View {
         Map(position: $position) {
             ForEach(amtrakTrains, id: \.trainID) { train in
                 if let lat = train.lat, let lon = train.lon {
-                    Annotation("Amtrak \(train.trainNum)", coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon)) {
+                    Annotation(coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon)) {
                         Button {
                             selectAmtrakTrain(train)
                         } label: {
-                            TrainPositionMarker(operatorColor: ColorTheme.amtrak)
+                            TrainPositionMarker(operatorColor: ColorTheme.amtrak, trainNumber: train.trainNum)
                         }
                         .buttonStyle(.plain)
                     }
@@ -29,11 +29,11 @@ struct LiveExploreMapView: View {
             ForEach(Array(viaTrains.keys), id: \.self) { key in
                 if let train = viaTrains[key], let lat = train.lat, let lon = train.lng {
                     let trainNum = key.split(separator: " ").first.map(String.init) ?? key
-                    Annotation("VIA \(trainNum)", coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon)) {
+                    Annotation(coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon)) {
                         Button {
                             selectViaTrain(number: trainNum, train: train)
                         } label: {
-                            TrainPositionMarker(operatorColor: ColorTheme.via)
+                            TrainPositionMarker(operatorColor: ColorTheme.via, trainNumber: trainNum)
                         }
                         .buttonStyle(.plain)
                     }
@@ -43,11 +43,11 @@ struct LiveExploreMapView: View {
             ForEach(Array(goTrains.keys), id: \.self) { key in
                 if let train = goTrains[key], let lat = train.lat, let lon = train.lng {
                     let trainNum = key.split(separator: " ").first.map(String.init) ?? key
-                    Annotation("GO \(trainNum)", coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon)) {
+                    Annotation(coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon)) {
                         Button {
                             selectGoTrain(number: trainNum, train: train)
                         } label: {
-                            TrainPositionMarker(operatorColor: ColorTheme.go)
+                            TrainPositionMarker(operatorColor: ColorTheme.go, trainNumber: trainNum)
                         }
                         .buttonStyle(.plain)
                     }

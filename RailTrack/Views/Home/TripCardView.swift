@@ -6,141 +6,78 @@ struct TripCardView: View {
     private var operatorColor: Color { ColorTheme.operatorColor(for: trip.trainOperator) }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-                // Header strip
-                HStack {
-                    // Operator badge
+        VStack(alignment: .leading, spacing: 16) {
+            // Header: Op + Status
+            HStack {
+                HStack(spacing: 6) {
                     Text(trip.trainOperator)
-                        .font(.rtCaption)
-                        .fontWeight(.bold)
+                        .font(.system(size: 8, weight: .black))
                         .foregroundStyle(.white)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(operatorColor, in: RoundedRectangle(cornerRadius: 6))
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 3)
+                        .background(operatorColor, in: RoundedRectangle(cornerRadius: 4))
 
-                    Text("Train \(trip.trainNumber)")
-                        .font(.rtCaption)
-                        .foregroundStyle(ColorTheme.textSecondary)
-
-                    Spacer()
-
-                    StatusBadge(status: trip.status)
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
-                .padding(.bottom, 12)
-
-                Divider().opacity(0.1)
-
-                // Route row
-                HStack(alignment: .center, spacing: 0) {
-                    // Origin
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(trip.origin.code)
-                            .font(.rtMono)
-                            .foregroundStyle(ColorTheme.textPrimary)
-                        Text(trip.scheduledDeparture.timeString)
-                            .font(.rtCaption)
-                            .foregroundStyle(ColorTheme.textSecondary)
-                        if let actual = trip.actualDeparture, trip.isActive {
-                            Text(actual.timeString)
-                                .font(.rtCaption)
-                                .foregroundStyle(ColorTheme.accentAmber)
-                        }
-                    }
-                    .frame(minWidth: 50, alignment: .leading)
-
-                    // Route line
-                    RouteLineView(operatorColor: operatorColor)
-                        .padding(.horizontal, 10)
-
-                    // Destination
-                    VStack(alignment: .trailing, spacing: 2) {
-                        Text(trip.destination.code)
-                            .font(.rtMono)
-                            .foregroundStyle(ColorTheme.textPrimary)
-                        Text(trip.scheduledArrival.timeString)
-                            .font(.rtCaption)
-                            .foregroundStyle(ColorTheme.textSecondary)
-                    }
-                    .frame(minWidth: 50, alignment: .trailing)
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 14)
-
-                // Footer
-                HStack {
-                    Image(systemName: "calendar")
-                        .font(.system(size: 11))
-                        .foregroundStyle(ColorTheme.textTertiary)
-                    Text(trip.scheduledDeparture.relativeDayString)
-                        .font(.rtCaption)
-                        .foregroundStyle(ColorTheme.textTertiary)
-
-                    Spacer()
-
-                    Text(trip.scheduledDurationMinutes.durationString)
-                        .font(.rtCaption)
-                        .foregroundStyle(ColorTheme.textTertiary)
-
-                    Image(systemName: "clock")
-                        .font(.system(size: 11))
+                    Text(trip.trainNumber)
+                        .font(.system(size: 10, weight: .bold))
                         .foregroundStyle(ColorTheme.textTertiary)
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 14)
+                
+                Spacer()
+                
+                StatusBadge(status: trip.status)
             }
-            .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 18))
-            .overlay(
-                RoundedRectangle(cornerRadius: 18)
-                    .strokeBorder(
-                        trip.status.isNegative
-                            ? ColorTheme.accentAmber.opacity(0.3)
-                            : Color.white.opacity(0.06),
-                        lineWidth: 1
-                    )
-            )
-            .shadow(color: .black.opacity(0.25), radius: 12, x: 0, y: 4)
-    }
-}
 
-// MARK: - Route Line
+            // Route & Times
+            HStack(alignment: .center, spacing: 0) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(trip.origin.code)
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .foregroundStyle(ColorTheme.textPrimary)
+                    Text(trip.scheduledDeparture.timeString)
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(ColorTheme.textSecondary)
+                }
 
-private struct RouteLineView: View {
-    let operatorColor: Color
+                Spacer()
+                
+                VStack(spacing: 4) {
+                    Image(systemName: "tram.fill")
+                        .font(.system(size: 10))
+                        .foregroundStyle(ColorTheme.textTertiary.opacity(0.3))
+                    Rectangle()
+                        .fill(ColorTheme.textTertiary.opacity(0.15))
+                        .frame(width: 40, height: 1.5)
+                    
+                    Text(trip.scheduledDeparture.relativeDayString.uppercased())
+                        .font(.system(size: 8, weight: .black))
+                        .foregroundStyle(ColorTheme.textTertiary)
+                }
+                .padding(.horizontal, 12)
 
-    var body: some View {
-        HStack(spacing: 0) {
-            Circle()
-                .fill(operatorColor)
-                .frame(width: 7, height: 7)
+                Spacer()
 
-            Rectangle()
-                .fill(
-                    LinearGradient(
-                        colors: [operatorColor, operatorColor.opacity(0.4)],
-                        startPoint: .leading, endPoint: .trailing
-                    )
-                )
-                .frame(height: 2)
-
-            Image(systemName: "tram.fill")
-                .font(.system(size: 12))
-                .foregroundStyle(operatorColor)
-
-            Rectangle()
-                .fill(
-                    LinearGradient(
-                        colors: [operatorColor.opacity(0.4), operatorColor],
-                        startPoint: .leading, endPoint: .trailing
-                    )
-                )
-                .frame(height: 2)
-
-            Circle()
-                .fill(operatorColor)
-                .frame(width: 7, height: 7)
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text(trip.destination.code)
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .foregroundStyle(ColorTheme.textPrimary)
+                    Text(trip.scheduledArrival.timeString)
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(ColorTheme.textSecondary)
+                }
+            }
         }
+        .padding(20)
+        .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 20))
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .strokeBorder(
+                    trip.status.isNegative
+                        ? ColorTheme.accentAmber.opacity(0.3)
+                        : ColorTheme.textTertiary.opacity(0.1),
+                    lineWidth: 1
+                )
+        )
+        .shadow(color: .black.opacity(0.15), radius: 10, y: 4)
     }
 }
 

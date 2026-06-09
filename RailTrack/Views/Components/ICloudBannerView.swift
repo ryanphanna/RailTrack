@@ -9,8 +9,8 @@ struct ICloudBannerView: View {
         switch ckService.accountStatus {
         case .noAccount:
             return (
-                title: "iCloud Sync Offline",
-                subtitle: "Sign into iCloud on your device to enable automatic trip backups.",
+                title: "Cloud Sync Disabled",
+                subtitle: "Sign into iCloud to enable automatic trip backups and sync.",
                 icon: "icloud.slash"
             )
         case .restricted:
@@ -35,7 +35,7 @@ struct ICloudBannerView: View {
     }
 
     var body: some View {
-        if ckService.accountStatus == .available {
+        if ckService.accountStatus == .available || (ckService.isDevelopmentMode && (ckService.accountStatus == .couldNotDetermine || ckService.accountStatus == .restricted)) {
             EmptyView()
         } else {
             Button {

@@ -4,6 +4,8 @@ import Combine
 
 /// A thread-safe, SwiftUI-friendly helper to manage device location updates.
 final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
+    static let shared = LocationManager()
+    
     private let manager = CLLocationManager()
     
     @Published var location: CLLocation?
@@ -12,13 +14,16 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
     override init() {
         super.init()
         manager.delegate = self
-        manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
-        manager.distanceFilter = 500 // Update location only if moved 500m
+        manager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+        manager.distanceFilter = 100 // Update location more frequently for tracking
+        manager.allowsBackgroundLocationUpdates = true
+        manager.pausesLocationUpdatesAutomatically = false
+        manager.showsBackgroundLocationIndicator = true
         self.authorizationStatus = manager.authorizationStatus
     }
     
     func requestPermission() {
-        manager.requestWhenInUseAuthorization()
+        manager.requestAlwaysAuthorization()
     }
     
     func startUpdating() {

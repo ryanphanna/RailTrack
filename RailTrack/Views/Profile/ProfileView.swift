@@ -119,13 +119,13 @@ struct ProfileView: View {
         }
         let uniqueStations = stationIDs.count
 
-        // On-time performance
-        let pastNonCancelled = completedOrPastTrips.filter { $0.status != .cancelled }
-        let onTimeTrips = pastNonCancelled.filter { !$0.status.isNegative }
-        let onTimePercent = pastNonCancelled.isEmpty ? 100 : Int((Double(onTimeTrips.count) / Double(pastNonCancelled.count)) * 100)
+        // On-time performance — Only count completed trips to avoid "fake" 100% on active/scheduled ones
+        let completedNonCancelled = trips.filter { $0.status == .completed }
+        let onTimeTrips = completedNonCancelled.filter { !$0.status.isNegative }
+        let onTimePercent = completedNonCancelled.isEmpty ? 100 : Int((Double(onTimeTrips.count) / Double(completedNonCancelled.count)) * 100)
 
         // Streaks
-        let sortedPast = pastNonCancelled.sorted { $0.scheduledDeparture < $1.scheduledDeparture }
+        let sortedPast = completedNonCancelled.sorted { $0.scheduledDeparture < $1.scheduledDeparture }
         var currentStreak = 0
         var longestStreak = 0
         var tempStreak = 0
