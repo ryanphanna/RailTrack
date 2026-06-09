@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Train Service Catalog:** New static database mapping train numbers to official service names (e.g., "The Canadian", "Wolverine", "Empire Builder").
 - **GPS Journey Tracking:** New setting to record accurate personal travel paths during active trips.
 - **Background Auto-Refresh:** Explore map now automatically updates train positions every 60 seconds.
 - **Geographical Route Mapping:** Trip routes now connect every intermediate station, following rail corridors more accurately on the map.
@@ -51,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **UI Refinement:** Complete overhaul of Trip Cards, Profile Stats, and Trip Detail headers for a more premium "Boarding Pass" aesthetic.
+- **Branding Integration:** Service names are now prominently displayed on Trip Cards, Detail views, and route recommendations.
 - **Passport Stamps:** Redesigned station stamps to look like authentic postmark cancellations.
 - **Map Polish:** Cluttered map labels removed; replaced with compact, pulsing train markers.
 - **Improved Active Logic:** Trips now automatically move to Past Journeys after a 2-hour arrival buffer.

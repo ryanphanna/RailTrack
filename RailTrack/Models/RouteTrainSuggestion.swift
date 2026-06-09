@@ -8,4 +8,8 @@ struct RouteTrainSuggestion: Identifiable {
     let destinationCode: String
     let scheduledDeparture: Date?
     let scheduledArrival: Date?
+    
+    var serviceName: String? {
+        TrainServiceCatalog.shared.getServiceName(for: trainNumber, operatorName: operatorName)
+    }
 }

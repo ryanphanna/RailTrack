@@ -104,6 +104,16 @@ struct TripDetailView: View {
                                     .foregroundStyle(ColorTheme.textTertiary)
                                     .tracking(1.0)
                                 
+                                if let service = trip.serviceName {
+                                    Text("•")
+                                        .font(.system(size: 8))
+                                        .foregroundStyle(ColorTheme.textTertiary.opacity(0.5))
+                                    Text(service.uppercased())
+                                        .font(.system(size: 10, weight: .black))
+                                        .foregroundStyle(ColorTheme.textTertiary)
+                                        .tracking(0.5)
+                                }
+                                
                                 Spacer()
                                 
                                 StatusBadge(status: trip.status)

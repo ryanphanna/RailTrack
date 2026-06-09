@@ -20,6 +20,16 @@ struct TripCardView: View {
                     Text(trip.trainNumber)
                         .font(.system(size: 10, weight: .bold))
                         .foregroundStyle(ColorTheme.textTertiary)
+                    
+                    if let service = trip.serviceName {
+                        Text("•")
+                            .font(.system(size: 8))
+                            .foregroundStyle(ColorTheme.textTertiary.opacity(0.5))
+                        Text(service.uppercased())
+                            .font(.system(size: 8, weight: .black))
+                            .foregroundStyle(ColorTheme.textTertiary)
+                            .tracking(0.5)
+                    }
                 }
                 
                 Spacer()

@@ -74,6 +74,10 @@ struct Trip: Identifiable, Codable {
     var liveUpdated: Date? = nil
 
     // Computed
+    var serviceName: String? {
+        TrainServiceCatalog.shared.getServiceName(for: trainNumber, operatorName: trainOperator)
+    }
+
     var scheduledDurationMinutes: Int {
         Int(scheduledArrival.timeIntervalSince(scheduledDeparture) / 60)
     }

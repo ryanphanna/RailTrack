@@ -45,9 +45,21 @@ struct RouteSuggestionsCard: View {
                                     .foregroundStyle(ColorTheme.operatorColor(for: suggestion.operatorName))
                                 
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text("\(suggestion.operatorName) Train \(suggestion.trainNumber)")
-                                        .font(.rtBody.bold())
-                                        .foregroundStyle(ColorTheme.textPrimary)
+                                    HStack(spacing: 6) {
+                                        Text("\(suggestion.operatorName) \(suggestion.trainNumber)")
+                                            .font(.rtBody.bold())
+                                            .foregroundStyle(ColorTheme.textPrimary)
+                                        
+                                        if let service = suggestion.serviceName {
+                                            Text("•")
+                                                .font(.system(size: 8))
+                                                .foregroundStyle(ColorTheme.textTertiary.opacity(0.5))
+                                            Text(service.uppercased())
+                                                .font(.system(size: 8, weight: .black))
+                                                .foregroundStyle(ColorTheme.textTertiary)
+                                                .tracking(0.5)
+                                        }
+                                    }
                                     
                                     if let dep = suggestion.scheduledDeparture {
                                         Text("Departs \(dep.formatted(.dateTime.hour().minute()))")
