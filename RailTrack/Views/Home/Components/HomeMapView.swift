@@ -25,7 +25,11 @@ struct HomeMapView: View {
                 // Past: Faded "Travel Log" look
                 let isPast = !trip.isActive
                 
-                MapPolyline(coordinates: [trip.origin.clCoordinate, trip.destination.clCoordinate])
+                let routeCoords: [CLLocationCoordinate2D] = !trip.stops.isEmpty 
+                    ? trip.stops.map { $0.station.clCoordinate } 
+                    : [trip.origin.clCoordinate, trip.destination.clCoordinate]
+                
+                MapPolyline(coordinates: routeCoords)
                     .stroke(
                         ColorTheme.operatorColor(for: trip.trainOperator).opacity(isPast ? 0.3 : 1.0),
                         lineWidth: isPast ? 2 : 4

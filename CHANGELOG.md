@@ -50,7 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Train Service Catalog:** New static database mapping train numbers to official service names (e.g., "The Canadian", "Wolverine", "Empire Builder").
 - **GPS Journey Tracking:** New setting to record accurate personal travel paths during active trips.
 - **Background Auto-Refresh:** Explore map now automatically updates train positions every 60 seconds.
-- **Geographical Route Mapping:** Trip routes now connect every intermediate station, following rail corridors more accurately on the map.
+- **Geographical Route Mapping:** Trip routes now connect every intermediate station, following rail corridors more accurately on the map. These paths are now persisted, ensuring historical journeys remain geographically perfect in your Travel Log.
 - **Proactive Schedule Lookup:** Auto-fills station and time details when a train number is entered in the Add Trip view.
 ...
 ### Changed

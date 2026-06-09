@@ -56,6 +56,9 @@ final class TripRecord {
     var liveLongitude: Double?
     var liveSpeed: Int?
     var liveUpdated: Date?
+    
+    // Persistence for geographical routes
+    var stopsData: Data? // JSON encoded [Stop]
 
     init(
         id: UUID = UUID(),
@@ -128,6 +131,7 @@ final class TripRecord {
             coordinate: Coordinate(latitude: destinationLat, longitude: destinationLon),
             timezone: destinationTimezone, railOperator: nil, city: destinationCity, country: destinationCountry
         )
+        
         let status: TripStatus
         switch statusRaw {
         case "onTime":    status = .onTime
@@ -136,9 +140,15 @@ final class TripRecord {
         case "completed": status = .completed
         default:          status = .scheduled
         }
+        
+        var stops: [Stop] = []
+        if let data = stopsData {
+            stops = (try? JSONDecoder().decode([Stop].self, from: data)) ?? []
+        }
+        
         return Trip(
             id: id, trainNumber: trainNumber, trainOperator: trainOperator,
-            origin: origin, destination: destination, stops: [],
+            origin: origin, destination: destination, stops: stops,
             scheduledDeparture: scheduledDeparture, scheduledArrival: scheduledArrival,
             actualDeparture: actualDeparture, actualArrival: actualArrival,
             status: status, currentPlatform: currentPlatform,

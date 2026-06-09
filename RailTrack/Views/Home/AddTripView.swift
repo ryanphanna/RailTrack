@@ -23,6 +23,7 @@ struct AddTripView: View {
     @State private var isSaving = false
     @State private var isLookingUp = false
     @State private var lookupError: String? = nil
+    @State private var discoveredStops: [Stop] = []
 
     @FocusState private var isOriginFocused: Bool
     @FocusState private var isDestinationFocused: Bool
@@ -255,6 +256,14 @@ struct AddTripView: View {
             scheduledDeparture: departureDate,
             scheduledArrival: arrivalDate
         )
+        
+        // Persist stops for geographical accuracy
+        if !discoveredStops.isEmpty {
+            if let data = try? JSONEncoder().encode(discoveredStops) {
+                record.stopsData = data
+            }
+        }
+        
         modelContext.insert(record)
         NotificationService.shared.scheduleDepartureReminder(for: record.toTrip(), minutesBefore: 30)
         dismiss()
@@ -386,6 +395,25 @@ struct AddTripView: View {
                         arrivalDate = date
                     }
                 }
+                
+                // Map VIA times to Stops
+                self.discoveredStops = train.times.map { t in
+                    let station = StationDatabase.shared.stations.first { $0.id == "VIA-\(t.code)" }
+                    ?? Station(
+                        id: "VIA-\(t.code)", name: t.station, shortName: t.station, code: t.code,
+                        coordinate: Coordinate(latitude: 0, longitude: 0),
+                        timezone: "America/Toronto", railOperator: "VIA", city: t.station, country: "CA"
+                    )
+                    return Stop(
+                        id: UUID(), station: station,
+                        scheduledArrival: VIALiveDataService.shared.parseISO8601Date(t.arrival?.scheduled ?? t.scheduled),
+                        scheduledDeparture: VIALiveDataService.shared.parseISO8601Date(t.departure?.scheduled ?? t.scheduled),
+                        actualArrival: nil, actualDeparture: nil, platform: nil,
+                        isOrigin: t.code == train.times.first?.code,
+                        isDestination: t.code == train.times.last?.code
+                    )
+                }
+                
                 return true
             }
         } else if operatorName == "Amtrak" {
@@ -433,6 +461,25 @@ struct AddTripView: View {
                         arrivalDate = date
                     }
                 }
+                
+                // Map Amtrak stations to Stops
+                self.discoveredStops = train.stations.map { s in
+                    let station = StationDatabase.shared.stations.first { $0.id == "AMT-\(s.code)" }
+                    ?? Station(
+                        id: "AMT-\(s.code)", name: s.name, shortName: s.name, code: s.code,
+                        coordinate: Coordinate(latitude: 0, longitude: 0),
+                        timezone: s.tz, railOperator: "Amtrak", city: s.name, country: "US"
+                    )
+                    return Stop(
+                        id: UUID(), station: station,
+                        scheduledArrival: AmtrakLiveDataService.shared.parseISO8601Date(s.schArr),
+                        scheduledDeparture: AmtrakLiveDataService.shared.parseISO8601Date(s.schDep),
+                        actualArrival: nil, actualDeparture: nil, platform: nil,
+                        isOrigin: s.code == train.stations.first?.code,
+                        isDestination: s.code == train.stations.last?.code
+                    )
+                }
+                
                 return true
             }
         } else if operatorName == "GO" {
