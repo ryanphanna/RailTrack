@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Visual Travel Log:** Home map now displays a cumulative history of all journeys taken, using varying opacities to distinguish between past, active, and upcoming trips.
 - **Future Trip Planning:** Users can now save trips for any date in the future.
 - **Schedule Auto-Refresh:** Saved trips now automatically sync with official live data as the departure date approaches, ensuring platform and schedule changes are captured.
 - **Train Service Catalog:** New static database mapping train numbers to official service names (e.g., "The Canadian", "Wolverine", "Empire Builder").
@@ -51,7 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Background Auto-Refresh:** Explore map now automatically updates train positions every 60 seconds.
 - **Geographical Route Mapping:** Trip routes now connect every intermediate station, following rail corridors more accurately on the map.
 - **Proactive Schedule Lookup:** Auto-fills station and time details when a train number is entered in the Add Trip view.
-
+...
 ### Changed
 - **UI Refinement:** Complete overhaul of Trip Cards, Profile Stats, and Trip Detail headers for a more premium "Boarding Pass" aesthetic.
 - **Branding Integration:** Service names are now prominently displayed on Trip Cards, Detail views, and route recommendations.
