@@ -52,8 +52,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Background Auto-Refresh:** Explore map now automatically updates train positions every 60 seconds.
 - **Geographical Route Mapping:** Trip routes now connect every intermediate station, following rail corridors more accurately on the map. These paths are now persisted, ensuring historical journeys remain geographically perfect in your Travel Log.
 - **Proactive Schedule Lookup:** Auto-fills station and time details when a train number is entered in the Add Trip view.
-...
+
 ### Changed
+- **Personal Stats Architecture:** Complete refactor of the Trip model to support high-precision personal metrics, including max speed recording, precise GPS paths, and actual distance traveled.
 - **UI Refinement:** Complete overhaul of Trip Cards, Profile Stats, and Trip Detail headers for a more premium "Boarding Pass" aesthetic.
 - **Branding Integration:** Service names are now prominently displayed on Trip Cards, Detail views, and route recommendations.
 - **Passport Stamps:** Redesigned station stamps to look like authentic postmark cancellations.

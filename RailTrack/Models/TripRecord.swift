@@ -59,6 +59,12 @@ final class TripRecord {
     
     // Persistence for geographical routes
     var stopsData: Data? // JSON encoded [Stop]
+    
+    // Personal Stats (User-specific journey data)
+    var maxSpeedKmh: Double?
+    var recordedPathData: Data? // JSON encoded [Coordinate]
+    var personalDistanceKm: Double?
+    var personalDurationMinutes: Int?
 
     init(
         id: UUID = UUID(),
@@ -146,6 +152,11 @@ final class TripRecord {
             stops = (try? JSONDecoder().decode([Stop].self, from: data)) ?? []
         }
         
+        var recordedPath: [Coordinate] = []
+        if let data = recordedPathData {
+            recordedPath = (try? JSONDecoder().decode([Coordinate].self, from: data)) ?? []
+        }
+        
         return Trip(
             id: id, trainNumber: trainNumber, trainOperator: trainOperator,
             origin: origin, destination: destination, stops: stops,
@@ -154,7 +165,10 @@ final class TripRecord {
             status: status, currentPlatform: currentPlatform,
             isPublic: isPublic, notes: notes, createdAt: createdAt,
             liveLatitude: liveLatitude, liveLongitude: liveLongitude,
-            liveSpeed: liveSpeed, liveUpdated: liveUpdated
+            liveSpeed: liveSpeed, liveUpdated: liveUpdated,
+            maxSpeedKmh: maxSpeedKmh,
+            recordedPath: recordedPath,
+            personalDistanceKm: personalDistanceKm
         )
     }
 }

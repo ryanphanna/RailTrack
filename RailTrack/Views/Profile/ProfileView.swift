@@ -97,9 +97,13 @@ struct ProfileView: View {
         // Distance in km
         var totalKm: Double = 0.0
         for trip in validTrips {
-            let originLoc = CLLocation(latitude: trip.origin.coordinate.latitude, longitude: trip.origin.coordinate.longitude)
-            let destLoc = CLLocation(latitude: trip.destination.coordinate.latitude, longitude: trip.destination.coordinate.longitude)
-            totalKm += originLoc.distance(from: destLoc) / 1000.0
+            if let personal = trip.personalDistanceKm {
+                totalKm += personal
+            } else {
+                let originLoc = CLLocation(latitude: trip.origin.coordinate.latitude, longitude: trip.origin.coordinate.longitude)
+                let destLoc = CLLocation(latitude: trip.destination.coordinate.latitude, longitude: trip.destination.coordinate.longitude)
+                totalKm += originLoc.distance(from: destLoc) / 1000.0
+            }
         }
 
         // Travel Duration in hours

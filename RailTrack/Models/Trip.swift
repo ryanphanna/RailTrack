@@ -73,6 +73,11 @@ struct Trip: Identifiable, Codable {
     var liveSpeed: Int? = nil
     var liveUpdated: Date? = nil
 
+    // Personal Metrics
+    var maxSpeedKmh: Double? = nil
+    var recordedPath: [Coordinate] = []
+    var personalDistanceKm: Double? = nil
+
     // Computed
     var serviceName: String? {
         TrainServiceCatalog.shared.getServiceName(for: trainNumber, operatorName: trainOperator)
