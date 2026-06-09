@@ -4,50 +4,40 @@ import Foundation
 struct TrainServiceCatalog {
     static let shared = TrainServiceCatalog()
     
-    private let viaServices: [String: String] = [
-        "1": "The Canadian", "2": "The Canadian",
-        "14": "Ocean", "15": "Ocean",
-        "50": "Corridor", "51": "Corridor", "52": "Corridor", "53": "Corridor",
-        "54": "Corridor", "55": "Corridor", "57": "Corridor", "59": "Corridor",
-        "60": "Corridor", "61": "Corridor", "62": "Corridor", "63": "Corridor",
-        "64": "Corridor", "65": "Corridor", "66": "Corridor", "67": "Corridor",
-        "68": "Corridor", "69": "Corridor",
-        "70": "Corridor", "71": "Corridor", "72": "Corridor", "73": "Corridor",
-        "75": "Corridor", "76": "Corridor", "78": "Corridor", "79": "Corridor",
-        "82": "Corridor", "83": "Corridor", "84": "Corridor", "85": "Corridor",
-        "87": "Corridor", "88": "Corridor",
-        "97": "Corridor", "98": "Corridor"
-    ]
-    
-    private let amtrakServices: [String: String] = [
-        "1": "Sunset Limited", "2": "Sunset Limited",
-        "3": "Southwest Chief", "4": "Sunset Limited",
-        "5": "California Zephyr", "6": "California Zephyr",
-        "7": "Empire Builder", "8": "Empire Builder",
-        "11": "Coast Starlight", "14": "Coast Starlight",
-        "19": "Crescent", "20": "Crescent",
-        "21": "Texas Eagle", "22": "Texas Eagle",
-        "29": "Capitol Limited", "30": "Capitol Limited",
-        "48": "Lake Shore Limited", "49": "Lake Shore Limited",
-        "50": "Cardinal", "51": "Cardinal",
-        "58": "City of New Orleans", "59": "City of New Orleans",
-        "63": "Maple Leaf", "64": "Maple Leaf",
-        "66": "Northeast Regional", "67": "Northeast Regional",
-        "91": "Silver Star", "92": "Silver Star",
-        "97": "Silver Meteor", "98": "Silver Meteor",
-        "350": "Wolverine", "351": "Wolverine", "352": "Wolverine", "353": "Wolverine"
-    ]
-    
     /// Returns the official service name for a given train number and operator.
     func getServiceName(for trainNumber: String, operatorName: String) -> String? {
         let cleanNumber = trainNumber.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let numStr = cleanNumber.hasPrefix("v") ? String(cleanNumber.dropFirst()) : cleanNumber
+        guard let num = Int(numStr) else { return nil }
         
         if operatorName == "VIA" {
-            return viaServices[cleanNumber]
+            switch num {
+            case 1...2:   return "The Canadian"
+            case 14...15: return "Ocean"
+            case 50...98: return "Corridor"
+            case 692...693: return "Hudson Bay"
+            default: return nil
+            }
         } else if operatorName == "Amtrak" {
-            // Remove 'v' prefix if present from Amtraker API
-            let num = cleanNumber.hasPrefix("v") ? String(cleanNumber.dropFirst()) : cleanNumber
-            return amtrakServices[num]
+            switch num {
+            case 1...2, 4: return "Sunset Limited"
+            case 3:        return "Southwest Chief"
+            case 5...6:    return "California Zephyr"
+            case 7...8:    return "Empire Builder"
+            case 11, 14:   return "Coast Starlight"
+            case 19...20:  return "Crescent"
+            case 21...22:  return "Texas Eagle"
+            case 29...30:  return "Capitol Limited"
+            case 48...49:  return "Lake Shore Limited"
+            case 50...51:  return "Cardinal"
+            case 58...59:  return "City of New Orleans"
+            case 63...64:  return "Maple Leaf"
+            case 66...67:  return "Northeast Regional"
+            case 91...92:  return "Silver Star"
+            case 97...98:  return "Silver Meteor"
+            case 350...355: return "Wolverine"
+            default: return nil
+            }
         }
         
         return nil
