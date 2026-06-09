@@ -142,64 +142,78 @@ struct EditTripView: View {
     @ViewBuilder
     private var operatorSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            FieldLabel(text: "Operator", icon: "tram")
-            HStack(spacing: 8) {
+            FieldLabel(text: "Operator", icon: "tram.fill")
+            HStack(spacing: 0) {
                 ForEach(operators, id: \.self) { op in
                     Button {
                         selectedOperator = op
                     } label: {
                         Text(op)
-                            .font(.rtCaption.bold())
-                            .foregroundStyle(selectedOperator == op ? .white : ColorTheme.textSecondary)
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 8)
+                            .font(.system(size: 11, weight: .black))
+                            .foregroundStyle(selectedOperator == op ? .white : ColorTheme.textTertiary)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 36)
                             .background(
                                 selectedOperator == op
                                     ? ColorTheme.operatorColor(for: op)
-                                    : ColorTheme.surface,
-                                in: RoundedRectangle(cornerRadius: 10)
+                                    : Color.clear,
+                                in: RoundedRectangle(cornerRadius: 8)
                             )
                     }
+                    .padding(4)
                 }
             }
+            .padding(2)
+            .background(Color.black.opacity(0.2), in: RoundedRectangle(cornerRadius: 10))
         }
-        .padding(16)
-        .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+        .padding(20)
+        .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 20))
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(ColorTheme.textTertiary.opacity(0.1), lineWidth: 1)
+        )
     }
 
     @ViewBuilder
     private var routeSection: some View {
-        Group {
+        VStack(spacing: 12) {
             // Train number
             FormCard {
                 FormRow(label: "Train Number", icon: "number") {
                     TextField("e.g. 60", text: $trainNumber, prompt: Text("e.g. 60").foregroundColor(ColorTheme.textTertiary))
                         .keyboardType(.numberPad)
-                        .font(.rtBody)
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
                         .foregroundStyle(ColorTheme.textPrimary)
                 }
             }
+            .overlay(RoundedRectangle(cornerRadius: 20).stroke(ColorTheme.textTertiary.opacity(0.1), lineWidth: 1))
 
             // Origin
             StationPickerField(
-                label: "From", icon: "mappin.circle",
+                label: "From", icon: "arrow.up.right.circle.fill",
                 query: $originQuery, results: $originResults,
                 selected: $selectedOrigin, operatorFilter: selectedOperator
             )
+            .padding(16)
+            .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 20))
+            .overlay(RoundedRectangle(cornerRadius: 20).stroke(ColorTheme.textTertiary.opacity(0.1), lineWidth: 1))
 
             // Destination
             StationPickerField(
-                label: "To", icon: "mappin.and.ellipse",
+                label: "To", icon: "arrow.down.left.circle.fill",
                 query: $destinationQuery, results: $destinationResults,
                 selected: $selectedDestination, operatorFilter: selectedOperator
             )
+            .padding(16)
+            .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 20))
+            .overlay(RoundedRectangle(cornerRadius: 20).stroke(ColorTheme.textTertiary.opacity(0.1), lineWidth: 1))
         }
     }
 
     @ViewBuilder
     private var statusSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            FieldLabel(text: "Status", icon: "info.circle")
+        VStack(alignment: .leading, spacing: 10) {
+            FieldLabel(text: "Trip Status", icon: "info.circle.fill")
             VStack(spacing: 0) {
                 ForEach(StatusOption.allCases) { opt in
                     Button {
@@ -207,53 +221,66 @@ struct EditTripView: View {
                             statusOption = opt
                         }
                     } label: {
-                        HStack(spacing: 12) {
+                        HStack(spacing: 16) {
                             Image(systemName: opt.icon)
-                                .font(.system(size: 16))
+                                .font(.system(size: 14, weight: .bold))
                                 .foregroundStyle(opt.color)
                                 .frame(width: 24)
-                            Text(opt.rawValue)
-                                .font(.rtBody)
+                            Text(opt.rawValue.uppercased())
+                                .font(.system(size: 11, weight: .black))
                                 .foregroundStyle(ColorTheme.textPrimary)
+                                .tracking(0.5)
                             Spacer()
                             if statusOption == opt {
-                                Image(systemName: "checkmark")
-                                    .font(.system(size: 14, weight: .semibold))
+                                Image(systemName: "checkmark.circle.fill")
+                                    .font(.system(size: 16))
                                     .foregroundStyle(ColorTheme.accent)
+                            } else {
+                                Circle()
+                                    .stroke(ColorTheme.textTertiary.opacity(0.2), lineWidth: 1.5)
+                                    .frame(width: 16, height: 16)
                             }
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 14)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 16)
                     }
                     .buttonStyle(.plain)
                     if opt.id != StatusOption.allCases.last?.id {
-                        Divider().opacity(0.1).padding(.leading, 52)
+                        Divider().opacity(0.08).padding(.leading, 60)
                     }
                 }
             }
-            .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+            .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 20))
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(ColorTheme.textTertiary.opacity(0.1), lineWidth: 1)
+            )
 
             // Delay stepper — shown only when Delayed is selected
             if statusOption == .delayed {
-                HStack(spacing: 12) {
-                    Image(systemName: "clock.badge.exclamationmark")
+                HStack(spacing: 16) {
+                    Image(systemName: "clock.badge.exclamationmark.fill")
                         .font(.system(size: 16))
                         .foregroundStyle(ColorTheme.accentAmber)
                         .frame(width: 24)
-                    Text("Delay")
-                        .font(.rtBody)
+                    Text("DELAY INTENSITY")
+                        .font(.system(size: 10, weight: .black))
                         .foregroundStyle(ColorTheme.textPrimary)
                     Spacer()
                     Stepper("", value: $delayMins, in: 1...999, step: 5)
                         .labelsHidden()
-                    Text("\(delayMins) min")
-                        .font(.rtMono)
+                    Text("\(delayMins)m")
+                        .font(.system(size: 14, weight: .bold, design: .monospaced))
                         .foregroundStyle(ColorTheme.accentAmber)
-                        .frame(width: 68, alignment: .trailing)
+                        .frame(width: 50, alignment: .trailing)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 14)
-                .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+                .background(ColorTheme.surface, in: RoundedRectangle(cornerRadius: 20))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(ColorTheme.accentAmber.opacity(0.2), lineWidth: 1)
+                )
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
@@ -261,47 +288,51 @@ struct EditTripView: View {
 
     @ViewBuilder
     private var scheduleSection: some View {
-        Group {
+        VStack(spacing: 12) {
             // Departure
             FormCard {
-                FormRow(label: "Departs", icon: "arrow.up.right.circle") {
+                FormRow(label: "Departs", icon: "arrow.up.right.circle.fill") {
                     DatePicker("", selection: $departureDate, displayedComponents: [.date, .hourAndMinute])
                         .labelsHidden()
                         .colorScheme(.dark)
                 }
             }
+            .overlay(RoundedRectangle(cornerRadius: 20).stroke(ColorTheme.textTertiary.opacity(0.1), lineWidth: 1))
 
             // Arrival
             FormCard {
-                FormRow(label: "Arrives", icon: "arrow.down.left.circle") {
+                FormRow(label: "Arrives", icon: "arrow.down.left.circle.fill") {
                     DatePicker("", selection: $arrivalDate, in: departureDate..., displayedComponents: [.date, .hourAndMinute])
                         .labelsHidden()
                         .colorScheme(.dark)
                 }
             }
+            .overlay(RoundedRectangle(cornerRadius: 20).stroke(ColorTheme.textTertiary.opacity(0.1), lineWidth: 1))
         }
     }
 
     @ViewBuilder
     private var detailsSection: some View {
-        Group {
+        VStack(spacing: 12) {
             // Platform
             FormCard {
-                FormRow(label: "Platform", icon: "signpost.right") {
+                FormRow(label: "Platform", icon: "signpost.right.fill") {
                     TextField("e.g. 8", text: $platformText, prompt: Text("e.g. 8").foregroundColor(ColorTheme.textTertiary))
-                        .font(.rtBody)
+                        .font(.system(size: 15, weight: .bold, design: .rounded))
                         .foregroundStyle(ColorTheme.textPrimary)
                 }
             }
+            .overlay(RoundedRectangle(cornerRadius: 20).stroke(ColorTheme.textTertiary.opacity(0.1), lineWidth: 1))
 
             // Notes
             FormCard {
                 FormRow(label: "Notes", icon: "note.text") {
                     TextField("Optional…", text: $notesText, prompt: Text("Optional…").foregroundColor(ColorTheme.textTertiary), axis: .vertical)
-                        .font(.rtBody)
-                        .foregroundStyle(ColorTheme.textPrimary)
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(ColorTheme.textSecondary)
                 }
             }
+            .overlay(RoundedRectangle(cornerRadius: 20).stroke(ColorTheme.textTertiary.opacity(0.1), lineWidth: 1))
         }
     }
 
