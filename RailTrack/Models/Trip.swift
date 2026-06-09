@@ -98,6 +98,12 @@ struct Trip: Identifiable, Codable {
         return scheduledDeparture > Date()
     }
 
+    var isFuture: Bool {
+        // A trip is considered "future" if it is more than 24 hours away.
+        // We use this to decide whether to prioritize static or live data.
+        scheduledDeparture.timeIntervalSinceNow > 86400
+    }
+
     var delayMinutes: Int? {
         if case .delayed(let mins) = status { return mins }
         return nil

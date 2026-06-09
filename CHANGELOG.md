@@ -44,6 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Future Trip Planning:** Users can now save trips for any date in the future.
+- **Schedule Auto-Refresh:** Saved trips now automatically sync with official live data as the departure date approaches, ensuring platform and schedule changes are captured.
 - **Train Service Catalog:** New static database mapping train numbers to official service names (e.g., "The Canadian", "Wolverine", "Empire Builder").
 - **GPS Journey Tracking:** New setting to record accurate personal travel paths during active trips.
 - **Background Auto-Refresh:** Explore map now automatically updates train positions every 60 seconds.

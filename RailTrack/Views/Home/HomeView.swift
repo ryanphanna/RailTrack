@@ -104,6 +104,9 @@ struct HomeView: View {
                 }
             }
             .ignoresSafeArea(edges: .bottom)
+            .task {
+                await ScheduleUpdateService.shared.refreshUpcomingTrips(modelContext: modelContext)
+            }
             .sheet(item: $activePrepopulatedTrip) { trip in
                 AddTripView(
                     initialOrigin: trip.origin,
