@@ -8,9 +8,9 @@ struct HomeMapView: View {
     
     var body: some View {
         Map(position: $position) {
-            ForEach(records.map { $0.toTrip() }) { trip in
-                // Markers only for active/upcoming or most recent past to avoid clutter
-                if trip.isActive || trip.isUpcoming {
+            ForEach(records.map { $0.toTrip() }.filter { !$0.isUpcoming }) { trip in
+                // Markers only for active trips to avoid cluttering the travel log
+                if trip.isActive {
                     Annotation(trip.origin.shortName, coordinate: trip.origin.clCoordinate) {
                         StationMarker(code: trip.origin.code, isOrigin: true)
                     }
@@ -21,9 +21,9 @@ struct HomeMapView: View {
                 }
                 
                 // Route polyline
-                // Active/Upcoming: Solid & Bold
+                // Active: Solid & Bold
                 // Past: Faded "Travel Log" look
-                let isPast = !trip.isActive && !trip.isUpcoming
+                let isPast = !trip.isActive
                 
                 MapPolyline(coordinates: [trip.origin.clCoordinate, trip.destination.clCoordinate])
                     .stroke(
