@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replaced the full-width "Close" button in `SelectedTrainDrawerView` with a compact icon circle button (xmark) stacked above a plus circle button, matching the style of the map refresh button.
 
 ### Fixed
+- **Security Infrastructure:** Switched to GitHub's Default CodeQL setup for simplified security monitoring and resolved configuration conflicts.
 - **Data Integrity:** Amtrak feed now rigorously filters out VIA Rail "virtual" trains and test data.
 - **iCloud Messaging:** Softened development-mode sync warnings to reduce user alarm.
 - **Map Interpolation:** Train position guessing now uses intermediate stop data for much better accuracy.
