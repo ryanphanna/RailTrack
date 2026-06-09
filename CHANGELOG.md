@@ -44,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **Visual Travel Log:** Home map now displays a cumulative history of all journeys taken, using varying opacities to distinguish between past, active, and upcoming trips.
+- **Visual Travel Log:** Home map now displays a cumulative history of journeys taken. Active trips are shown with bold lines and markers, while past trips appear as subtle historical paths. Upcoming trips are hidden from the map to keep the focus on actual travel.
 - **Future Trip Planning:** Users can now save trips for any date in the future.
 - **Schedule Auto-Refresh:** Saved trips now automatically sync with official live data as the departure date approaches, ensuring platform and schedule changes are captured.
 - **Train Service Catalog:** New static database mapping train numbers to official service names (e.g., "The Canadian", "Wolverine", "Empire Builder").
