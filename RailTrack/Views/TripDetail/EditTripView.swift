@@ -111,14 +111,12 @@ struct EditTripView: View {
                     VStack(spacing: 16) {
                         operatorSection
                         routeSection
-                        statusSection
                         scheduleSection
                         detailsSection
 
                         Color.clear.frame(height: 20)
                     }
                     .padding(20)
-                    .animation(.easeInOut(duration: 0.2), value: statusOption)
                 }
             }
             .navigationTitle("Edit Trip")
