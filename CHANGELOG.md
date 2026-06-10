@@ -23,7 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Branding Integration:** Service names are now prominently displayed on Trip Cards, Detail views, and route recommendations.
 - **Passport Stamps:** Redesigned station stamps to look like authentic postmark cancellations.
 - **Map Polish:** Cluttered map labels removed; replaced with compact, pulsing train markers.
-- **Improved Active Logic:** Trips now automatically move to Past Journeys after a 2-hour arrival buffer.
+- **Improved Active Logic:** Trips now automatically move to Past Journeys after a 15-minute arrival buffer (reduced from 2 hours) or upon physical arrival at the destination (if GPS enabled).
+- **Edit Trip Refinement:** Redesigned the edit screen to match the "Boarding Pass" aesthetic, fixed layout alignment issues, and removed the manual status picker to rely entirely on automated tracking data.
 - **Refined Stats:** On-time performance and streaks now only count completed trips for better accuracy.
 - Station list in Explore now sorts by distance from the user's location when location permission is granted, with a distance label on each row.
 - Station list rows now use a coloured code badge (filled pill) instead of plain coloured text.
