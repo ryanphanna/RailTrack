@@ -5,7 +5,7 @@ All notable changes to RailTrack will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.4.0] - 2026-06-08
+## [Unreleased]
 
 ### Added
 - **Visual Travel Log:** Home map now displays a cumulative history of journeys taken. Active trips are shown with bold lines and markers, while past trips appear as subtle historical paths. Upcoming trips are hidden from the map to keep the focus on actual travel.
@@ -64,30 +64,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added live API status updates for GO Transit to the Transit Connections agency detail views.
 
 ## [1.2.0] - 2026-06-01
-
-### Added
-- Created `RailTrackTests` directory with unit tests for `StationDatabase`, `AmtrakLiveDataService`, `VIALiveDataService`, and `GOLiveDataService`.
-- Created `Views/Explore` directory to house all explore-related components.
-- Extracted `SelectedTrainDrawerView` and `SelectedTrainInfo` to support the new integrated detail view.
-- Added `Utilities/LocationManager.swift` to share location tracking logic across views.
-- Created `Views/Home/Components` and `Views/Profile/Components` to improve project organization.
-- Extracted `TicketCardView`, `StationSearchResultsCard`, `RouteSuggestionsCard`, and `ScheduleCard` from `AddTripView`.
-- Extracted `BoardingPassProfileCard`, `PassportStampCard`, `OnTimeCard`, and `EmptyProfileView` from `ProfileView`.
-- Extracted `HomeMapView` and `HomeSmartSearchView` from `HomeView`.
-- Consolidated shared UI elements into `Views/Components/MapMarkers.swift`, `TicketComponents.swift`, and `EmptyTripsView.swift`.
-- Added **Interactive Trip Maps**: The map in the Trip Detail view can now be expanded to a full-screen interactive view.
-
-### Changed
-- **Integrated Train Details**: Moved the "Selected Train" floating card from a map overlay directly into the "Explore" bottom drawer for a more cohesive and cleaner UI.
-- **Dynamic Drawer Content**: The bottom drawer now automatically updates its header and content to show train details when a train is selected on the map.
-- **Codebase Refactoring**: Major modularization of large view files. Split `ContentView.swift`, `AddTripView.swift`, `HomeView.swift`, and `ProfileView.swift` into focused, reusable components.
-- Redesigned **Explore** tab with a full-screen interactive map background and a sliding bottom drawer panel, matching the `HomeView` UX pattern.
-- Added floating **Settings** and **Locate** buttons to `ExploreView` in the same top-right layout as `HomeView`.
-- Shared map camera position (`sharedCameraPosition`) via `AppState` so the map viewport is seamlessly preserved when switching between the **Trips** and **Explore** tabs.
-- Added `hasInitializedCameraPosition` flag to `AppState` to ensure the initial trip-fit zoom only fires once at app startup, not on every tab return.
-- Removed redundant **Map** and **Active Trains** tab buttons from the Explore drawer; the live map always shows active trains and the drawer now focuses on Station Board search and Nearby Departures.
-- `ExploreView` now reads and writes to `AppState.sharedCameraPosition` instead of a local `@State` variable.
-- `HomeView` now reads and writes to `AppState.sharedCameraPosition` instead of a local `@State` variable.
-
-### Fixed
-- Fixed a horizontal clipping bug in `AddTripView` where long station names pushed departure/arrival columns off-screen; resolved by applying `.frame(maxWidth: .infinity, alignment: .leading)` to the inner `ZStack`/`VStack` elements.
