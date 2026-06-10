@@ -31,6 +31,7 @@ Config.swift
 
 # AI Agent Configuration
 agents.md
+GEMINI.md
 build_dir/
 
 # Handoff / Temporary Notes
